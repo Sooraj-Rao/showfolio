@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { ImageSlider } from "./img-slider";
+import Image from "next/image";
 
 export function PortfolioSection({ section, onUpdate }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -41,7 +42,7 @@ export function PortfolioSection({ section, onUpdate }) {
                 onUpdate({ ...section.content, avatar: e.target.value })
               }
             />
-            <img
+            <Image
               src={section.content.avatar}
               alt="Avatar"
               className="w-20 h-20 rounded-full"

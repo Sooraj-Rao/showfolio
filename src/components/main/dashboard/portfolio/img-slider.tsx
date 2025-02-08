@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
+import Image from "next/image";
 
 export function ImageSlider({ images, onImagesChange }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -39,7 +40,7 @@ export function ImageSlider({ images, onImagesChange }) {
       <div className="relative h-64">
         {images.length > 0 ? (
           <>
-            <img
+            <Image
               src={images[currentIndex]}
               alt={`Slide ${currentIndex}`}
               className="w-full h-full object-cover"

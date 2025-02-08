@@ -258,7 +258,7 @@ export default function PortfolioForm() {
                             Available for hire
                           </FormLabel>
                           <FormDescription>
-                            Let others know that you're open to work
+                            Let others know that you are open to work
                           </FormDescription>
                         </div>
                         <FormControl>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, type KeyboardEvent, type React } from "react"; // Added React import
+import { useState, useEffect, useCallback, type KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -64,7 +64,7 @@ function TagInput({ tags, setTags }: TagInputProps) {
   };
 
   const handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && input) {
+    if (e.key === "Enter" && input.trim()) {
       e.preventDefault();
       if (!tags.includes(input.trim())) {
         setTags([...tags, input.trim()]);
@@ -79,10 +79,10 @@ function TagInput({ tags, setTags }: TagInputProps) {
 
   return (
     <div className="flex flex-wrap items-center gap-2 p-2 border rounded-md">
-      {tags?.map((tag) => (
+      {tags.map((tag) => (
         <span
           key={tag}
-          className="flex text-sm items-center justify-between bg-muted  text-muted-foreground px-3 py-1 rounded-md"
+          className="flex text-sm items-center justify-between bg-muted text-muted-foreground px-3 py-1 rounded-md"
         >
           {tag}
           <Button
@@ -121,56 +121,50 @@ export default function ResumeDetailsPage({
   const [isEditing, setIsEditing] = useState(false);
   const { resumes, setResumes } = useZustandStore();
   const [updateFields, setUpdateFields] = useState({
-    title: resume?.title || "",
-    tags: resume?.tags || ([] as string[]),
-    isPublic: resume?.isPublic || false,
+    title: "",
+    tags: [] as string[],
+    isPublic: false,
   });
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  useEffect(() => {
-    fetchResume();
-  }, []);
-
-  useEffect(() => {
-    if (resume) {
-      setUpdateFields({
-        title: resume.title,
-        tags: resume.tags,
-        isPublic: resume.isPublic,
-      });
-    }
-  }, [resume]);
-
-  async function fetchResume() {
+  const fetchResume = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
         `/api/resume/?shortUrl=${params?.resume_id}&operation=getone`
       );
+
       if (response.status !== 200) {
-        throw new Error(
-          response.status === 404
-            ? "Resume not found."
-            : "Failed to fetch resume. Please try again later."
-        );
+        throw new Error("Failed to fetch resume. Please try again.");
       }
 
       setResume(response.data);
-    } catch (err: any) {
+      setUpdateFields({
+        title: response.data.title,
+        tags: response.data.tags,
+        isPublic: response.data.isPublic,
+      });
+    } catch (err: unknown) {
       handleError(err);
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [params?.resume_id]);
 
-  const handleError = (err: any) => {
+  useEffect(() => {
+    fetchResume();
+  }, [fetchResume]);
+
+  const handleError = (err: unknown) => {
     if (axios.isAxiosError(err)) {
       if (err.response?.status === 401) {
         router.push("/auth/login");
       } else {
-        setError(err?.response?.data?.error || "An error occurred");
+        setError(err.response?.data?.error || "An error occurred");
       }
+    } else if (err instanceof Error) {
+      setError(err.message);
     } else {
       setError("An unexpected error occurred");
     }
@@ -179,68 +173,55 @@ export default function ResumeDetailsPage({
   const handleSave = async () => {
     try {
       if (!resume) return;
-      const updatedResume = { shortUrl: resume?.shortUrl, ...updateFields };
+      const updatedResume = { shortUrl: resume.shortUrl, ...updateFields };
       const response = await axios.put(`/api/resume/`, updatedResume);
 
       if (response.status !== 200) {
         throw new Error("Failed to update resume. Please try again.");
       }
-      const { title, tags, isPublic } = response.data;
-      //  @ts-expect-error error here
-      setResume({ ...resume, title, tags, isPublic });
-      const updateResumes = resumes?.map((item) => {
-        if (item.shortUrl === resume.shortUrl) {
-          // title:title,
-          item.title = title;
-          item.tags = tags;
-          item.isPublic = isPublic;
-        }
-        return item;
-      });
-      setResumes(updateResumes);
+
+      // setResume((prev) => (prev ? { ...prev, ...updateFields } : null));
+
+      const updatedResumes = resumes?.map((item) =>
+        item.shortUrl === resume.shortUrl ? { ...item, ...updateFields } : item
+      );
+
+      setResumes(updatedResumes);
       setIsEditing(false);
-      toast({
-        title: "Success",
-        description: "Resume updated successfully.",
-      });
-    } catch (err: any) {
-      toast({
-        title: "Error",
-        description: err.message || "Failed to save changes.",
-        variant: "destructive",
-      });
+      toast({ title: "Success", description: "Resume updated successfully." });
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast({
+          title: "Error",
+          description: err.message,
+          variant: "destructive",
+        });
+      }
     }
   };
 
   const handleDelete = async () => {
     try {
       setIsLoading(true);
-      const selectedResumes = [params?.resume_id];
-
-      const response = await axios.post("/api/resume", {
-        selectedResumes,
+      await axios.post("/api/resume", {
+        selectedResumes: [params.resume_id],
         operation: "delete",
       });
-      if (response.status === 200) {
-        toast({
-          title: "Resume deleted successfully!",
-          description: "Your resume has been deleted.",
-        });
-        router.push("/dashboard/resumes");
-      } else {
+
+      toast({
+        title: "Resume deleted successfully!",
+        description: "Your resume has been deleted.",
+      });
+
+      router.push("/dashboard/resumes");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
         toast({
           title: "Error deleting resume",
-          description: response.data?.error,
+          description: err.message,
           variant: "destructive",
         });
       }
-    } catch (error: any) {
-      setError(error.message);
-      toast({
-        title: "Error deleting resume",
-        description: error.message,
-        variant: "destructive",
-      });
     } finally {
       setIsLoading(false);
       setIsDeleteDialogOpen(false);
@@ -268,7 +249,6 @@ export default function ResumeDetailsPage({
             <Button
               size="sm"
               variant="outline"
-              className="mt-4"
               onClick={() => router.push("/dashboard/resumes")}
             >
               Go Back
@@ -455,7 +435,7 @@ function EditingForm({
         <Label htmlFor="resumeTags">Tags</Label>
         <TagInput
           tags={tags}
-          setTags={(newTags: string) =>
+          setTags={(newTags: string[]) =>
             setUpdateFields({ ...updateFields, tags: newTags })
           }
         />

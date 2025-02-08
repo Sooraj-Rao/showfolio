@@ -103,7 +103,9 @@ export default function AIFeedbackPage() {
               <Select
                 value={selectedResume?.fileUrl} // Binding the selected resume's file URL to the select input
                 onValueChange={(value) => {
-                  const resume = resumes.find((r) => r.fileUrl === value);
+                  const resume = resumes.find(
+                    (r: IResume) => r.fileUrl === value
+                  );
                   if (resume) setSelectedResume(resume); // Set the selected resume from the dropdown
                 }}
               >

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 import styled from "styled-components";
 
@@ -23,7 +24,7 @@ export default function PortfolioPreview({ template, page, data }) {
         return <p>{element.content || data.about}</p>;
       case "image":
         return (
-          <img
+          <Image
             src={element.content || data.profile.avatar}
             alt="Portfolio"
             className="w-full h-64 object-cover"

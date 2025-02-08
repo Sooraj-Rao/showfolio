@@ -1,14 +1,14 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useZustandStore } from "@/zustand/store";
 
 const useResumes = () => {
   const { resumes, setResumes } = useZustandStore();
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchResumes = async () => {
+  const fetchResumes = useCallback(async () => {
     try {
       const response = await axios.get("/api/resume/?operation=getall");
       const { data } = response;
@@ -18,7 +18,7 @@ const useResumes = () => {
       }
 
       setResumes(data);
-    } catch (err) {
+    } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         if (err.response?.status === 401) {
           window.location.href = "/auth/login";
@@ -29,10 +29,11 @@ const useResumes = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [setResumes]);
+
   useEffect(() => {
     fetchResumes();
-  }, []);
+  }, [fetchResumes]);
 
   return {
     resumes,

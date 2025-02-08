@@ -1,6 +1,6 @@
 import React from "react";
 
-interface GridProps extends React.HTMLAttributes<HTMLDivElement> {}
+type GridProps = React.HTMLAttributes<HTMLDivElement>;
 
 export const Grid = React.forwardRef<HTMLDivElement, GridProps>(
   ({ className, ...props }, ref) => {

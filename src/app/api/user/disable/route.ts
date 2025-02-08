@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const payload = await verifyJwtToken(token);
+    const payload = (await verifyJwtToken(token)) as { userId: string };
     if (!payload) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }

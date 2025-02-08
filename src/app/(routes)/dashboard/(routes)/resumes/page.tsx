@@ -25,15 +25,15 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { ResumeCard } from "@/components/main/dashboard/resumes/card";
 import useResumes from "@/app/hooks/get-resumes";
+import { IResume } from "@/models/resume";
 
 type SortOption = "name" | "date" | "views";
 
 export default function ResumesPage() {
   // const { userData } = useZustandStore();
   // const { loadingUserData } = useGetUserData();
-  const { resumes, fetchError, loadingResumes, fetchResumes } = useResumes();
+  const { resumes, loadingResumes, fetchResumes } = useResumes();
   const [selectedResumes, setSelectedResumes] = useState<string[]>([]);
-  const [error, setError] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -49,13 +49,13 @@ export default function ResumesPage() {
     // }
   }, []);
 
-  const toggleResumeSelection = (id: string) => {
-    setSelectedResumes((prev) =>
-      prev.includes(id)
-        ? prev.filter((resumeId) => resumeId !== id)
-        : [...prev, id]
-    );
-  };
+  // const toggleResumeSelection = (id: string) => {
+  //   setSelectedResumes((prev) =>
+  //     prev.includes(id)
+  //       ? prev.filter((resumeId) => resumeId !== id)
+  //       : [...prev, id]
+  //   );
+  // };
 
   const DeleteSelectedResumes = () => {
     setIsDeleteDialogOpen(true);
@@ -91,7 +91,7 @@ export default function ResumesPage() {
 
   const filteredAndSortedResumes = useMemo(() => {
     return resumes
-      ?.filter((resume) => {
+      ?.filter((resume: IResume) => {
         const matchesSearch = resume?.title
           .toLowerCase()
           .includes(searchQuery.toLowerCase());
@@ -117,10 +117,6 @@ export default function ResumesPage() {
 
   if (loadingResumes) {
     return <ResumeCardSkeleton />;
-  }
-
-  if (error) {
-    return <div className="text-center text-red-500">{error}</div>;
   }
 
   return (
@@ -247,7 +243,7 @@ export default function ResumesPage() {
   );
 }
 
-export function ResumeCardSkeleton() {
+function ResumeCardSkeleton() {
   return (
     <Grid className="gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {[...Array(6)].map((_, index) => (

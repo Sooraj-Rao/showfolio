@@ -189,7 +189,7 @@ export default function SharePage() {
                 value={selectedResume?.shortUrl.toString()}
                 onValueChange={(value) => {
                   const resume = resumes?.find(
-                    (r) => r.shortUrl.toString() === value
+                    (r: IResume) => r.shortUrl.toString() === value
                   );
                   if (resume) {
                     setSelectedResume(resume);

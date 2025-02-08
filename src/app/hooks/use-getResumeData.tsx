@@ -4,7 +4,6 @@ import { useState, useCallback } from "react";
 import axios from "axios";
 
 interface ResumeData {
-  // Define your resume data structure here
   [key: string]: string;
 }
 

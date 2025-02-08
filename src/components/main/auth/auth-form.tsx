@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "@/app/utils/api";
+import axios from "axios";
 
 interface AuthFormProps {
   type: "login" | "register";
@@ -28,7 +28,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
         ? { email: formData.email, password: formData.password }
         : formData;
 
-    const { data: response } = await api.post(endpoint, data);
+    const { data: response } = await axios.post(endpoint, data);
     console.log(response);
     if (response.user) {
       router.push("/"); // Redirect to the home/dashboard page after success

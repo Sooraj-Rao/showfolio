@@ -104,7 +104,7 @@ export default function SettingsPage() {
         description: "Your account has been successfully deleted.",
       });
       router.push("/");
-    } catch (error: unknown) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to delete account. Please try again.",
@@ -128,7 +128,7 @@ export default function SettingsPage() {
         title: "Account Disable",
         description: "Your account has been successfully disabled.",
       });
-    } catch (error: unknown) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to disable account. Please try again.",

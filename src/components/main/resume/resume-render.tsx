@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import useGetResumeData from "@/app/hooks/use-getResumeData";
@@ -21,15 +21,6 @@ import {
   FileDown,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-interface ResumeData {
-  name: string;
-  email: string;
-  fileUrl: string;
-  portfolioUrl: string;
-  phone?: string;
-  user?: { imageUrl: string };
-}
 
 const PDFViewer: React.FC<{ fileUrl: string }> = ({ fileUrl }) => {
   return (
@@ -79,9 +70,16 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
   const { resumeData, fetchResumeData, isLoading, error } = useGetResumeData();
   const [isFullScreen, setIsFullScreen] = useState(false);
 
+  const fetchResumeDataMemoized = useCallback(() => {
+    if (shortUrl) {
+      fetchResumeData({ shortUrl, operation: "ResumePreview" });
+    }
+  }, [fetchResumeData, shortUrl]);
+
   useEffect(() => {
-    if (shortUrl) fetchResumeData({ shortUrl, operation: "ResumePreview" });
-  }, [shortUrl]);
+    fetchResumeDataMemoized();
+  }, [fetchResumeDataMemoized]);
+
   const handleContact = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     toast({
@@ -200,7 +198,7 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
               <div className="space-y-6 bg-white p-4 rounded-lg shadow">
                 <div className="text-center">
                   <Image
-                    src={resumeData?.user?.imageUrl || "/placeholder.svg"}
+                    src={"/placeholder.svg"}
                     alt="Profile Picture"
                     width={150}
                     height={150}

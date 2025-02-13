@@ -163,14 +163,7 @@ export default function SharePage() {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">Share Your Work</h2>
-        <p className="text-muted-foreground">
-          Manage and share your resumes and portfolio with ease.
-        </p>
-      </div>
-
+    <div className="space-y-6  p-3 mx-auto">
       <Tabs defaultValue="resume">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="resume">Resume</TabsTrigger>

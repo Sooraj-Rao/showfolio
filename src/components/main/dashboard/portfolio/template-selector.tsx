@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 const TemplateGrid = styled.div`
   display: grid;
@@ -33,7 +34,7 @@ export default function TemplateSelector({
           key={template.id}
           onClick={() => onSelectTemplate(template)}
         >
-          <img
+          <Image
             src={template.thumbnail}
             alt={template.name}
             className="w-full h-32 object-cover mb-2"

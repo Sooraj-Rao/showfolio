@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import dynamic from "next/dynamic";
 
 const DynamicChart = dynamic(
-  () => import("@/app/(routes)/dashboard/widgets/charts"),
+  () => import("@/app/(routes)/resume/dashboard/widgets/charts"),
   { ssr: false }
 );
 
@@ -18,8 +18,7 @@ const data = [
 
 export default function Analytics() {
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-3xl font-bold">Analytics</h1>
+    <div className="p-3 space-y-6">
       <Tabs defaultValue="overview" className="w-full">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>

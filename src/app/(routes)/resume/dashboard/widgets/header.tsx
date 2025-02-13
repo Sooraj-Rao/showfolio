@@ -10,21 +10,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Bell, Search, User } from "lucide-react";
+import { Bell, User } from "lucide-react";
 
 export function DashboardHeader() {
   return (
-    <header className="border-b">
+    <header className="border-b bg-background/90 z-[99] backdrop-blur w-full sticky top-0 ">
       <div className="flex h-16 items-center px-4">
-        <div className="flex-1">
-          <form className="flex items-center">
-            <div className="relative w-96">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search resumes..." className="pl-8" />
-            </div>
-          </form>
-        </div>
+        <h2 className="flex-1">Resume Org</h2>
         <div className="flex items-center space-x-4">
           <ModeToggle />
           <Button variant="ghost" size="icon">

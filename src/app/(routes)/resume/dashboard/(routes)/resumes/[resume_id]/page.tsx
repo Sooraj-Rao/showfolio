@@ -596,7 +596,7 @@ function AIFeedbackCard() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center">
-          <FileText className="mr-2 h-5 w-5 text-purple-500" />
+          <FileText className="mr-2 h-5 w-5 text-rose-500" />
           AI Feedback
         </CardTitle>
         <CardDescription>

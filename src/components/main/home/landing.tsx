@@ -114,11 +114,11 @@ export default function LandingPage() {
             <div className="relative">
               <div className="relative aspect-square rounded-xl border bg-background shadow-lg">
                 {/* Replace with actual app screenshot */}
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-cyan-500/20 rounded-xl" />
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/20 to-cyan-500/20 rounded-xl" />
               </div>
               <div className="absolute -bottom-6 -right-6 w-2/3 aspect-square rounded-xl border bg-background shadow-lg">
                 {/* Replace with actual analytics screenshot */}
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 to-pink-500/20 rounded-xl" />
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 to-rose-500/20 rounded-xl" />
               </div>
             </div>
           </div>

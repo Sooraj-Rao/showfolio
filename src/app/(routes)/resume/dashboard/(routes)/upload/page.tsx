@@ -122,7 +122,7 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 p-6">
+    <div className="  mx-auto space-y-8 p-2">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">Upload Resume</h2>
         <p className="text-muted-foreground mt-2">
@@ -260,7 +260,7 @@ export default function UploadPage() {
                   <div className="flex items-center space-x-3">
                     <File className="h-5 w-5 text-primary" />
                     <Link
-                      className=" hover:text-purple-400
+                      className=" hover:text-rose-400
                     flex items-center gap-x-2 
                     "
                       href={`/dashboard/resumes/${resume.shortUrl}`}

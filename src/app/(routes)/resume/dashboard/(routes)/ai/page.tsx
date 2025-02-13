@@ -77,17 +77,11 @@ export default function AIFeedbackPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">AI Feedback</h2>
-          <p className="text-muted-foreground">
-            Get AI-powered suggestions to improve your resume.
-          </p>
-        </div>
+    <div className="space-y-6 p-3">
+      <div className="flex items-center justify-start">
         <div className="flex items-center space-x-2">
           <Badge variant="secondary">5 Credits Left</Badge>
-          <Button>Buy Credits</Button>
+          <Button size="sm">Buy Credits</Button>
         </div>
       </div>
       <form>
@@ -129,7 +123,7 @@ export default function AIFeedbackPage() {
               />
             </div>
             <Button
-              className="w-full"
+              className="w-fit px-3"
               size="icon"
               onClick={processResume}
               disabled={isLoading}
@@ -160,7 +154,7 @@ export default function AIFeedbackPage() {
               {formatFeedback(result)} {/* Format and display feedback */}
             </div>
           ) : (
-            <p>No feedback generated yet.</p>
+            <p className=" text-sm">No feedback generated yet.</p>
           )}
         </CardContent>
       </Card>

@@ -38,7 +38,7 @@ export function ResumeCard({
             <ExternalLink className="h-4 w-4 text-primary" />
           </div>
           <Link
-            className=" hover:text-purple-400"
+            className=" hover:text-rose-400"
             href={`/dashboard/resumes/${resume.shortUrl}`}
           >
             <h3 className="font-semibold text-lg">{resume.title}</h3>

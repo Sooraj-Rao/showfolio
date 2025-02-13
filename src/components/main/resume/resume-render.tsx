@@ -264,7 +264,7 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
                     variant="outline"
                     size="icon"
                     onClick={handleShare}
-                    className="border-purple-500 text-purple-500 hover:bg-purple-50"
+                    className="border-rose-500 text-rose-500 hover:bg-rose-50"
                   >
                     <Share2 className="w-4 h-4" />
                     <span className="sr-only">Share resume</span>

@@ -1,282 +1,1138 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import Link from "next/link";
-import { ArrowRight, BarChart2, FileText, Share2, Shield } from "lucide-react";
-import { SiteNav } from "./site-nav";
+"use client";
 
-export default function LandingPage() {
+import Link from "next/link";
+import { SiteNav } from "./site-nav";
+import { Button } from "@/components/ui/button";
+import { ScrollReveal } from "./scroll-reveal";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  ArrowRight,
+  BarChart3,
+  FileText,
+  Share2,
+  Sparkles,
+  Globe,
+  QrCode,
+  PenTool,
+  ChevronRight,
+  MousePointerClick,
+  Award,
+  Users,
+  Star,
+  CheckCircle2,
+  Palette,
+  Link2,
+} from "lucide-react";
+import React, { useState } from "react";
+
+export function LandingPage() {
+  const [activeTab, setActiveTab] = useState(0);
+
+  const features = [
+    {
+      title: "Smart Document Management",
+      description:
+        "Store and organize all your resumes, cover letters, and career documents in one secure location with easy access.",
+      icon: FileText,
+      benefits: [
+        "Unlimited storage for all your career documents",
+        "Organize by job type, company, or custom categories",
+        "Version control to track changes and updates",
+        "Secure cloud storage with privacy controls",
+      ],
+      image: "/placeholder.svg?height=450&width=800",
+    },
+    {
+      title: "AI-Powered Optimization",
+      description:
+        "Get intelligent suggestions to improve your resume and increase your chances of landing interviews.",
+      icon: Sparkles,
+      benefits: [
+        "Keyword optimization for ATS compatibility",
+        "Content suggestions based on job descriptions",
+        "Grammar and style improvements",
+        "Industry-specific recommendations",
+      ],
+      image: "/placeholder.svg?height=450&width=800",
+    },
+    {
+      title: "Advanced Analytics",
+      description:
+        "Track views, downloads, and engagement with detailed analytics to optimize your applications.",
+      icon: BarChart3,
+      benefits: [
+        "Real-time tracking of resume views and downloads",
+        "Engagement metrics for each section of your resume",
+        "Comparison tools for different resume versions",
+        "Insights on which skills and experiences attract attention",
+      ],
+      image: "/placeholder.svg?height=450&width=800",
+    },
+    {
+      title: "Custom Portfolio Builder",
+      description:
+        "Create a beautiful portfolio website to showcase your projects, skills, and experience.",
+      icon: Palette,
+      benefits: [
+        "Beautiful, customizable templates",
+        "Showcase projects with rich media galleries",
+        "Integrated blog for sharing your insights",
+        "Mobile-responsive design for all devices",
+      ],
+      image: "/placeholder.svg?height=450&width=800",
+    },
+    {
+      title: "Easy Sharing & Custom Domain",
+      description:
+        "Share your resume with custom links and QR codes, plus get your own personalized subdomain.",
+      icon: Link2,
+      benefits: [
+        "Custom shareable links for each document",
+        "QR codes for easy sharing on business cards",
+        "Your own custom subdomain (you.resumehub.com)",
+        "Privacy controls to manage who can view your content",
+      ],
+      image: "/placeholder.svg?height=450&width=800",
+    },
+  ];
+
   return (
     <div className="flex flex-col min-h-screen">
       <SiteNav />
-      <section className="pt-32 pb-24 md:pt-40 md:pb-32">
-        <div className="container px-4 space-y-12">
-          <div className="max-w-[640px] space-y-6">
-            <div className="inline-flex items-center rounded-full border px-3 py-1 text-sm">
-              <span className="text-muted-foreground">
-                October Product Updates
-              </span>
-              <ArrowRight className="ml-1 h-4 w-4" />
-            </div>
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-              Smart Resume Management for the Modern Job Search
-            </h1>
-            <p className="text-xl text-muted-foreground">
-              Track applications, analyze performance, and optimize your job
-              search with AI-powered insights.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" asChild>
-                <Link href="/auth/signup">Try it for free</Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="/demo">View demo</Link>
-              </Button>
-            </div>
-          </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 border-t">
-            <div className="space-y-2">
-              <h3 className="text-3xl font-bold">50K+</h3>
-              <p className="text-sm text-muted-foreground">Active Users</p>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-3xl font-bold">100K+</h3>
-              <p className="text-sm text-muted-foreground">Resumes Tracked</p>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-3xl font-bold">85%</h3>
-              <p className="text-sm text-muted-foreground">Success Rate</p>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-3xl font-bold">4.9/5</h3>
-              <p className="text-sm text-muted-foreground">User Rating</p>
-            </div>
-          </div>
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-gradient-to-b from-background to-muted/30 dark:from-background dark:to-background"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent"></div>
+
+          {/* Animated background elements */}
+          <motion.div
+            className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-primary/5 blur-3xl"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Number.POSITIVE_INFINITY,
+              repeatType: "reverse",
+            }}
+          />
+          <motion.div
+            className="absolute bottom-1/3 right-1/4 w-96 h-96 rounded-full bg-primary/5 blur-3xl"
+            animate={{
+              scale: [1, 1.1, 1],
+              opacity: [0.2, 0.4, 0.2],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Number.POSITIVE_INFINITY,
+              repeatType: "reverse",
+            }}
+          />
         </div>
-      </section>
 
-      {/* Features Grid */}
-      <section className="py-20 bg-slate-50">
         <div className="container px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="space-y-4">
-              <h2 className="text-3xl font-bold">
-                Everything you need to manage your job search
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                Track applications, analyze performance, and get insights to
-                improve your success rate.
-              </p>
-              <div className="grid gap-4">
-                {[
-                  {
-                    title: "Resume Analytics",
-                    description:
-                      "Track views, downloads, and engagement with your resumes",
-                    icon: BarChart2,
-                  },
-                  {
-                    title: "Smart Organization",
-                    description:
-                      "Organize resumes by job type, company, or custom categories",
-                    icon: FileText,
-                  },
-                  {
-                    title: "Secure Sharing",
-                    description:
-                      "Share resumes securely with custom links and tracking",
-                    icon: Share2,
-                  },
-                  {
-                    title: "Privacy Controls",
-                    description:
-                      "Control who can view your resumes and for how long",
-                    icon: Shield,
-                  },
-                ].map((feature) => (
-                  <Card key={feature.title} className="p-6">
-                    <div className="flex items-start space-x-4">
-                      <div className="mt-1">
-                        <feature.icon className="h-6 w-6" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">{feature.title}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {feature.description}
+            <div className="space-y-8">
+              <ScrollReveal>
+                <motion.div
+                  className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <span>Introducing ResumeHub</span>
+                  <motion.div
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Number.POSITIVE_INFINITY,
+                    }}
+                  >
+                    <ArrowRight className="ml-1 h-4 w-4" />
+                  </motion.div>
+                </motion.div>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.1}>
+                <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+                  Elevate Your{" "}
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
+                    Career Presence
+                  </span>
+                </h1>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.2}>
+                <p className="text-xl text-muted-foreground">
+                  The all-in-one platform for managing resumes, creating
+                  portfolios, and optimizing your job search with AI-powered
+                  insights.
+                </p>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.3}>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    <Button
+                      size="lg"
+                      className="group relative overflow-hidden"
+                    >
+                      <span className="relative z-10">Get Started Free</span>
+                      <motion.span
+                        className="absolute inset-0 bg-primary/80 z-0"
+                        initial={{ x: "-100%" }}
+                        whileHover={{ x: 0 }}
+                        transition={{
+                          type: "tween",
+                          ease: "easeInOut",
+                          duration: 0.3,
+                        }}
+                      />
+                      <ChevronRight className="ml-1 h-4 w-4 relative z-10 transition-transform group-hover:translate-x-1" />
+                    </Button>
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    <Button size="lg" variant="outline">
+                      See Demo
+                    </Button>
+                  </motion.div>
+                </div>
+              </ScrollReveal>
+
+              {/* Trusted By */}
+              <ScrollReveal delay={0.4}>
+                <div className="pt-8 border-t">
+                  <div className="text-sm text-muted-foreground mb-4">
+                    Trusted by professionals from
+                  </div>
+                  <div className="flex flex-wrap gap-8 items-center">
+                    {[
+                      { width: "w-20", delay: 0 },
+                      { width: "w-24", delay: 0.1 },
+                      { width: "w-16", delay: 0.2 },
+                      { width: "w-28", delay: 0.3 },
+                    ].map((item, index) => (
+                      <motion.div
+                        key={index}
+                        className={`h-6 ${item.width} bg-foreground/20 dark:bg-foreground/10 rounded`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 + item.delay, duration: 0.5 }}
+                        whileHover={{ opacity: 0.8 }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </ScrollReveal>
+            </div>
+
+            <div className="relative">
+              <ScrollReveal direction="left">
+                <motion.div
+                  className="relative aspect-[4/3] rounded-xl overflow-hidden border shadow-2xl"
+                  whileHover={{ y: -5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <img
+                    src="/placeholder.svg?height=600&width=800"
+                    alt="ResumeHub Dashboard"
+                    className="object-cover w-full h-full"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-transparent mix-blend-overlay"></div>
+                </motion.div>
+              </ScrollReveal>
+
+              {/* Floating Elements */}
+              <ScrollReveal delay={0.3} direction="down">
+                <motion.div
+                  className="absolute -top-8 -right-8 w-40 h-40 rounded-lg bg-background border shadow-lg p-3 flex flex-col justify-between hidden sm:flex"
+                  whileHover={{ y: -5, scale: 1.03 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div className="text-xs text-muted-foreground">
+                    Resume Analytics
+                  </div>
+                  <div className="flex-1 flex items-center justify-center">
+                    <motion.div
+                      className="relative h-20 w-20 rounded-full bg-muted flex items-center justify-center"
+                      animate={{ rotate: 360 }}
+                      transition={{
+                        duration: 8,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: "linear",
+                      }}
+                    >
+                      <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent"></div>
+                      <div className="text-sm font-bold">85%</div>
+                    </motion.div>
+                  </div>
+                  <div className="text-xs text-center text-muted-foreground">
+                    Engagement Rate
+                  </div>
+                </motion.div>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.4} direction="right">
+                <motion.div
+                  className="absolute -bottom-8 -left-8 w-48 rounded-lg bg-background border shadow-lg p-3 hidden sm:block"
+                  whileHover={{ y: -5, scale: 1.03 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div className="text-xs text-muted-foreground mb-2">
+                    AI Feedback
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <motion.div
+                      animate={{
+                        scale: [1, 1.2, 1],
+                        rotate: [0, 5, 0, -5, 0],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Number.POSITIVE_INFINITY,
+                        repeatDelay: 3,
+                      }}
+                    >
+                      <Sparkles className="h-4 w-4 text-primary" />
+                    </motion.div>
+                    <div className="text-sm font-medium">
+                      Skills section is strong!
+                    </div>
+                  </div>
+                  <div className="mt-2 text-xs text-muted-foreground">
+                    Consider adding more quantifiable achievements.
+                  </div>
+                </motion.div>
+              </ScrollReveal>
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto mt-20">
+            {[
+              { icon: Users, value: "50K+", label: "Active Users" },
+              { icon: FileText, value: "100K+", label: "Resumes Created" },
+              { icon: Award, value: "85%", label: "Success Rate" },
+              { icon: Star, value: "4.9/5", label: "User Rating" },
+            ].map((stat, index) => (
+              <ScrollReveal key={index} delay={0.1 * index}>
+                <motion.div
+                  className="text-center p-6 rounded-xl border border-transparent hover:border-primary/10 hover:bg-primary/5 transition-colors"
+                  whileHover={{ y: -5 }}
+                >
+                  <motion.div
+                    className="mx-auto mb-3 h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center"
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                  >
+                    <stat.icon className="h-5 w-5 text-primary" />
+                  </motion.div>
+                  <motion.div
+                    className="text-4xl font-bold text-primary"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 100,
+                      delay: 0.2 + index * 0.1,
+                    }}
+                  >
+                    {stat.value}
+                  </motion.div>
+                  <div className="text-sm text-muted-foreground mt-1">
+                    {stat.label}
+                  </div>
+                </motion.div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="py-20 relative overflow-hidden">
+        <div className="absolute inset-0 -z-10 bg-muted/30 dark:bg-muted/5"></div>
+
+        {/* Animated background elements */}
+        <motion.div
+          className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full bg-primary/5 blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            x: [0, 50, 0],
+            opacity: [0.2, 0.3, 0.2],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Number.POSITIVE_INFINITY,
+            repeatType: "reverse",
+          }}
+        />
+
+        <div className="container px-4">
+          <ScrollReveal className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <motion.div
+              className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary"
+              whileHover={{ scale: 1.05 }}
+            >
+              <span>Key Features</span>
+            </motion.div>
+            <h2 className="text-3xl font-bold">
+              Everything You Need to Succeed
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Our platform provides all the tools you need to manage your career
+              documents and stand out from the crowd.
+            </p>
+          </ScrollReveal>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Smart Document Storage",
+                description:
+                  "Store and organize all your resumes, cover letters, and career documents in one secure location.",
+                icon: FileText,
+                color: "from-blue-500 to-cyan-500",
+              },
+              {
+                title: "Advanced Analytics",
+                description:
+                  "Track views, downloads, and engagement with detailed analytics to optimize your applications.",
+                icon: BarChart3,
+                color: "from-purple-500 to-pink-500",
+              },
+              {
+                title: "AI-Powered Feedback",
+                description:
+                  "Get intelligent suggestions to improve your resume and increase your chances of landing interviews.",
+                icon: Sparkles,
+                color: "from-amber-500 to-orange-500",
+              },
+              {
+                title: "Easy Sharing Options",
+                description:
+                  "Share your resume with custom links and QR codes that you can include on business cards or profiles.",
+                icon: Share2,
+                color: "from-green-500 to-emerald-500",
+              },
+              {
+                title: "Custom Portfolio Builder",
+                description:
+                  "Create a beautiful portfolio website to showcase your projects, skills, and experience.",
+                icon: PenTool,
+                color: "from-rose-500 to-red-500",
+              },
+              {
+                title: "Personal Domain",
+                description:
+                  "Get your own custom subdomain (you.resumehub.com) to make your profile easily discoverable.",
+                icon: Globe,
+                color: "from-indigo-500 to-violet-500",
+              },
+            ].map((feature, index) => (
+              <ScrollReveal key={index} delay={0.05 * index}>
+                <motion.div
+                  className="group relative overflow-hidden rounded-xl border bg-background p-6 shadow-md transition-all hover:shadow-xl h-full"
+                  whileHover={{ y: -5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div className="mb-4">
+                    <motion.div
+                      className={`h-12 w-12 rounded-full bg-gradient-to-br ${feature.color} flex items-center justify-center`}
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <feature.icon className="h-6 w-6 text-white" />
+                    </motion.div>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-muted-foreground">{feature.description}</p>
+                  <div className="mt-6">
+                    <motion.div
+                      whileHover={{ x: 5 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <Button
+                        variant="ghost"
+                        className="group p-0 h-auto font-medium text-primary"
+                      >
+                        Learn more
+                        <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </Button>
+                    </motion.div>
+                  </div>
+
+                  {/* Animated gradient border on hover */}
+                  <motion.div
+                    className="absolute -inset-px rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    style={{
+                      background: `linear-gradient(90deg, ${feature.color
+                        .replace("from-", "")
+                        .replace("to-", "")})`,
+                      zIndex: -1,
+                      filter: "blur(8px)",
+                    }}
+                  />
+                </motion.div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="features" className="py-20">
+        <div className="container px-4">
+          <ScrollReveal className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <motion.div
+              className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary"
+              whileHover={{ scale: 1.05 }}
+            >
+              <span>Key Features</span>
+            </motion.div>
+            <h2 className="text-3xl font-bold">
+              Everything You Need to Succeed
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Our platform provides all the tools you need to manage your career
+              documents and stand out from the crowd.
+            </p>
+          </ScrollReveal>
+
+          <div className="mb-10">
+            <div className="flex flex-wrap justify-center gap-2 md:gap-4 mb-12">
+              {features.map((feature, index) => (
+                <motion.button
+                  key={index}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                    activeTab === index
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted hover:bg-muted/80 text-foreground"
+                  }`}
+                  onClick={() => setActiveTab(index)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <div className="flex items-center gap-2">
+                    <feature.icon className="h-4 w-4" />
+                    <span>{feature.title}</span>
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="grid md:grid-cols-2 gap-12 items-center"
+              >
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3">
+                    <motion.div
+                      className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center"
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                    >
+                      {React.createElement(features[activeTab].icon, {
+                        className: "h-5 w-5 text-primary",
+                      })}
+                    </motion.div>
+                    <h3 className="text-2xl font-semibold">
+                      {features[activeTab].title}
+                    </h3>
+                  </div>
+                  <p className="text-lg text-muted-foreground">
+                    {features[activeTab].description}
+                  </p>
+                  <div className="space-y-4">
+                    {features[activeTab].benefits.map((item, i) => (
+                      <motion.div key={i} className="flex items-start gap-3">
+                        <motion.div
+                          whileHover={{ scale: 1.2, rotate: 5 }}
+                          className="mt-0.5"
+                        >
+                          <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                        </motion.div>
+                        <span>{item}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                  <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    <Button className="group">
+                      Learn More
+                      <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </Button>
+                  </motion.div>
+                </div>
+                <div className="relative">
+                  <motion.div
+                    className="aspect-video rounded-xl overflow-hidden border shadow-xl"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <img
+                      src={features[activeTab].image || "/placeholder.svg"}
+                      alt={features[activeTab].title}
+                      className="object-cover w-full h-full"
+                    />
+                    <motion.div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end">
+                      <div className="p-6 text-white">
+                        <h3 className="text-xl font-bold">
+                          {features[activeTab].title}
+                        </h3>
+                        <p className="text-sm opacity-80">
+                          Click to explore this feature
                         </p>
                       </div>
+                    </motion.div>
+                  </motion.div>
+
+                  {/* Decorative elements */}
+                  <motion.div
+                    className="absolute -z-10 -bottom-6 -right-6 w-32 h-32 rounded-full bg-primary/10"
+                    animate={{
+                      scale: [1, 1.1, 1],
+                      rotate: [0, 5, 0],
+                    }}
+                    transition={{
+                      duration: 5,
+                      repeat: Number.POSITIVE_INFINITY,
+                      repeatType: "reverse",
+                    }}
+                  />
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+      </section>
+
+      {/* Portfolio Showcase */}
+      <section
+        id="portfolio"
+        className="py-20 bg-muted/50 dark:bg-muted/5 relative overflow-hidden"
+      >
+        {/* Animated background elements */}
+        <motion.div
+          className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/5 blur-3xl"
+          animate={{
+            scale: [1, 1.1, 1],
+            y: [0, -30, 0],
+            opacity: [0.2, 0.3, 0.2],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Number.POSITIVE_INFINITY,
+            repeatType: "reverse",
+          }}
+        />
+
+        <div className="container px-4">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="order-2 md:order-1 relative">
+              <ScrollReveal>
+                <motion.div
+                  className="aspect-[3/4] rounded-xl overflow-hidden border shadow-xl"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <img
+                    src="/placeholder.svg?height=800&width=600"
+                    alt="Portfolio Example"
+                    className="object-cover w-full h-full"
+                  />
+                  <motion.div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end">
+                    <div className="p-6 text-white">
+                      <h3 className="text-xl font-bold">
+                        John Doe&apos;s Portfolio
+                      </h3>
+                      <p className="text-sm opacity-80">
+                        Full-stack developer & UI/UX designer
+                      </p>
                     </div>
-                  </Card>
-                ))}
-              </div>
+                  </motion.div>
+                </motion.div>
+              </ScrollReveal>
+
+              {/* Floating Elements */}
+              <ScrollReveal delay={0.2} direction="up">
+                <motion.div
+                  className="absolute -top-6 -right-6 w-48 rounded-lg bg-background border shadow-lg p-3 hidden sm:block"
+                  whileHover={{ y: -5, scale: 1.03 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div className="text-xs text-muted-foreground mb-2">
+                    Your Custom Domain
+                  </div>
+                  <div className="flex items-center gap-2 bg-muted/50 rounded-md px-3 py-2">
+                    <Globe className="h-4 w-4 text-primary" />
+                    <div className="text-sm font-medium">
+                      yourname.resumehub.com
+                    </div>
+                  </div>
+                </motion.div>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.3} direction="left">
+                <motion.div
+                  className="absolute -bottom-6 -left-6 w-40 h-40 rounded-lg bg-background border shadow-lg p-3 flex items-center justify-center hidden sm:flex"
+                  whileHover={{ y: -5, scale: 1.03 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <motion.div
+                    animate={{
+                      scale: [1, 1.05, 1],
+                      rotate: [0, 1, 0, -1, 0],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Number.POSITIVE_INFINITY,
+                    }}
+                  >
+                    <QrCode className="h-20 w-20 text-primary" />
+                  </motion.div>
+                </motion.div>
+              </ScrollReveal>
             </div>
-            <div className="relative">
-              <div className="relative aspect-square rounded-xl border bg-background shadow-lg">
-                {/* Replace with actual app screenshot */}
-                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/20 to-cyan-500/20 rounded-xl" />
-              </div>
-              <div className="absolute -bottom-6 -right-6 w-2/3 aspect-square rounded-xl border bg-background shadow-lg">
-                {/* Replace with actual analytics screenshot */}
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 to-rose-500/20 rounded-xl" />
-              </div>
+
+            <div className="order-1 md:order-2 space-y-6">
+              <ScrollReveal>
+                <motion.div
+                  className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <span>Portfolio Builder</span>
+                </motion.div>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.1}>
+                <h2 className="text-3xl font-bold">
+                  Create a Stunning Portfolio Website
+                </h2>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.2}>
+                <p className="text-lg text-muted-foreground">
+                  Showcase your skills, projects, and experience with a
+                  beautiful portfolio website that stands out from the crowd.
+                </p>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.3}>
+                <div className="space-y-4">
+                  {[
+                    "Choose from beautiful, customizable templates",
+                    "Showcase your projects with rich media galleries",
+                    "Highlight your skills and experience",
+                    "Share your thoughts with an integrated blog",
+                    "Get a custom domain for a professional online presence",
+                  ].map((item, i) => (
+                    <motion.div
+                      key={i}
+                      className="flex items-start gap-3"
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.1 * i }}
+                    >
+                      <motion.div
+                        whileHover={{ scale: 1.2, rotate: 5 }}
+                        className="mt-0.5"
+                      >
+                        <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                      </motion.div>
+                      <span>{item}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.4}>
+                <motion.div
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <Button className="group relative overflow-hidden">
+                    <span className="relative z-10">Create Your Portfolio</span>
+                    <motion.span
+                      className="absolute inset-0 bg-primary/80 z-0"
+                      initial={{ x: "-100%" }}
+                      whileHover={{ x: 0 }}
+                      transition={{
+                        type: "tween",
+                        ease: "easeInOut",
+                        duration: 0.3,
+                      }}
+                    />
+                    <ArrowRight className="ml-1 h-4 w-4 relative z-10 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </motion.div>
+              </ScrollReveal>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Product Demo Section */}
-      <section className="py-20">
+      {/* Analytics Section */}
+      <section id="analytics" className="py-20 relative overflow-hidden">
+        {/* Animated background elements */}
+        <motion.div
+          className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-primary/5 blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            x: [0, -30, 0],
+            opacity: [0.2, 0.3, 0.2],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Number.POSITIVE_INFINITY,
+            repeatType: "reverse",
+          }}
+        />
+
         <div className="container px-4">
-          <div className="max-w-3xl mx-auto text-center space-y-8">
-            <h2 className="text-3xl font-bold">See it in action</h2>
-            <p className="text-lg text-muted-foreground">
-              Watch how ResumeAI helps you manage your job search more
-              effectively.
-            </p>
-            <div className="aspect-video rounded-xl border bg-slate-50 shadow-lg">
-              {/* Replace with actual product demo video/animation */}
-              <div className="h-full flex items-center justify-center">
-                <p className="text-muted-foreground">Product Demo</p>
-              </div>
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <ScrollReveal>
+                <motion.div
+                  className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <span>Smart Analytics</span>
+                </motion.div>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.1}>
+                <h2 className="text-3xl font-bold">
+                  Track Your Resume Performance
+                </h2>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.2}>
+                <p className="text-lg text-muted-foreground">
+                  Get detailed insights into how your resumes are performing.
+                  See who&apos;s viewing your documents and optimize for better
+                  results.
+                </p>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.3}>
+                <div className="space-y-4">
+                  {[
+                    "Track views, downloads, and engagement metrics",
+                    "See which sections of your resume get the most attention",
+                    "Compare performance across different resume versions",
+                    "Get AI-powered suggestions for improvements",
+                    "Share your resume with QR codes and track scans",
+                  ].map((item, i) => (
+                    <motion.div
+                      key={i}
+                      className="flex items-start gap-3"
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.1 * i }}
+                    >
+                      <motion.div
+                        whileHover={{ scale: 1.2, rotate: 5 }}
+                        className="mt-0.5"
+                      >
+                        <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                      </motion.div>
+                      <span>{item}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.4}>
+                <motion.div
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <Button className="group relative overflow-hidden">
+                    <span className="relative z-10">Explore Analytics</span>
+                    <motion.span
+                      className="absolute inset-0 bg-primary/80 z-0"
+                      initial={{ x: "-100%" }}
+                      whileHover={{ x: 0 }}
+                      transition={{
+                        type: "tween",
+                        ease: "easeInOut",
+                        duration: 0.3,
+                      }}
+                    />
+                    <ArrowRight className="ml-1 h-4 w-4 relative z-10 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </motion.div>
+              </ScrollReveal>
+            </div>
+
+            <div className="relative">
+              <ScrollReveal direction="left">
+                <motion.div
+                  className="aspect-square rounded-xl overflow-hidden border shadow-xl"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <img
+                    src="/placeholder.svg?height=700&width=700"
+                    alt="Analytics Dashboard"
+                    className="object-cover w-full h-full"
+                  />
+                  <motion.div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end">
+                    <div className="p-6 text-white">
+                      <h3 className="text-xl font-bold">Resume Analytics</h3>
+                      <p className="text-sm opacity-80">
+                        Track performance and optimize your resume
+                      </p>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              </ScrollReveal>
+
+              {/* Floating Elements */}
+              <ScrollReveal delay={0.3} direction="up">
+                <motion.div
+                  className="absolute -top-6 -left-6 w-48 rounded-lg bg-background border shadow-lg p-3 hidden sm:block"
+                  whileHover={{ y: -5, scale: 1.03 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div className="text-xs text-muted-foreground mb-2">
+                    Resume Performance
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm">Views</div>
+                      <motion.div
+                        className="text-sm font-medium"
+                        animate={{
+                          scale: [1, 1.1, 1],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Number.POSITIVE_INFINITY,
+                          repeatDelay: 5,
+                        }}
+                      >
+                        128
+                      </motion.div>
+                    </div>
+                    <motion.div
+                      className="h-2 bg-muted rounded-full overflow-hidden"
+                      initial={{ width: 0 }}
+                      whileInView={{ width: "100%" }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1 }}
+                    >
+                      <motion.div
+                        className="h-full bg-primary"
+                        initial={{ width: 0 }}
+                        whileInView={{ width: "75%" }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1.5, delay: 0.5 }}
+                      />
+                    </motion.div>
+                  </div>
+                  <div className="space-y-2 mt-3">
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm">Downloads</div>
+                      <motion.div
+                        className="text-sm font-medium"
+                        animate={{
+                          scale: [1, 1.1, 1],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Number.POSITIVE_INFINITY,
+                          repeatDelay: 7,
+                        }}
+                      >
+                        43
+                      </motion.div>
+                    </div>
+                    <motion.div
+                      className="h-2 bg-muted rounded-full overflow-hidden"
+                      initial={{ width: 0 }}
+                      whileInView={{ width: "100%" }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1 }}
+                    >
+                      <motion.div
+                        className="h-full bg-primary"
+                        initial={{ width: 0 }}
+                        whileInView={{ width: "50%" }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1.5, delay: 0.7 }}
+                      />
+                    </motion.div>
+                  </div>
+                </motion.div>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.4} direction="right">
+                <motion.div
+                  className="absolute -bottom-6 -right-6 w-32 h-32 rounded-lg bg-background border shadow-lg p-3 hidden sm:flex items-center justify-center"
+                  whileHover={{ y: -5, scale: 1.03 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <motion.div
+                    animate={{
+                      scale: [1, 1.05, 1],
+                      rotate: [0, 2, 0, -2, 0],
+                    }}
+                    transition={{
+                      duration: 4,
+                      repeat: Number.POSITIVE_INFINITY,
+                    }}
+                  >
+                    <MousePointerClick className="h-16 w-16 text-primary" />
+                  </motion.div>
+                </motion.div>
+              </ScrollReveal>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-slate-900 text-white">
+      <section className="py-20 relative overflow-hidden">
+        <div className="absolute inset-0 -z-10 bg-primary"></div>
+
+        {/* Animated background elements */}
+        <motion.div
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary-foreground/10 via-transparent to-transparent"
+          animate={{
+            opacity: [0.5, 0.7, 0.5],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Number.POSITIVE_INFINITY,
+            repeatType: "reverse",
+          }}
+        />
+
         <div className="container px-4">
-          <div className="max-w-[640px] mx-auto text-center space-y-8">
-            <h2 className="text-3xl font-bold">
-              Start optimizing your job search today
-            </h2>
-            <p className="text-lg text-slate-300">
-              Join thousands of job seekers who are using ResumeAI to land their
-              dream jobs.
+          <ScrollReveal className="max-w-3xl mx-auto text-center space-y-8">
+            <motion.h2
+              className="text-3xl font-bold text-primary-foreground"
+              animate={{
+                scale: [1, 1.01, 1],
+              }}
+              transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
+            >
+              Ready to Take Your Career to the Next Level?
+            </motion.h2>
+            <p className="text-xl text-primary-foreground/90">
+              Join thousands of professionals who are using ResumeHub to land
+              their dream jobs.
             </p>
-            <Button size="lg" variant="secondary" asChild>
-              <Link href="/signup">Get started for free</Link>
-            </Button>
-          </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button size="lg" variant="secondary" className="group">
+                  Get Started Free
+                  <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="bg-transparent border-primary-foreground/20 hover:bg-primary-foreground/10 text-primary-foreground"
+                >
+                  Watch Demo
+                </Button>
+              </motion.div>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="py-12 border-t">
         <div className="container px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="font-semibold mb-3">Product</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="/features"
-                    className="text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    Features
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/pricing"
-                    className="text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    Pricing
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/updates"
-                    className="text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    Updates
-                  </Link>
-                </li>
-              </ul>
+          <div className="flex flex-col md:flex-row justify-between gap-8">
+            <div className="md:w-1/3">
+              <Link href="/" className="flex items-center gap-2 mb-4">
+                <motion.div
+                  className="relative size-8 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                >
+                  <span className="font-bold text-primary-foreground">R</span>
+                </motion.div>
+                <span className="font-bold text-xl">ResumeHub</span>
+              </Link>
             </div>
-            <div>
-              <h3 className="font-semibold mb-3">Company</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="/about"
-                    className="text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    About
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/blog"
-                    className="text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/careers"
-                    className="text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    Careers
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-3">Resources</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="/docs"
-                    className="text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    Documentation
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/help"
-                    className="text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    Help Center
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/guides"
-                    className="text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    Guides
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-3">Legal</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="/privacy"
-                    className="text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    Privacy
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/terms"
-                    className="text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    Terms
-                  </Link>
-                </li>
-              </ul>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:w-2/3">
+              {[
+                {
+                  title: "Product",
+                  links: ["Features", "Templates", "Analytics", "Portfolio"],
+                },
+                {
+                  title: "Company",
+                  links: ["About", "Blog", "Careers", "Contact"],
+                },
+                {
+                  title: "Legal",
+                  links: ["Privacy", "Terms", "Cookies"],
+                },
+              ].map((column, i) => (
+                <div key={i}>
+                  <h3 className="font-semibold mb-4">{column.title}</h3>
+                  <ul className="space-y-2">
+                    {column.links.map((link, j) => (
+                      <motion.li key={j} whileHover={{ x: 2 }}>
+                        <Link
+                          href="#"
+                          className="text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          {link}
+                        </Link>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           </div>
-          <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
-            <p>&copy; 2023 ResumeAI. All rights reserved.</p>
+
+          <div className="mt-12 pt-8 flex justify-between border-t text-center text-sm text-muted-foreground">
+            <p>
+              &copy; {new Date().getFullYear()} ResumeHub. All rights reserved.
+            </p>
+            <p className="text-muted-foreground text-sm">
+              Designed & Developed by{" "}
+              <a
+                className="text-primary hover:underline"
+                target="_blank"
+                href="https://soorajrao.in/?ref=resume-org"
+                rel="noreferrer"
+              >
+                Sooraj Rao
+              </a>
+            </p>
           </div>
         </div>
       </footer>

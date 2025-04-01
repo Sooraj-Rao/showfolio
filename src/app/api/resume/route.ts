@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { deleteFileFromStorage, GetUserId } from "../helper/utils";
 import User from "@/models/user";
 import { v4 as uuidv4 } from "uuid";
+import { ResumeNameSplit } from "@/lib/utils";
 
 export async function POST(req: NextRequest) {
   try {
@@ -45,9 +46,10 @@ interface CreateResumeBody {
 async function createResume(userId: string, body: CreateResumeBody) {
   const { title, fileUrl, fileType } = body;
   const shortUrl = await uuidv4();
+  const TitleWithoutExtension = await ResumeNameSplit(title);
   const resume = await Resume.create({
     user: userId,
-    title,
+    title: TitleWithoutExtension,
     fileUrl,
     fileType,
     shortUrl,
@@ -227,8 +229,8 @@ async function updateTags(
   }
 
   const resume = await Resume.findOneAndUpdate(
-    { shortUrl: resumeId, user: userId, isPublic },
-    { tags, title },
+    { shortUrl: resumeId, user: userId },
+    { tags, title, isPublic },
     { new: true }
   );
 

@@ -3,27 +3,27 @@ export const RouteTitle = {
     title: "Dashboard",
     desc: "Detailed view of your profile",
   },
-  "/resume/dashboard/resumes": {
+  "/resume/resumes": {
     title: "Resumes",
     desc: "Manage and edit your resumes",
   },
-  "/resume/dashboard/upload": {
+  "/resume/upload": {
     title: "Upload",
     desc: "Upload new documents and resumes",
   },
-  "/resume/dashboard/analytics": {
+  "/resume/analytics": {
     title: "Analytics",
     desc: "View insights and statistics",
   },
-  "/resume/dashboard/share": {
+  "/resume/share": {
     title: "Share",
-    desc: "Share your profile and resumes",
+    desc: "Sharing your resumes",
   },
-  "/resume/dashboard/ai": {
+  "/resume/ai": {
     title: "AI Feedback",
     desc: "Get AI-powered resume feedback",
   },
-  "/resume/dashboard/settings": {
+  "/resume/settings": {
     title: "Settings",
     desc: "Manage your account settings and preferences.",
   },
@@ -31,11 +31,19 @@ export const RouteTitle = {
     title: "Dashboard",
     desc: "Manage your account settings and preferences.",
   },
-  "/portfolio/dashboard/create": {
+  "/portfolio/create": {
     title: "Create",
     desc: "Create portfolio",
   },
-  "/portfolio/dashboard/settings": {
+  "/portfolio/manage": {
+    title: "Manage",
+    desc: "Manage portfolio details",
+  },
+  "/portfolio/analytics": {
+    title: "Analytics",
+    desc: "View insights and statistics for your portfolio",
+  },
+  "/portfolio/settings": {
     title: "Settings",
     desc: "Manage your account settings and preferences.",
   },

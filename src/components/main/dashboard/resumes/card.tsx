@@ -1,19 +1,12 @@
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { MoreHorizontal, Edit, Share2, Zap, ExternalLink } from "lucide-react";
+import { MoreHorizontal, ExternalLink, Eye } from "lucide-react";
 import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -21,15 +14,29 @@ import { IResume } from "@/models/resume";
 
 interface ResumeCardProps {
   resume: IResume;
+  searchQuery: string;
   onDelete: (id: string) => void;
   onToggleVisibility: (id: string, isPublic: boolean) => void;
 }
 
-export function ResumeCard({
-  resume,
-  onDelete,
-  onToggleVisibility,
-}: ResumeCardProps) {
+export function ResumeCard({ resume, searchQuery, onDelete }: ResumeCardProps) {
+  const highlightText = (text, query) => {
+    if (!query) return text;
+
+    const regex = new RegExp(`(${query})`, "gi");
+    return text.split(regex).map((part, index) =>
+      regex.test(part) ? (
+        <span key={index} className="bg-primary text-white">
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
+
+  const SearchTitle = highlightText(resume.title, searchQuery);
+
   return (
     <Card className="w-full hover:bg-muted/20">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -39,9 +46,16 @@ export function ResumeCard({
           </div>
           <Link
             className=" hover:text-rose-400"
-            href={`/dashboard/resumes/${resume.shortUrl}`}
+            href={`/resume/resumes/${resume.shortUrl}`}
           >
-            <h3 className="font-semibold text-lg">{resume.title}</h3>
+            {/* <h3
+              className={`font-semibold text-lg 
+              ${isSearchMatch && "text-primary"}
+              `}
+            >
+              {resume.title}
+            </h3> */}
+            {SearchTitle}
           </Link>
         </div>
         <DropdownMenu>
@@ -51,7 +65,6 @@ export function ResumeCard({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>Edit Tags</DropdownMenuItem>
             <DropdownMenuItem>Move to Folder</DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -75,11 +88,12 @@ export function ResumeCard({
         <p className="text-sm text-muted-foreground">
           Uploaded on {new Date(resume.createdAt).toLocaleDateString()}
         </p>
-        <p className="text-sm text-muted-foreground">
-          Views: {resume.analytics.views}
+        <p className="flex items-center gap-x-3 justify-start text-muted-foreground">
+          <Eye size={16} />
+          {resume.analytics.views}
         </p>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      {/* <CardFooter className="flex justify-between">
         <div className="flex items-center space-x-2">
           <Switch
             checked={resume.isPublic}
@@ -107,7 +121,7 @@ export function ResumeCard({
             </Button>
           </Link>
         </div>
-      </CardFooter>
+      </CardFooter> */}
     </Card>
   );
 }

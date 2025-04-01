@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "@/components/main/theme/theme-provider";
-import { QueryProvider } from "@/lib/query-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { Suspense } from "react";
+
+function LoadingFallback() {
+  return <div className="text-center p-4">Loading...</div>;
+}
 
 export const metadata: Metadata = {
   title: "Resume Manager",
@@ -25,7 +29,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Toaster />
-          <QueryProvider>{children}</QueryProvider>
+          <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
         </ThemeProvider>
       </body>
     </html>

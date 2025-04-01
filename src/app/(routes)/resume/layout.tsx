@@ -1,16 +1,16 @@
 "use client";
-import useGetUserData from "@/app/hooks/use-getUserData";
+import { DashboardHeader } from "./widgets/header";
 import { Sidebar } from "./widgets/sidebar";
 import { usePathname } from "next/navigation";
 import { RouteTitle } from "@/data/route-names";
-import { DashboardHeader } from "../resume/widgets/header";
+import ClientWrapper from "./widgets/client-wrapper";
+
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const {} = useGetUserData();
   const path = usePathname();
   const title = RouteTitle[path]?.title;
   const desc = RouteTitle[path]?.desc;
@@ -21,14 +21,17 @@ export default function DashboardLayout({
       {title && desc && (
         <div className="sticky top-14 bg-background/95 z-[90] py-4 px-24 border-b">
           <h2 className="text-2xl font-bold tracking-tight">
-            Portfolio {"-"} {title}
+            Resume {"-"} {title}
           </h2>
           <p className="text-sm text-muted-foreground">{desc}</p>
         </div>
       )}
       <div className="flex flex-1 overflow-hidden px-20 pt-3">
         <Sidebar />
-        <main className="flex-1 p-8 pt-6  overflow-auto">{children}</main>
+        <main className="flex-1 p-8 pt-6 overflow-auto">
+          <ClientWrapper>{children}</ClientWrapper>
+          {children}
+        </main>
       </div>
     </div>
   );

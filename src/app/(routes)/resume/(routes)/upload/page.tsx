@@ -261,7 +261,7 @@ export default function UploadPage() {
                       className=" hover:text-rose-400
                     flex items-center gap-x-2 
                     "
-                      href={`/resume/dashboard/resumes/${resume.shortUrl}`}
+                      href={`/resume/resumes/${resume.shortUrl}`}
                     >
                       {resume.title}
                     </Link>

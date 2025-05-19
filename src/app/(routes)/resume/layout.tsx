@@ -3,8 +3,6 @@ import { DashboardHeader } from "./widgets/header";
 import { Sidebar } from "./widgets/sidebar";
 import { usePathname } from "next/navigation";
 import { RouteTitle } from "@/data/route-names";
-import ClientWrapper from "./widgets/client-wrapper";
-
 
 export default function DashboardLayout({
   children,
@@ -28,10 +26,7 @@ export default function DashboardLayout({
       )}
       <div className="flex flex-1 overflow-hidden px-20 pt-3">
         <Sidebar />
-        <main className="flex-1 p-8 pt-6 overflow-auto">
-          <ClientWrapper>{children}</ClientWrapper>
-          {children}
-        </main>
+        <main className="flex-1 p-8 pt-6 overflow-auto">{children}</main>
       </div>
     </div>
   );

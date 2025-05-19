@@ -600,7 +600,7 @@ function AIFeedbackCard({ resume_id }: { resume_id: string }) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Link href={`/resume/dashboard/ai/?shortUrl=${resume_id}`} passHref>
+        <Link href={`/resume/ai/?shortUrl=${resume_id}`} passHref>
           <Button size="sm" className="w-full">
             <FileText className="mr-2 h-4 w-4" />
             Request Feedback

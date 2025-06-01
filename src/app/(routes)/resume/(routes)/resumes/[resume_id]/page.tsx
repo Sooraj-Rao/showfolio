@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback, type KeyboardEvent } from "react";
+import type React from "react";
+
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +26,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Eye,
   Download,
   Share2,
@@ -35,21 +45,24 @@ import {
   ArrowLeft,
   ExternalLink,
   X,
+  Plus,
+  TrendingUp,
+  Calendar,
+  Globe,
+  Lock,
+  Copy,
+  BarChart3,
+  Clock,
+  Star,
+  Settings,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { IResume } from "@/models/resume";
 import axios from "axios";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { DownloadResume } from "@/app/utils/download-file";
 import { useZustandStore } from "@/zustand/store";
 import Link from "next/link";
+import PdfViewer from "./pdf";
 
 interface TagInputProps {
   tags: string[];
@@ -59,11 +72,7 @@ interface TagInputProps {
 function TagInput({ tags, setTags }: TagInputProps) {
   const [input, setInput] = useState("");
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
-  };
-
-  const handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && input.trim()) {
       e.preventDefault();
       if (!tags.includes(input.trim())) {
@@ -78,31 +87,48 @@ function TagInput({ tags, setTags }: TagInputProps) {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2 p-2 border rounded-md">
-      {tags.map((tag) => (
-        <span
-          key={tag}
-          className="flex text-sm items-center justify-between bg-muted text-muted-foreground px-3 py-1 rounded-md"
-        >
-          {tag}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="ml-1 p-0 h-4 w-4"
-            onClick={() => removeTag(tag)}
+    <div className="space-y-2">
+      <div className="flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <Badge
+            key={tag}
+            variant="secondary"
+            className="flex items-center gap-1"
           >
-            <X size={12} />
-          </Button>
-        </span>
-      ))}
-      <Input
-        type="text"
-        value={input}
-        onChange={handleInputChange}
-        onKeyDown={handleInputKeyDown}
-        className="flex-grow border-none focus:ring-0"
-        placeholder="Add a tag..."
-      />
+            {tag}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-4 w-4 p-0 hover:bg-transparent"
+              onClick={() => removeTag(tag)}
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          </Badge>
+        ))}
+      </div>
+      <div className="flex gap-2">
+        <Input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleInputKeyDown}
+          placeholder="Add tags (press Enter)"
+          className="flex-1"
+        />
+        <Button
+          onClick={() => {
+            if (input.trim() && !tags.includes(input.trim())) {
+              setTags([...tags, input.trim()]);
+              setInput("");
+            }
+          }}
+          disabled={!input.trim()}
+          size="sm"
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
   );
 }
@@ -125,7 +151,6 @@ export default function ResumeDetailsPage({
     tags: [] as string[],
     isPublic: false,
   });
-
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const fetchResume = useCallback(async () => {
@@ -179,7 +204,7 @@ export default function ResumeDetailsPage({
         throw new Error("Failed to update resume. Please try again.");
       }
 
-      // setResume((prev) => (prev ? { ...prev, ...updateFields } : null));
+      setResume((prev) => (prev ? { ...prev, ...updateFields } : null));
 
       const updatedResumes = resumes?.map((item) =>
         item.shortUrl === resume.shortUrl ? { ...item, ...updateFields } : item
@@ -212,7 +237,7 @@ export default function ResumeDetailsPage({
         description: "Your resume has been deleted.",
       });
 
-      router.push("resume/dashboard/resumes");
+      router.push("/resume/resumes");
     } catch (err: unknown) {
       if (err instanceof Error) {
         toast({
@@ -227,30 +252,49 @@ export default function ResumeDetailsPage({
     }
   };
 
+  const copyShareLink = async () => {
+    const shareUrl = `${window.location.origin}/${resume?.shortUrl}`;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      toast({
+        title: "Link copied!",
+        description: "Resume share link copied to clipboard.",
+      });
+    } catch (err) {
+      toast({
+        title: "Failed to copy",
+        description: "Please copy the link manually.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (!error && isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-        <p className="ml-4">Loading resume details...</p>
+        <div className="flex items-center gap-3">
+          <Loader2 className="animate-spin h-6 w-6 text-blue-600" />
+          <p className="text-gray-600">Loading resume details...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-screen text-center">
-        <Card className="w-96">
-          <CardHeader>
-            <CardTitle className="text-red-500">Error</CardTitle>
+      <div className="flex flex-col justify-center items-center min-h-screen">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-red-600">Error Loading Resume</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p>{error}</p>
+          <CardContent className="text-center space-y-4">
+            <p className="text-gray-600">{error}</p>
             <Button
-              size="sm"
               variant="outline"
-              onClick={() => router.push("/resume/dashboard/resumes")}
+              onClick={() => router.push("/resume/resumes")}
             >
-              Go Back
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Resumes
             </Button>
           </CardContent>
         </Card>
@@ -259,388 +303,418 @@ export default function ResumeDetailsPage({
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => router.push("/resume/dashboard/resumes")}
-          >
-            <ArrowLeft className="h-4 w-4 " />
-            Back
-          </Button>
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight">
-              {resume.title}
-            </h2>
+    <div className="min-h-screen  p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push("/resume/resumes")}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Dashboard
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-600">
+                {resume?.title}
+              </h1>
+              <p className="text-gray-600 flex items-center gap-2 mt-1">
+                <Calendar className="h-4 w-4" />
+                Created {new Date(resume?.createdAt ?? "").toLocaleDateString()}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Badge
+              variant={resume?.isPublic ? "default" : "secondary"}
+              className="flex items-center gap-1"
+            >
+              {resume?.isPublic ? (
+                <Globe className="h-3 w-3" />
+              ) : (
+                <Lock className="h-3 w-3" />
+              )}
+              {resume?.isPublic ? "Public" : "Private"}
+            </Badge>
+
+            <Button asChild>
+              <a
+                href={`/${resume?.shortUrl}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <ExternalLink className="h-4 w-4 mr-2" />
+                View Live
+              </a>
+            </Button>
           </div>
         </div>
-        <div className="flex gap-x-3 items-center justify-between">
-          <a target="_blank" href={`/${resume?.shortUrl}`} rel="noreferrer">
-            <Button size="sm">
-              Live
-              <span>
-                <ExternalLink size={16} />
-              </span>
-            </Button>
-          </a>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <MoreVertical className="h-4 w-4" />
+        {/* Analytics Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">
+                    Total Views
+                  </p>
+                  <p className="text-3xl font-bold text-blue-600">
+                    {resume?.analytics?.views || 0}
+                  </p>
+                </div>
+                <Eye className="h-8 w-8 text-blue-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Downloads</p>
+                  <p className="text-3xl font-bold text-green-600">
+                    {resume?.analytics?.clicks || 0}
+                  </p>
+                </div>
+                <Download className="h-8 w-8 text-green-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">
+                    Engagement Rate
+                  </p>
+                  <p className="text-3xl font-bold text-purple-600">
+                    {resume?.analytics?.views
+                      ? Math.round(
+                          ((resume?.analytics?.clicks || 0) /
+                            resume.analytics.views) *
+                            100
+                        )
+                      : 0}
+                    %
+                  </p>
+                </div>
+                <TrendingUp className="h-8 w-8 text-purple-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">
+                    Last Updated
+                  </p>
+                  <p className="text-lg font-semibold text-gray-900">
+                    {new Date(resume?.updatedAt ?? "").toLocaleDateString()}
+                  </p>
+                </div>
+                <Clock className="h-8 w-8 text-gray-600" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Resume Preview */}
+          <div className="lg:col-span-2">
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Resume Preview
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="h-[600px] border-t">
+                  <PdfViewer fileUrl={resume?.shortUrl} />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Settings & Details */}
+          <div className="space-y-6">
+            {/* Resume Settings */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Settings className="h-5 w-5" />
+                  Resume Settings
+                </CardTitle>
+                <CardDescription>
+                  Manage your resume details and visibility
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {isEditing ? (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="title">Resume Title</Label>
+                      <Input
+                        id="title"
+                        value={updateFields.title}
+                        onChange={(e) =>
+                          setUpdateFields({
+                            ...updateFields,
+                            title: e.target.value,
+                          })
+                        }
+                        placeholder="Enter resume title"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Tags</Label>
+                      <TagInput
+                        tags={updateFields.tags}
+                        setTags={(newTags) =>
+                          setUpdateFields({ ...updateFields, tags: newTags })
+                        }
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="visibility">Public Visibility</Label>
+                        <p className="text-sm text-gray-600">
+                          Allow others to find your resume
+                        </p>
+                      </div>
+                      <Switch
+                        id="visibility"
+                        checked={updateFields.isPublic}
+                        onCheckedChange={(checked) =>
+                          setUpdateFields({
+                            ...updateFields,
+                            isPublic: checked,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div className="flex gap-2 pt-4">
+                      <Button onClick={handleSave} className="flex-1">
+                        Save Changes
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsEditing(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="space-y-3">
+                      <div>
+                        <Label className="text-sm font-medium text-gray-600">
+                          Title
+                        </Label>
+                        <p className="text-sm font-semibold">{resume?.title}</p>
+                      </div>
+
+                      <div>
+                        <Label className="text-sm font-medium text-gray-600">
+                          Tags
+                        </Label>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {resume?.tags?.length ? (
+                            resume.tags.map((tag: string) => (
+                              <Badge
+                                key={tag}
+                                variant="secondary"
+                                className="text-xs"
+                              >
+                                {tag}
+                              </Badge>
+                            ))
+                          ) : (
+                            <p className="text-sm text-gray-500">
+                              No tags added
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label className="text-sm font-medium text-gray-600">
+                            Visibility
+                          </Label>
+                          <p className="text-sm">
+                            {resume?.isPublic ? "Public" : "Private"}
+                          </p>
+                        </div>
+                        <Badge
+                          variant={resume?.isPublic ? "default" : "secondary"}
+                        >
+                          {resume?.isPublic ? (
+                            <Globe className="h-3 w-3 mr-1" />
+                          ) : (
+                            <Lock className="h-3 w-3 mr-1" />
+                          )}
+                          {resume?.isPublic ? "Public" : "Private"}
+                        </Badge>
+                      </div>
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsEditing(true)}
+                      className="w-full"
+                    >
+                      <Pencil className="h-4 w-4 mr-2" />
+                      Edit Settings
+                    </Button>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Quick Actions */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Star className="h-5 w-5" />
+                  Quick Actions
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={copyShareLink}
+                >
+                  <Share2 className="h-4 w-4 mr-2" />
+                  Share Resume Link
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={() =>
+                    DownloadResume(
+                      `/api/resume-file?resume=${resume?._id}`,
+                      resume?.title
+                    )
+                  }
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download PDF
+                </Button>
+
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full justify-start"
+                >
+                  <Link href={`/resume/ai/?shortUrl=${resume?.shortUrl}`}>
+                    <BarChart3 className="h-4 w-4 mr-2" />
+                    AI Feedback
+                  </Link>
+                </Button>
+
+                <Separator />
+
+                <Button
+                  variant="destructive"
+                  className="w-full justify-start"
+                  onClick={() => setIsDeleteDialogOpen(true)}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete Resume
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Performance Insights
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5" />
+                  Performance Insights
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>View to Download Rate</span>
+                    <span className="font-medium">
+                      {resume?.analytics?.views
+                        ? Math.round(
+                            ((resume?.analytics?.clicks || 0) /
+                              resume.analytics.views) *
+                              100
+                          )
+                        : 0}
+                      %
+                    </span>
+                  </div>
+                  <div className="w-full  rounded-full h-2">
+                    <div
+                      className="bg-blue-600 h-2 rounded-full"
+                      style={{
+                        width: `${
+                          resume?.analytics?.views
+                            ? Math.round(
+                                ((resume?.analytics?.clicks || 0) /
+                                  resume.analytics.views) *
+                                  100
+                              )
+                            : 0
+                        }%`,
+                      }}
+                    ></div>
+                  </div>
+                </div>
+
+                <div className="text-sm ">
+                  <p>💡 Tip: Add relevant tags to improve discoverability</p>
+                </div>
+              </CardContent>
+            </Card> */}
+          </div>
+        </div>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete Resume</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete "{resume?.title}"? This action
+                cannot be undone and will permanently remove your resume and all
+                its analytics data.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setIsDeleteDialogOpen(false)}
+              >
+                Cancel
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem>
-                <Share2 className="mr-2 h-4 w-4" />
-                Share Resume
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => DownloadResume(resume?.fileUrl || "")}
-              >
-                <Download className="mr-2 h-4 w-4" />
-                Download
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => setIsDeleteDialogOpen(true)}
-                className="text-red-600"
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
+              <Button variant="destructive" onClick={handleDelete}>
+                <Trash2 className="h-4 w-4 mr-2" />
                 Delete Resume
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        <ResumeDetailsCard
-          resume={resume}
-          isEditing={isEditing}
-          setIsEditing={setIsEditing}
-          updateFields={updateFields}
-          setUpdateFields={setUpdateFields}
-          handleSave={handleSave}
-        />
-
-        <ResumePreviewCard resume={resume} />
-
-        <AnalyticsCard resume={resume} />
-        <AIFeedbackCard resume_id={resume.shortUrl} />
-      </div>
-
-      <DeleteConfirmationDialog
-        isOpen={isDeleteDialogOpen}
-        onClose={() => setIsDeleteDialogOpen(false)}
-        onConfirm={handleDelete}
-      />
     </div>
-  );
-}
-
-function ResumeDetailsCard({
-  resume,
-  isEditing,
-  setIsEditing,
-  updateFields,
-  setUpdateFields,
-  handleSave,
-}: {
-  resume: IResume | null;
-  isEditing: boolean;
-  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
-  updateFields: {
-    title: string;
-    tags: string[];
-    isPublic: boolean;
-  };
-  setUpdateFields: React.Dispatch<
-    React.SetStateAction<{
-      title: string;
-      tags: string[];
-      isPublic: boolean;
-    }>
-  >;
-  handleSave: () => void;
-}) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Resume Details</CardTitle>
-        <CardDescription>View and edit your resume information</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {isEditing ? (
-          <EditingForm
-            updateFields={updateFields}
-            setUpdateFields={setUpdateFields}
-            setIsEditing={setIsEditing}
-            handleSave={handleSave}
-          />
-        ) : (
-          <ViewingDetails
-            setIsEditing={setIsEditing}
-            resume={resume}
-            updateFields={updateFields}
-          />
-        )}
-      </CardContent>
-    </Card>
-  );
-}
-
-function EditingForm({
-  updateFields,
-  setUpdateFields,
-  setIsEditing,
-  handleSave,
-}: {
-  updateFields: {
-    title: string;
-    tags: string[];
-    isPublic: boolean;
-  };
-  setUpdateFields: React.Dispatch<
-    React.SetStateAction<{
-      title: string;
-      tags: string[];
-      isPublic: boolean;
-    }>
-  >;
-  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
-  handleSave: () => void;
-}) {
-  const { title, tags, isPublic } = updateFields;
-  return (
-    <>
-      <div className="space-y-2">
-        <Label htmlFor="resumeName">Resume Name</Label>
-        <Input
-          id="resumeName"
-          value={title}
-          onChange={(e) =>
-            setUpdateFields({ ...updateFields, title: e.target.value })
-          }
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="resumeTags">Tags</Label>
-        <TagInput
-          tags={tags}
-          setTags={(newTags: string[]) =>
-            setUpdateFields({ ...updateFields, tags: newTags })
-          }
-        />
-      </div>
-      <div className="flex justify-between items-center">
-        <span className="font-medium">Visibility:</span>
-        <Switch
-          checked={isPublic}
-          onCheckedChange={(checked) =>
-            setUpdateFields({ ...updateFields, isPublic: checked })
-          }
-        />
-      </div>
-      <div className="flex justify-end space-x-2">
-        <Button size="sm" variant="outline" onClick={() => setIsEditing(false)}>
-          Cancel
-        </Button>
-        <Button size="sm" onClick={handleSave}>
-          Save Changes
-        </Button>
-      </div>
-    </>
-  );
-}
-
-function ViewingDetails({
-  resume,
-  updateFields,
-  setIsEditing,
-}: {
-  resume: IResume | null;
-  setIsEditing: (val: boolean) => void;
-  updateFields: {
-    title: string;
-    tags: string[];
-    isPublic: boolean;
-  };
-}) {
-  return (
-    <>
-      <DetailItem label="File Name" value={updateFields.title} />
-      <DetailItem label="File Type" value={resume?.fileType} />
-      <DetailItem
-        label="Upload Date"
-        value={new Date(resume?.createdAt ?? "").toLocaleDateString()}
-      />
-      <DetailItem
-        label="Last Modified"
-        value={new Date(resume?.updatedAt ?? "").toLocaleDateString()}
-      />
-      <div className="flex justify-between items-center">
-        <span className="font-medium">Tags:</span>
-        <div>
-          {updateFields?.tags?.map((tag: string) => (
-            <Badge key={tag} variant="secondary" className="mr-1">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      </div>
-      <div className="flex justify-between items-center">
-        <span className="font-medium">Visibility:</span>
-        <Switch
-          checked={updateFields.isPublic}
-          onClick={() => setIsEditing(true)}
-        />
-      </div>
-      <Button size="sm" variant="outline" onClick={() => setIsEditing(true)}>
-        <Pencil className="mr-2 h-3 w-3" />
-        <p>Edit Details</p>
-      </Button>
-    </>
-  );
-}
-
-function DetailItem({
-  label,
-  value,
-}: {
-  label: string;
-  value: string | undefined;
-}) {
-  return (
-    <div className="flex justify-between">
-      <span className="font-medium">{label}:</span>
-      <span>{value}</span>
-    </div>
-  );
-}
-
-function ResumePreviewCard({ resume }: { resume: IResume | null }) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Resume Preview</CardTitle>
-        <CardDescription>Preview your uploaded resume</CardDescription>
-      </CardHeader>
-      <CardContent className="flex items-center justify-center">
-        <div className="w-full h-96 bg-slate-100 flex items-center justify-center">
-          <embed className="h-full w-full" src={resume?.fileUrl}></embed>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function AnalyticsCard({ resume }: { resume: IResume | null }) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center">
-          <Eye className="mr-2 h-5 w-5 text-blue-500" />
-          Analytics
-        </CardTitle>
-        <CardDescription>
-          View performance metrics for your resume
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <AnalyticsItem
-          icon={<Eye className="mr-2 h-4 w-4 text-blue-500" />}
-          label="Views"
-          value={resume?.analytics.views}
-        />
-        <Separator />
-        <AnalyticsItem
-          icon={<Download className="mr-2 h-4 w-4 text-green-500" />}
-          label="Downloads"
-          value={resume?.analytics.clicks}
-        />
-      </CardContent>
-    </Card>
-  );
-}
-
-function AnalyticsItem({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: number | undefined;
-}) {
-  return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center">
-        {icon}
-        <span className="font-medium">{label}</span>
-      </div>
-      <span className="text-2xl font-bold">{value}</span>
-    </div>
-  );
-}
-
-function AIFeedbackCard({ resume_id }: { resume_id: string }) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center">
-          <FileText className="mr-2 h-5 w-5 text-rose-500" />
-          AI Feedback
-        </CardTitle>
-        <CardDescription>
-          Get AI-powered insights on your resume
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <Link href={`/resume/ai/?shortUrl=${resume_id}`} passHref>
-          <Button size="sm" className="w-full">
-            <FileText className="mr-2 h-4 w-4" />
-            Request Feedback
-          </Button>
-        </Link>
-      </CardContent>
-    </Card>
-  );
-}
-
-function DeleteConfirmationDialog({
-  isOpen,
-  onClose,
-  onConfirm,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-}) {
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            Are you sure you want to delete this resume?
-          </DialogTitle>
-          <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            resume.
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button size="sm" variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button size="sm" variant="destructive" onClick={onConfirm}>
-            Delete
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
   );
 }

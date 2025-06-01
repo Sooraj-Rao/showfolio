@@ -13,7 +13,6 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Return the result from getResumePreview
   return getResumePreview(shortUrl);
 }
 
@@ -26,7 +25,6 @@ async function getResumePreview(shortUrl: string) {
     if (!resume) {
       return NextResponse.json({ error: "Resume not found" }, { status: 404 });
     }
-    // Check if the resume is public or not
     if (!resume.isPublic) {
       return NextResponse.json(
         { error: "Resume is private. You do not have permission to view it." },
@@ -34,7 +32,6 @@ async function getResumePreview(shortUrl: string) {
       );
     }
 
-    // Check if the resume is password protected
     if (resume.passwordProtected) {
       return NextResponse.json(
         { error: "Resume is password protected. Access denied." },
@@ -51,14 +48,12 @@ async function getResumePreview(shortUrl: string) {
       );
     }
 
-    // Check if user has a valid portfolio (handle case where 'private' might not exist)
     const portfolioUrl = user.private ? user.private.portfolio : null;
 
-    // Construct the result object
     const result = {
       name: user.name,
       email: user.email,
-      fileUrl: resume.fileUrl,
+      fileUrl: `/api/resume-file?resume=${shortUrl}`,
       portfolioUrl: portfolioUrl,
     };
 

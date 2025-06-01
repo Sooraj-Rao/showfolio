@@ -37,7 +37,7 @@ export default function Signup() {
       });
 
       if (response.status === 200) {
-        router.push("/dashboard");
+        router.push("/resume/dashboard");
       } else {
         throw new Error("Failed to sign up");
       }

@@ -5,27 +5,18 @@ export interface IResume extends Document {
   user: mongoose.Types.ObjectId | IUser;
   title: string;
   fileUrl: string;
-  fileType: string;
   createdAt: Date;
   updatedAt: Date;
   tags: string[];
-  folder?: string;
   shortUrl: string;
-  qrCode?: string;
   isPublic: boolean;
   passwordProtected: boolean;
   password?: string;
   analytics: {
     views: number;
-    clicks: number;
-    regions: Record<string, number>;
-    devices: Record<string, number>;
+    downloads: number;
+    shares: number;
   };
-  archiveVersions: {
-    version: number;
-    fileUrl: string;
-    createdAt: Date;
-  }[];
 }
 
 const ResumeSchema: Schema<IResume> = new Schema(
@@ -46,25 +37,17 @@ const ResumeSchema: Schema<IResume> = new Schema(
       type: String,
       required: true,
     },
-    fileType: {
-      type: String,
-      required: true,
-    },
+
     tags: {
       type: [String],
       default: [],
     },
-    folder: {
-      type: String,
-      trim: true,
-    },
+
     shortUrl: {
       type: String,
       unique: true,
     },
-    qrCode: {
-      type: String,
-    },
+
     isPublic: {
       type: Boolean,
       default: true,
@@ -82,37 +65,15 @@ const ResumeSchema: Schema<IResume> = new Schema(
         type: Number,
         default: 0,
       },
-      clicks: {
+      downloads: {
         type: Number,
         default: 0,
       },
-      regions: {
-        type: Map,
-        of: Number,
-        default: {},
-      },
-      devices: {
-        type: Map,
-        of: Number,
-        default: {},
+      shares: {
+        type: Number,
+        default: 0,
       },
     },
-    archiveVersions: [
-      {
-        version: {
-          type: Number,
-          required: true,
-        },
-        fileUrl: {
-          type: String,
-          required: true,
-        },
-        createdAt: {
-          type: Date,
-          default: Date.now,
-        },
-      },
-    ],
   },
   {
     timestamps: true,

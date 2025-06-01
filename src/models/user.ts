@@ -9,18 +9,13 @@ export interface IUser extends Document {
   provider: "email" | "google" | "linkedin";
   createdAt: Date;
   updatedAt: Date;
-  lastLogin?: Date;
-  image: string;
   isActive: boolean;
   portfolio: string;
-  resumeCredits: number;
-  sharedResumes: string[];
+  aiCredits: number;
   private: {
     portfolio: boolean;
     profile: boolean;
-  };
-  settings: {
-    notifications: boolean;
+    resumes: boolean;
   };
 }
 
@@ -38,9 +33,7 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    image: {
-      type: String,
-    },
+
     password: {
       type: String,
       required: true,
@@ -55,20 +48,13 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       enum: ["email", "google", "linkedin"],
       default: "email",
     },
-    lastLogin: {
-      type: Date,
-    },
     isActive: {
       type: Boolean,
       default: true,
     },
-    resumeCredits: {
+    aiCredits: {
       type: Number,
       default: 5,
-    },
-    sharedResumes: {
-      type: [String],
-      default: [],
     },
     portfolio: {
       type: String,
@@ -84,16 +70,14 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
         default: false,
         required: true,
       },
+      resumes: {
+        type: Boolean,
+        default: false,
+        required: true,
+      },
     },
     imageUrl: {
       type: String,
-    },
-
-    settings: {
-      notifications: {
-        type: Boolean,
-        default: true,
-      },
     },
   },
   {

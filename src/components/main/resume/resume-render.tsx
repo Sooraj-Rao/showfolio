@@ -3,14 +3,12 @@
 import type React from "react";
 
 import { useState, useEffect, useCallback } from "react";
-import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import useGetResumeData from "@/app/hooks/use-getResumeData";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
 import {
   Download,
   Mail,
@@ -22,14 +20,12 @@ import {
   MapPin,
   User,
   Minimize2,
-  Send,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import PdfViewer from "@/app/(routes)/resume/(routes)/resumes/[resume_id]/pdf";
 import { ClickEvent } from "@/app/actions/analytics";
+import Cookies from "js-cookie";
+import TooltipWrapper from "./tooltip-wrapper";
 
 interface ResumeViewerProps {
   shortUrl: string;
@@ -40,7 +36,7 @@ export default function ResumeViewer({ shortUrl }: ResumeViewerProps) {
   const router = useRouter();
   const { resumeData, fetchResumeData, isLoading, error } = useGetResumeData();
   const [isFullScreen, setIsFullScreen] = useState(false);
-
+  const [firstView] = useState(Cookies.get("firstView") || "true");
   const fetchResumeDataMemoized = useCallback(() => {
     if (shortUrl) {
       fetchResumeData({ shortUrl, operation: "ResumePreview" });
@@ -49,42 +45,21 @@ export default function ResumeViewer({ shortUrl }: ResumeViewerProps) {
 
   useEffect(() => {
     fetchResumeDataMemoized();
+    Cookies.set("firstView", "false");
   }, [fetchResumeDataMemoized]);
 
-  const handleContact = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const contactData = {
-      name: formData.get("name"),
-      email: formData.get("email"),
-      subject: formData.get("subject"),
-      message: formData.get("message"),
-      resumeOwner: resumeData?.name,
-      timestamp: new Date().toISOString(),
-    };
-
-    console.log("📧 Contact form submitted:", contactData);
-
-    toast({
-      title: "Message Sent Successfully!",
-      description: "Your message has been sent to the resume owner.",
-    });
-  };
-
-  const trackDownload = async () => {
-    await ClickEvent({ resume: shortUrl, event: "download" });
+  const trackDownload = async (event: string) => {
+    await ClickEvent({ resume: shortUrl, event });
   };
 
   const handleDownload = () => {
     if (resumeData?.fileUrl) {
-      trackDownload();
-
       const link = document.createElement("a");
       link.href = resumeData.fileUrl;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
+      trackDownload("download");
       toast({
         title: "Resume Downloaded",
         description: "The resume has been downloaded to your device.",
@@ -99,22 +74,18 @@ export default function ResumeViewer({ shortUrl }: ResumeViewerProps) {
   };
 
   const handleShare = async () => {
+    ClickEvent({ resume: shortUrl, event: "shares" });
     const shareData = {
       title: `${resumeData?.name}'s Resume`,
-      text: `Check out ${resumeData?.name}'s professional resume`,
+      text: `Check out ${resumeData?.name}'s Resume`,
       url: window.location.href,
     };
 
     if (navigator.share && navigator.canShare(shareData)) {
-      try {
-        await navigator.share(shareData);
-        console.log("📤 Resume shared via Web Share API");
-      } catch {
-        console.log("Share cancelled");
-      }
+      await navigator.share(shareData);
     } else if (navigator.clipboard) {
       await navigator.clipboard.writeText(window.location.href);
-      console.log("📋 Resume link copied to clipboard");
+
       toast({
         title: "Link Copied",
         description: "The resume link has been copied to your clipboard.",
@@ -130,9 +101,6 @@ export default function ResumeViewer({ shortUrl }: ResumeViewerProps) {
 
   const toggleFullScreen = () => {
     setIsFullScreen(!isFullScreen);
-    console.log(
-      `🖥️ Fullscreen mode: ${!isFullScreen ? "enabled" : "disabled"}`
-    );
   };
 
   if (isLoading) {
@@ -155,22 +123,15 @@ export default function ResumeViewer({ shortUrl }: ResumeViewerProps) {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle className="text-red-600 flex items-center justify-center gap-2">
-              <FileDown className="w-5 h-5" />
-              Resume Not Found
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-center space-y-4">
+      <div className="min-h-screen  flex items-center justify-center p-4">
+        <Card className="w-full max-w-md p-4">
+          <CardContent className="text-center p-4 space-y-2">
             <p className="text-gray-600">{error}</p>
             <Button
-              variant="outline"
-              onClick={() => router.push("/dashboard/resumes")}
+              onClick={() => router.push("/")}
               className="w-full"
             >
-              Go Back to Dashboard
+              Explore ResumeOrg
             </Button>
           </CardContent>
         </Card>
@@ -180,7 +141,7 @@ export default function ResumeViewer({ shortUrl }: ResumeViewerProps) {
 
   return (
     <div className="min-h-screen ">
-      <div className="shadow-sm border-b">
+      <div className="shadow-sm hidden border-b">
         <div className="container mx-auto max-w-7xl px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -222,33 +183,43 @@ export default function ResumeViewer({ shortUrl }: ResumeViewerProps) {
             <Card className="overflow-hidden shadow-lg">
               <CardContent className="p-0 relative">
                 <div className="absolute top-4 right-4 z-10 flex gap-2">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={toggleFullScreen}
-                    className="backdrop-blur-sm "
+                  <TooltipWrapper
+                    title={isFullScreen ? "Minimize" : "Maximize"}
                   >
-                    {isFullScreen ? (
-                      <Minimize2 className="w-4 h-4" />
-                    ) : (
-                      <Maximize2 className="w-4 h-4" />
-                    )}
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={handleDownload}
-                    className=" backdrop-blur-sm "
-                  >
-                    <FileDown className="w-4 h-4" />
-                  </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={toggleFullScreen}
+                      className="backdrop-blur-sm "
+                    >
+                      {isFullScreen ? (
+                        <Minimize2 className="w-4 h-4" />
+                      ) : (
+                        <Maximize2 className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </TooltipWrapper>
+                  <TooltipWrapper title="Download">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={handleDownload}
+                      className=" backdrop-blur-sm "
+                    >
+                      <FileDown className="w-4 h-4" />
+                    </Button>
+                  </TooltipWrapper>
                 </div>
                 <div
                   className={`${
                     isFullScreen ? "h-[calc(100vh-120px)]" : "h-[600px]"
                   }`}
                 >
-                  <PdfViewer fileUrl={shortUrl} preview={true} />
+                  <PdfViewer
+                    fileUrl={shortUrl}
+                    preview={true}
+                    firstView={firstView}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -273,12 +244,8 @@ export default function ResumeViewer({ shortUrl }: ResumeViewerProps) {
                       <h2 className="text-2xl font-bold text-gray-900">
                         {resumeData?.name || "Name not available"}
                       </h2>
-                      <p className="text-gray-600 font-medium">
-                        {resumeData?.title || "Professional"}
-                      </p>
                     </div>
 
-                    {/* Contact Info */}
                     <div className="space-y-2 pt-2">
                       {resumeData?.email && (
                         <a
@@ -313,10 +280,6 @@ export default function ResumeViewer({ shortUrl }: ResumeViewerProps) {
 
               <Card className="shadow-lg">
                 <CardContent className="p-6 space-y-4">
-                  <h3 className="font-semibold text-gray-900 mb-4">
-                    Quick Actions
-                  </h3>
-
                   <div className="grid grid-cols-1 gap-3">
                     <Button
                       onClick={handleDownload}
@@ -339,24 +302,6 @@ export default function ResumeViewer({ shortUrl }: ResumeViewerProps) {
                       </Button>
                     )}
 
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="w-full border-green-200 text-green-700 hover:bg-green-50"
-                        >
-                          <Mail className="w-4 h-4 mr-2" />
-                          Send Message
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-md">
-                        <ContactForm
-                          onSubmit={handleContact}
-                          recipientName={resumeData?.name}
-                        />
-                      </DialogContent>
-                    </Dialog>
-
                     <Button
                       onClick={handleShare}
                       variant="outline"
@@ -372,89 +317,6 @@ export default function ResumeViewer({ shortUrl }: ResumeViewerProps) {
           )}
         </div>
       </div>
-    </div>
-  );
-}
-
-interface ContactFormProps {
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  recipientName?: string;
-}
-
-function ContactForm({ onSubmit, recipientName }: ContactFormProps) {
-  return (
-    <div className="space-y-6">
-      <div className="text-center border-b pb-4">
-        <h2 className="text-2xl font-bold text-gray-900">Get in Touch</h2>
-        <p className="text-gray-600 mt-1">
-          Send a message to {recipientName || "the resume owner"}
-        </p>
-      </div>
-
-      <form onSubmit={onSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="name" className="text-sm font-medium text-gray-700">
-              Your Name *
-            </Label>
-            <Input
-              id="name"
-              required
-              className="mt-1"
-              placeholder="Enter your full name"
-            />
-          </div>
-          <div>
-            <Label
-              htmlFor="email"
-              className="text-sm font-medium text-gray-700"
-            >
-              Your Email *
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              required
-              className="mt-1"
-              placeholder="your.email@example.com"
-            />
-          </div>
-        </div>
-
-        <div>
-          <Label
-            htmlFor="subject"
-            className="text-sm font-medium text-gray-700"
-          >
-            Subject
-          </Label>
-          <Input
-            id="subject"
-            className="mt-1"
-            placeholder="What's this about?"
-          />
-        </div>
-
-        <div>
-          <Label
-            htmlFor="message"
-            className="text-sm font-medium text-gray-700"
-          >
-            Message *
-          </Label>
-          <Textarea
-            id="message"
-            required
-            className="mt-1 min-h-[120px]"
-            placeholder="Write your message here..."
-          />
-        </div>
-
-        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
-          <Send className="w-4 h-4 mr-2" />
-          Send Message
-        </Button>
-      </form>
     </div>
   );
 }

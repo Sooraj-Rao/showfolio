@@ -20,7 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Zap, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { FormEvent, useEffect, useState } from "react";
-import axios from "axios"; // Ensure axios is imported
+import axios from "axios";
 import useResumes from "@/app/hooks/get-resumes";
 import { IResume } from "@/models/resume";
 import { useSearchParams } from "next/navigation";
@@ -28,12 +28,12 @@ import { Label } from "@/components/ui/label";
 
 export default function AIFeedbackPage() {
   const searchParams = useSearchParams();
-  const { resumes } = useResumes(); // Assuming the resumes are already in the store
-  const [selectedResume, setSelectedResume] = useState<IResume | null>(null); // Store the selected resume
-  const [role, setRole] = useState(""); // Store the role input by the user
+  const { resumes } = useResumes();
+  const [selectedResume, setSelectedResume] = useState<IResume | null>(null);
+  const [role, setRole] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState(""); // Store feedback result
+  const [result, setResult] = useState({ desc: "", shortUrl: "" });
 
   const processResume = async (e: FormEvent) => {
     e.preventDefault();
@@ -48,15 +48,16 @@ export default function AIFeedbackPage() {
 
     try {
       const formData = new FormData();
-      formData.append("firebaseUrl", selectedResume.fileUrl); // Sending Firebase URL instead of file
-      formData.append("mode", "feedback"); // We assume feedback is the mode
-      formData.append("responseLength", "medium"); // You can customize based on user input
-      formData.append("query", role); // The query field (if applicable)
+      formData.append("firebaseUrl", selectedResume.fileUrl);
+      formData.append("mode", "feedback");
+      formData.append("responseLength", "medium");
+      formData.append("query", role);
 
-      const response = await axios.post(`/api/ai`, formData); // Adjusted endpoint as per your backend
-
-      // Set the feedback result received from backend
-      setResult(response.data.result);
+      const response = await axios.post(`/api/ai`, formData);
+      setResult({
+        desc: response.data.result,
+        shortUrl: selectedResume.shortUrl,
+      });
       if (error) {
       }
     } catch (err) {
@@ -65,22 +66,6 @@ export default function AIFeedbackPage() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const formatFeedback = (feedback: string) => {
-    const sections = feedback.split("\n\n**");
-
-    return sections.map((section, index) => {
-      const [sectionTitle, ...sectionContent] = section.split(":");
-      return (
-        <div key={index} className="space-y-4">
-          <h3 className="text-lg font-bold">
-            {sectionTitle.replace("*", "").trim()}:
-          </h3>
-          <p>{sectionContent.join(":").trim()}</p>
-        </div>
-      );
-    });
   };
 
   useEffect(() => {
@@ -99,8 +84,8 @@ export default function AIFeedbackPage() {
           <CardHeader>
             <CardTitle className="text-xl">
               <span className=" mr-4">Generate Resume Feedback</span>
-              <Badge variant="secondary">5 Credits Left</Badge>
-              <Button size="sm">Buy Credits</Button>
+              {/* <Badge variant="secondary">5 Credits Left</Badge>
+              <Button size="sm">Buy Credits</Button> */}
             </CardTitle>
 
             <CardDescription>
@@ -173,16 +158,16 @@ export default function AIFeedbackPage() {
         </Card>
       </form>
 
-      {result && (
+      {selectedResume?.shortUrl === result?.shortUrl && (
         <Card>
           <CardHeader>
-            <CardTitle>Generated Feedback</CardTitle>
+            <CardTitle className="text-xl">
+              Generated Feedback for {selectedResume?.title}
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold">Feedback Result:</h3>
-              {formatFeedback(result)}
-              {/* <HighlightedText text={result} /> */}
+            <div className="space-y-4 text-justify">
+              <HighlightedText text={result.desc} />
             </div>
           </CardContent>
         </Card>
@@ -190,3 +175,75 @@ export default function AIFeedbackPage() {
     </div>
   );
 }
+
+interface HighlightedTextProps {
+  text: string;
+}
+
+const HighlightedText: React.FC<HighlightedTextProps> = ({ text }) => {
+  const items = text.split(/\n?\s*\d+\.\s+/).filter(Boolean);
+
+  const renderHighlighted = (segment: string) => {
+    const parts = segment.split(/(\*.*?\*|".*?")/g);
+
+    return parts.map((part, i) => {
+      const isAsteriskWrapped = part.startsWith("*") && part.endsWith("*");
+      const isQuoteWrapped = part.startsWith('"') && part.endsWith('"');
+      const endsWithColon = part.endsWith(":");
+
+      if (isAsteriskWrapped) {
+        return (
+          <span key={i} className="font-semibold text-purple-600 -ml-[2px]">
+            {part.slice(1, -1)}
+          </span>
+        );
+      }
+
+      if (isQuoteWrapped) {
+        return (
+          <span key={i} className="font-semibold text-pink-600">
+            {part.slice(1, -1)}
+          </span>
+        );
+      }
+
+      if (part.startsWith("*") || part.startsWith('"')) {
+        return <span key={i}>{part.slice(1)}</span>;
+      }
+
+      if (part.endsWith("*") || part.endsWith('"')) {
+        return <span key={i}>{part.slice(0, -1)}</span>;
+      }
+
+      if (endsWithColon) {
+        return (
+          <span key={i} className="font-semibold">
+            {part}
+          </span>
+        );
+      }
+
+      return <span key={i}>{part}</span>;
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      {items.map((item, index) => {
+        const [heading, ...rest] = item.split(/(?<=:)|\n/);
+        const description = rest.join(" ").trim();
+
+        return (
+          <div key={index}>
+            <div className="font-semibold ">
+              {renderHighlighted(heading.trim())}
+            </div>
+            <div className="pl-4 dark:text-gray-300 text-gray-800">
+              {renderHighlighted(description)}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};

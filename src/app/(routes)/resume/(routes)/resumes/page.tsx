@@ -57,10 +57,6 @@ export default function ResumesPage() {
   //   );
   // };
 
-  const DeleteSelectedResumes = () => {
-    setIsDeleteDialogOpen(true);
-  };
-
   const confirmDelete = async () => {
     setIsDeleting(true);
     try {
@@ -95,8 +91,7 @@ export default function ResumesPage() {
         const matchesSearch = resume?.title
           .toLowerCase()
           .includes(searchQuery.toLowerCase());
-        const matchesFolder =
-          filterFolder === "all" || resume?.folder === filterFolder;
+        const matchesFolder = filterFolder === "all";
         return matchesSearch && matchesFolder;
       })
       .sort((a, b) => {
@@ -119,8 +114,14 @@ export default function ResumesPage() {
     return <ResumeCardSkeleton />;
   }
 
-  const tags = resumes?.map((item) => item.tags);
-  console.log(tags);
+  let tags = [];
+  resumes.map((item, i) => {
+    if (item.tags.length != 0) {
+      item.tags.forEach((tag) => {
+        tags.push(tag);
+      });
+    }
+  });
 
   return (
     <div className="space-y-6 p-3">
@@ -148,8 +149,11 @@ export default function ResumesPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Tags</SelectItem>
-              <SelectItem value="tech">Tech</SelectItem>
-              <SelectItem value="management">Management</SelectItem>
+              {tags.map((item) => (
+                <SelectItem key={item} value={item}>
+                  {item}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Select
@@ -169,7 +173,7 @@ export default function ResumesPage() {
       )}
 
       {filteredAndSortedResumes?.length === 0 ? (
-        <div className="bg-primary/5 p-4 rounded-md flex items-center justify-center">
+        <div className=" p-4 rounded-md flex items-center ">
           <InfoIcon className="mr-2" size={18} />
           <p>{searchQuery ? "No matching resumes found" : "No resumes yet"}</p>
         </div>
@@ -180,13 +184,6 @@ export default function ResumesPage() {
               key={resume?.shortUrl}
               resume={resume}
               searchQuery={searchQuery}
-              onDelete={(id) => {
-                setSelectedResumes([id]);
-                DeleteSelectedResumes();
-              }}
-              onToggleVisibility={(id, isPublic) => {
-                console.log(`Toggle visibility for ${id} to ${isPublic}`);
-              }}
             />
           ))}
         </Grid>

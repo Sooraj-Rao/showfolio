@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import PDFParser from "pdf2json";
-import axios from "axios"; // To fetch the file from Firebase URL
+import axios from "axios";
 
 type Mode = "feedback";
 type ResponseLength = "short" | "medium" | "descriptive";
@@ -14,11 +14,11 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
-    const firebaseUrl = formData.get("firebaseUrl") as string | null; // Firebase URL of the resume
+    const firebaseUrl = formData.get("firebaseUrl") as string | null;
     const mode = (formData.get("mode") as Mode) || "feedback";
     const responseLength =
       (formData.get("responseLength") as ResponseLength) || "medium";
-    const userQuery = formData.get("query") as string | null; // Query from the user
+    const userQuery = formData.get("query") as string | null;
 
     if (!firebaseUrl) {
       return NextResponse.json(
@@ -27,13 +27,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Fetch resume from Firebase URL
     const response = await axios.get(firebaseUrl, {
       responseType: "arraybuffer",
     });
     const buffer = Buffer.from(response.data);
 
-    // Parse the PDF content from the buffer
     const resumeText = await parsePdf(buffer);
 
     if (!resumeText || resumeText.trim().length === 0) {
@@ -43,12 +41,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Construct prompt for Gemini based on feedback and query
-    const prompt = createPrompt(resumeText, userQuery, mode, responseLength);
+    const prompt = createPrompt(resumeText, userQuery);
 
     const result = await genAI
       .getGenerativeModel({
-        model: "gemini-1.5-flash", // Gemini model
+        model: "gemini-1.5-flash",
       })
       .generateContent(prompt);
 
@@ -71,20 +68,13 @@ export async function POST(req: NextRequest) {
   }
 }
 
-const createPrompt = (
-  resumeText: string,
-  userQuery: string | null,
-  mode: Mode,
-  responseLength: ResponseLength
-): string => {
-  const wordLimit =
-    responseLength === "short" ? 100 : responseLength === "medium" ? 250 : 350;
-
+const createPrompt = (resumeText: string, userQuery: string | null): string => {
   const sectionStructure = `1. **Experience Section**: Provide feedback on the clarity, relevance, and impact of the experience described.
   2. **Skills Section**: Review the effectiveness and clarity of the skills listed, including whether they align with the job role.
   3. **Education Section**: Comment on the educational background and how it is presented, especially in relation to the job.
   4. **Formatting and Structure**: Evaluate the overall format, including readability, consistency, and professional layout.
   5. **Overall Strengths and Weaknesses**: Give an overall assessment of the resume, highlighting key strengths and areas for improvement.
+  6.If any of above mentioned section is not present in resume choose whichever section it has and give result for that section. 
   `;
 
   const feedbackInstruction = userQuery
@@ -93,6 +83,7 @@ const createPrompt = (
 
   return `
   You are a helpful assistant providing constructive feedback on resumes. Your job is to evaluate the following resume text in a professional and constructive tone.
+
   
   Resume Text:
   ${resumeText}
@@ -101,11 +92,12 @@ const createPrompt = (
   - Focus on sections like Experience, Skills, Education, Formatting, and overall Resume Quality.
   - Provide feedback on 4-5 sections with 2-3 points for each.
   - Keep your response professional, actionable, and encouraging. Avoid being too harsh.
-  - Limit your response to ${wordLimit} words.
+  - Limit your response to 200 words.
 
   ${sectionStructure}
 
   ${feedbackInstruction}
+  also dont return response like llm model chatbot app.. like Here's a constructive review  so on and alos dont include concluion also like chatbots llm does it.. only do what needed 
   `;
 };
 const parsePdf = async (buffer: Buffer): Promise<string> => {

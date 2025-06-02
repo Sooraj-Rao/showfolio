@@ -274,7 +274,7 @@ export default function ResumeDetailsPage({
       <div className="flex justify-center items-center min-h-screen">
         <div className="flex items-center gap-3">
           <Loader2 className="animate-spin h-6 w-6 text-blue-600" />
-          <p className="text-gray-600">Loading resume details...</p>
+          <p className="text-gray-500">Loading resume details...</p>
         </div>
       </div>
     );
@@ -288,7 +288,7 @@ export default function ResumeDetailsPage({
             <CardTitle className="text-red-600">Error Loading Resume</CardTitle>
           </CardHeader>
           <CardContent className="text-center space-y-4">
-            <p className="text-gray-600">{error}</p>
+            <p className="text-gray-500">{error}</p>
             <Button
               variant="outline"
               onClick={() => router.push("/resume/resumes")}
@@ -303,24 +303,16 @@ export default function ResumeDetailsPage({
   }
 
   return (
-    <div className="min-h-screen  p-6">
+    <div className="min-h-screen ">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push("/resume/resumes")}
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
-            </Button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-600">
+              <h1 className="text-2xl font-bold dark:text-gray-400 text-gray-700 ">
                 {resume?.title}
               </h1>
-              <p className="text-gray-600 flex items-center gap-2 mt-1">
+              <p className="text-gray-500 flex items-center gap-2 mt-1">
                 <Calendar className="h-4 w-4" />
                 Created {new Date(resume?.createdAt ?? "").toLocaleDateString()}
               </p>
@@ -353,20 +345,19 @@ export default function ResumeDetailsPage({
           </div>
         </div>
 
-        {/* Analytics Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-sm font-medium text-gray-500">
                     Total Views
                   </p>
-                  <p className="text-3xl font-bold text-blue-600">
+                  <p className="text-2xl font-bold text-blue-600">
                     {resume?.analytics?.views || 0}
                   </p>
                 </div>
-                <Eye className="h-8 w-8 text-blue-600" />
+                <Eye className="h-5 w-5 text-blue-600" />
               </div>
             </CardContent>
           </Card>
@@ -375,12 +366,25 @@ export default function ResumeDetailsPage({
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Downloads</p>
-                  <p className="text-3xl font-bold text-green-600">
-                    {resume?.analytics?.clicks || 0}
+                  <p className="text-sm font-medium text-gray-500">Downloads</p>
+                  <p className="text-2xl font-bold text-blue-600">
+                    {resume?.analytics?.downloads || 0}
                   </p>
                 </div>
-                <Download className="h-8 w-8 text-green-600" />
+                <Download className="h-5 w-5 text-blue-600" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Shares</p>
+                  <p className="text-2xl font-bold text-blue-600">
+                    {resume?.analytics?.shares || 0}
+                  </p>
+                </div>
+                <Share2 className="h-5 w-5 text-blue-600" />
               </div>
             </CardContent>
           </Card>
@@ -389,13 +393,14 @@ export default function ResumeDetailsPage({
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-sm font-medium text-gray-500">
                     Engagement Rate
                   </p>
-                  <p className="text-3xl font-bold text-purple-600">
+                  <p className="text-2xl font-bold text-blue-600">
                     {resume?.analytics?.views
                       ? Math.round(
-                          ((resume?.analytics?.clicks || 0) /
+                          (((resume?.analytics?.downloads || 0) +
+                            (resume?.analytics?.shares || 0)) /
                             resume.analytics.views) *
                             100
                         )
@@ -403,7 +408,7 @@ export default function ResumeDetailsPage({
                     %
                   </p>
                 </div>
-                <TrendingUp className="h-8 w-8 text-purple-600" />
+                <TrendingUp className="h-5 w-5 text-blue-600" />
               </div>
             </CardContent>
           </Card>
@@ -412,14 +417,14 @@ export default function ResumeDetailsPage({
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-sm font-medium text-gray-500">
                     Last Updated
                   </p>
-                  <p className="text-lg font-semibold text-gray-900">
+                  <p className="text-lg font-semibold ">
                     {new Date(resume?.updatedAt ?? "").toLocaleDateString()}
                   </p>
                 </div>
-                <Clock className="h-8 w-8 text-gray-600" />
+                <Clock className="h-5 w-5 text-gray-500" />
               </div>
             </CardContent>
           </Card>
@@ -444,18 +449,13 @@ export default function ResumeDetailsPage({
             </Card>
           </div>
 
-          {/* Settings & Details */}
           <div className="space-y-6">
-            {/* Resume Settings */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Settings className="h-5 w-5" />
                   Resume Settings
                 </CardTitle>
-                <CardDescription>
-                  Manage your resume details and visibility
-                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {isEditing ? (
@@ -488,8 +488,8 @@ export default function ResumeDetailsPage({
                     <div className="flex items-center justify-between">
                       <div>
                         <Label htmlFor="visibility">Public Visibility</Label>
-                        <p className="text-sm text-gray-600">
-                          Allow others to find your resume
+                        <p className="text-sm text-gray-500">
+                          Allow others to view your resume
                         </p>
                       </div>
                       <Switch
@@ -520,14 +520,14 @@ export default function ResumeDetailsPage({
                   <>
                     <div className="space-y-3">
                       <div>
-                        <Label className="text-sm font-medium text-gray-600">
+                        <Label className="text-sm font-medium text-gray-500">
                           Title
                         </Label>
                         <p className="text-sm font-semibold">{resume?.title}</p>
                       </div>
 
                       <div>
-                        <Label className="text-sm font-medium text-gray-600">
+                        <Label className="text-sm font-medium text-gray-500">
                           Tags
                         </Label>
                         <div className="flex flex-wrap gap-1 mt-1">
@@ -551,23 +551,13 @@ export default function ResumeDetailsPage({
 
                       <div className="flex items-center justify-between">
                         <div>
-                          <Label className="text-sm font-medium text-gray-600">
+                          <Label className="text-sm font-medium text-gray-500">
                             Visibility
                           </Label>
                           <p className="text-sm">
                             {resume?.isPublic ? "Public" : "Private"}
                           </p>
                         </div>
-                        <Badge
-                          variant={resume?.isPublic ? "default" : "secondary"}
-                        >
-                          {resume?.isPublic ? (
-                            <Globe className="h-3 w-3 mr-1" />
-                          ) : (
-                            <Lock className="h-3 w-3 mr-1" />
-                          )}
-                          {resume?.isPublic ? "Public" : "Private"}
-                        </Badge>
                       </div>
                     </div>
 
@@ -584,7 +574,6 @@ export default function ResumeDetailsPage({
               </CardContent>
             </Card>
 
-            {/* Quick Actions */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -608,7 +597,7 @@ export default function ResumeDetailsPage({
                   onClick={() =>
                     DownloadResume(
                       `/api/resume-file?resume=${resume?._id}`,
-                      resume?.title
+                      `${resume?.title}.pdf`
                     )
                   }
                 >
@@ -640,8 +629,7 @@ export default function ResumeDetailsPage({
               </CardContent>
             </Card>
 
-            {/* Performance Insights
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <BarChart3 className="h-5 w-5" />
@@ -689,7 +677,6 @@ export default function ResumeDetailsPage({
           </div>
         </div>
 
-        {/* Delete Confirmation Dialog */}
         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
           <DialogContent>
             <DialogHeader>

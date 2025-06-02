@@ -6,9 +6,14 @@ import "@react-pdf-viewer/core/lib/styles/index.css";
 interface PdfViewerProps {
   fileUrl: string;
   preview?: boolean;
+  firstView?: string;
 }
 
-export default function PdfViewer({ fileUrl, preview }: PdfViewerProps) {
+export default function PdfViewer({
+  fileUrl,
+  preview,
+  firstView,
+}: PdfViewerProps) {
   return (
     <div className="h-full w-full border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm">
       <Worker
@@ -17,7 +22,9 @@ export default function PdfViewer({ fileUrl, preview }: PdfViewerProps) {
         <Viewer
           fileUrl={`/api/resume-file?resume=${fileUrl}${
             preview ? "&preview=true" : ""
-          }`}
+          }
+          ${firstView ? `&firstview=${firstView}` : ""}
+          `}
         />
       </Worker>
     </div>

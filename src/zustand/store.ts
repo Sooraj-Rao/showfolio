@@ -10,6 +10,8 @@ export interface IAuthUser {
   email: string;
   portfolio?: string;
   resumes?: IResume[];
+  createdAt: Date;
+  isActive: boolean;
 }
 
 type ZustandStore = {

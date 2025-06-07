@@ -32,6 +32,8 @@ export async function GET(req: NextRequest) {
       },
       imageUrl: user.imageUrl,
       resumes: user.resumes,
+      createdAt: user.createdAt,
+      isActive: user.isActive,
     });
   } catch (error) {
     console.error("Error fetching user data:", error);

@@ -223,12 +223,11 @@ export default function ResumeDetailsPage({
       }
     }
   };
-
   const handleDelete = async () => {
     try {
       setIsLoading(true);
       await axios.post("/api/resume", {
-        selectedResumes: [params.resume_id],
+        selectedResumes: params.resume_id,
         operation: "delete",
       });
 

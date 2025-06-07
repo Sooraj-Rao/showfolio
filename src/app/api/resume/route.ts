@@ -67,54 +67,52 @@ async function createResume(userId: string, body: CreateResumeBody) {
 }
 
 interface DeleteResumeBody {
-  selectedResumes: string[];
+  selectedResumes: string;
 }
 
 async function deleteResumes(userId: string, body: DeleteResumeBody) {
-  const { selectedResumes } = body;
+  try {
+    const { selectedResumes } = body;
 
-  if (!Array.isArray(selectedResumes) || selectedResumes.length === 0) {
-    return NextResponse.json({ error: "Invalid input" }, { status: 400 });
-  }
+    if (!selectedResumes) {
+      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+    }
 
-  const resumes = await Resume.find({
-    shortUrl: { $in: selectedResumes },
-    user: userId,
-  });
+    const resume = await Resume.findOne({
+      shortUrl: selectedResumes,
+      user: userId,
+    });
+    await deleteFileFromStorage(resume?.fileUrl);
 
-  for (const resume of resumes) {
-    try {
-      await deleteFileFromStorage(resume.fileUrl);
-    } catch (error) {
-      console.error(
-        `Failed to delete file for resume ${resume.shortUrl}:`,
-        error
+    const deletedResumes = await Resume.deleteOne({
+      shortUrl: selectedResumes,
+      user: userId,
+    });
+
+    await User.findByIdAndUpdate(userId, {
+      $pull: { resumes: resume._id },
+    });
+
+    if (deletedResumes.deletedCount === 0) {
+      return NextResponse.json(
+        { message: "No resumes were deleted" },
+        { status: 404 }
       );
     }
-  }
 
-  const deletedResumes = await Resume.deleteMany({
-    shortUrl: { $in: selectedResumes },
-    user: userId,
-  });
-
-  const resumeIdsToDelete = resumes.map((resume) => resume._id);
-
-  await User.findByIdAndUpdate(userId, {
-    $pull: { resumes: { $in: resumeIdsToDelete } },
-  });
-
-  if (deletedResumes.deletedCount === 0) {
+    return NextResponse.json({
+      message: `Successfully deleted resume`,
+      deletedCount: deletedResumes.deletedCount,
+    });
+  } catch (error) {
+    console.log(error);
     return NextResponse.json(
-      { message: "No resumes were deleted" },
-      { status: 404 }
+      {
+        message: `Internal Server Error`,
+      },
+      { status: 500 }
     );
   }
-
-  return NextResponse.json({
-    message: `Successfully deleted ${deletedResumes.deletedCount} resume(s)`,
-    deletedCount: deletedResumes.deletedCount,
-  });
 }
 
 export async function GET(req: NextRequest) {

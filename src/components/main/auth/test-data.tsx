@@ -13,8 +13,8 @@ const TestCredentials: React.FC<TestCredentialsProps> = ({
   onClose,
 }) => {
   // a@b.com
-  const demoEmail = "test@gmail.com";
-  const demoPassword = "test@gmail.com";
+  const demoEmail = "a@b.com";
+  const demoPassword = "a@b.com";
 
   const handleUseDemo = () => {
     onUse(demoEmail, demoPassword);

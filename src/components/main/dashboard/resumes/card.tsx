@@ -79,11 +79,12 @@ export function ResumeCard({ resume, searchQuery }: ResumeCardProps) {
               <span>{resume.analytics.views} views</span>
             </div>
             <div className="flex items-center gap-1">
-              <span>
+              <p>
+                <span className=" mr-1">Created</span>
                 {formatDistanceToNow(new Date(resume.createdAt), {
                   addSuffix: true,
                 })}
-              </span>
+              </p>
             </div>
           </div>
         </CardFooter>

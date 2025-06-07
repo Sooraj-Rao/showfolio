@@ -13,7 +13,6 @@ export async function GET(req: NextRequest) {
   }
 
   let fileUrl: string, title: string, user;
-  console.log(firstView);
   try {
     if (firstView) {
       const updatedResume = await Resume.findOneAndUpdate(
@@ -48,9 +47,8 @@ export async function GET(req: NextRequest) {
     }
 
     const res = await fetch(fileUrl);
-
     if (!res.ok) {
-      return new NextResponse("Failed to fetch PDF", { status: 500 });
+      return new NextResponse("Failed to fetch PDF", { status: 404 });
     }
 
     const buffer = await res.arrayBuffer();

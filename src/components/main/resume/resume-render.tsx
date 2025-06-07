@@ -6,8 +6,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import useGetResumeData from "@/app/hooks/use-getResumeData";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Download,
@@ -26,17 +25,17 @@ import PdfViewer from "@/app/(routes)/resume/(routes)/resumes/[resume_id]/pdf";
 import { ClickEvent } from "@/app/actions/analytics";
 import Cookies from "js-cookie";
 import TooltipWrapper from "./tooltip-wrapper";
+import { trackEvent } from "@/app/utils/track";
+import { useLocationBrowserData } from "./fetch-location";
 
-interface ResumeViewerProps {
-  shortUrl: string;
-}
-
-export default function ResumeViewer({ shortUrl }: ResumeViewerProps) {
+export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
   const { toast } = useToast();
   const router = useRouter();
   const { resumeData, fetchResumeData, isLoading, error } = useGetResumeData();
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [firstView] = useState(Cookies.get("firstView") || "true");
+  const { location, browser, fetchData } = useLocationBrowserData();
+
   const fetchResumeDataMemoized = useCallback(() => {
     if (shortUrl) {
       fetchResumeData({ shortUrl, operation: "ResumePreview" });
@@ -45,8 +44,11 @@ export default function ResumeViewer({ shortUrl }: ResumeViewerProps) {
 
   useEffect(() => {
     fetchResumeDataMemoized();
+    fetchData()
     Cookies.set("firstView", "false");
-  }, [fetchResumeDataMemoized]);
+    console.log({ location, browser });
+    // trackEvent("page_view", shortUrl);
+  }, [fetchResumeDataMemoized, shortUrl]);
 
   const trackDownload = async (event: string) => {
     await ClickEvent({ resume: shortUrl, event });
@@ -127,10 +129,7 @@ export default function ResumeViewer({ shortUrl }: ResumeViewerProps) {
         <Card className="w-full max-w-md p-4">
           <CardContent className="text-center p-4 space-y-2">
             <p className="text-gray-600">{error}</p>
-            <Button
-              onClick={() => router.push("/")}
-              className="w-full"
-            >
+            <Button onClick={() => router.push("/")} className="w-full">
               Explore ResumeOrg
             </Button>
           </CardContent>
@@ -170,7 +169,6 @@ export default function ResumeViewer({ shortUrl }: ResumeViewerProps) {
           </div>
         </div>
       </div>
-
       <div className="container mx-auto max-w-7xl p-4">
         <div
           className={`grid gap-6 ${

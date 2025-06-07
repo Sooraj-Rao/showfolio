@@ -18,10 +18,12 @@ import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import useResumes from "@/app/hooks/get-resumes";
+import { useRouter } from "next/navigation";
 
 export default function UploadPage() {
   const storage = getStorage(app);
   const { toast } = useToast();
+  const router = useRouter();
   const { resumes, fetchResumes } = useResumes();
   const [dragActive, setDragActive] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
@@ -50,7 +52,7 @@ export default function UploadPage() {
       setUploadProgress((prev) => ({ ...prev, [file.name]: 0 }));
 
       const metadata = { contentType: file.type };
-      const storageRef = ref(storage, `resumes/${file.name}`);
+      const storageRef = ref(storage, `resumes/${file.name}-${Date.now()}`);
       const uploadTask = uploadBytesResumable(storageRef, file, metadata);
 
       uploadTask.on(
@@ -101,12 +103,13 @@ export default function UploadPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title, fileUrl, fileType, operation: "create" }),
       });
-
+      const data = await response.json();
       if (!response.ok) {
         throw new Error("Failed to save resume to database");
       }
       setFiles([]);
       await fetchResumes();
+      router.push(`/resume/resumes/${data?.shortUrl ? data?.shortUrl : ""}`);
     } catch (error) {
       console.error("Error saving resume to database:", error);
       toast({

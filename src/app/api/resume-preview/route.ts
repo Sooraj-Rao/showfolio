@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import Resume from "@/models/resume";
 import User from "@/models/user";
 import { IUser } from "@/models/user";
@@ -21,7 +20,7 @@ export async function GET(req: NextRequest) {
 }
 
 async function getResumePreview(shortUrl: string) {
-  // console.log(User)
+  console.log(User)
   try {
     const resume = await Resume.findOne({ shortUrl }).populate({
       path: "user",

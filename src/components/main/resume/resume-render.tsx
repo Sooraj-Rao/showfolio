@@ -23,17 +23,15 @@ import {
 import { useRouter } from "next/navigation";
 import PdfViewer from "@/app/(routes)/resume/(routes)/resumes/[resume_id]/pdf";
 import { ClickEvent } from "@/app/actions/analytics";
-import Cookies from "js-cookie";
 import TooltipWrapper from "./tooltip-wrapper";
-import { useLocationBrowserData } from "./fetch-location";
+import Analytics from "../analytics/main";
 
 export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
   const { toast } = useToast();
   const router = useRouter();
   const { resumeData, fetchResumeData, isLoading, error } = useGetResumeData();
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const [firstView] = useState(Cookies.get("firstView") || "true");
-  const { location, browser } = useLocationBrowserData();
+  // const { location, device } = useLocationBrowserData();
 
   const fetchResumeDataMemoized = useCallback(() => {
     if (shortUrl) {
@@ -42,17 +40,13 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
   }, [fetchResumeData, shortUrl]);
 
   useEffect(() => {
-    fetchResumeDataMemoized();
-    Cookies.set("firstView", "false");
-   
-    // trackEvent("page_view", shortUrl);
+    if (!resumeData) fetchResumeDataMemoized();
   }, [fetchResumeDataMemoized, shortUrl]);
 
   const trackDownload = async (event: string) => {
     await ClickEvent({ resume: shortUrl, event });
   };
-console.log(location)
-console.log(browser)
+
   const handleDownload = () => {
     if (resumeData?.fileUrl) {
       const link = document.createElement("a");
@@ -139,6 +133,7 @@ console.log(browser)
 
   return (
     <div className="min-h-screen ">
+      <Analytics shortUrl={shortUrl} />
       <div className="shadow-sm hidden border-b">
         <div className="container mx-auto max-w-7xl px-4 py-4">
           <div className="flex items-center justify-between">
@@ -215,7 +210,6 @@ console.log(browser)
                   <PdfViewer
                     fileUrl={shortUrl}
                     preview={true}
-                    firstView={firstView}
                   />
                 </div>
               </CardContent>

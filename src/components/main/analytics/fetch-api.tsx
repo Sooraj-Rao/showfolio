@@ -12,15 +12,14 @@ interface LocationData {
   org?: string;
 }
 
-interface BrowserInfo {
+interface DeviceInfo {
   browser: string;
   platform: string;
-  userAgent: string;
 }
 
 export interface I_LocationBrowserData {
   location: LocationData | null;
-  browser: BrowserInfo | null;
+  device: DeviceInfo | null;
 }
 
 interface NavigatorUAData {
@@ -29,10 +28,12 @@ interface NavigatorUAData {
 }
 
 export const useLocationBrowserData = (): I_LocationBrowserData => {
+  const [isFetching, setisFetching] = useState(false);
   const [location, setLocation] = useState<LocationData | null>(null);
-  const [browser, setBrowser] = useState<BrowserInfo | null>(null);
+  const [device, setDevice] = useState<DeviceInfo | null>(null);
 
   const fetchData = async () => {
+    setisFetching(true);
     const nav = navigator;
     const ua = nav.userAgent;
 
@@ -47,17 +48,16 @@ export const useLocationBrowserData = (): I_LocationBrowserData => {
 
     if ("userAgentData" in nav && nav.userAgentData) {
       const uaData = nav.userAgentData as NavigatorUAData;
-      const brands = uaData.brands.map((b) => b.brand).join(", ");
-      setBrowser({
+      const brands =
+        uaData.brands[0]?.brand ?? uaData.brands.map((b) => b.brand).join(", ");
+      setDevice({
         browser: brands,
         platform: uaData.platform,
-        userAgent: ua,
       });
     } else {
-      setBrowser({
+      setDevice({
         browser: detectBrowserFromUA(ua),
         platform: nav.platform,
-        userAgent: ua,
       });
     }
 
@@ -66,18 +66,21 @@ export const useLocationBrowserData = (): I_LocationBrowserData => {
       setLocation(JSON.parse(stored));
     } else {
       try {
-        const res = await axios.get("https://ipinfo.io/json");
+        console.log('going')
+        const res = await axios.get("/api/loc");
         localStorage.setItem("location", JSON.stringify(res.data));
         setLocation(res.data);
       } catch (err) {
         console.error("Failed to fetch location:", err);
       }
     }
+
+    setisFetching(false);
   };
 
   useEffect(() => {
-    fetchData();
+    if (!location || (!device && !isFetching)) fetchData();
   }, []);
 
-  return { location, browser };
+  return { location, device };
 };

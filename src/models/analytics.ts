@@ -10,6 +10,7 @@ const AnalyticsSchema = new Schema(
     browser: String,
     city: String,
     country: String,
+    region: String,
   },
   { timestamps: true }
 );

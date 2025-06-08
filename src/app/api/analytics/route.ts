@@ -8,18 +8,14 @@ export async function POST(req: NextRequest) {
   try {
     await connectDB();
 
-    const {
-      resumeId: shortUrl,
-      event,
-      data: { os, browser, city, country },
-    } = await req.json();
+    const { resumeId: shortUrl, event, data } = await req.json();
 
     const referrer = req.headers.get("referer") || "direct";
     const userAgent = req.headers.get("user-agent") || "";
-
+    const { location, device } = data;
     const parser = new UAParser();
     parser.setUA(userAgent);
-    const device = parser.getDevice()?.type || "desktop";
+    const deviceType = parser.getDevice()?.type || "desktop";
 
     const resumeData = await Resume.findOne({ shortUrl });
     if (!resumeData) return NextResponse.json({ success: false });
@@ -28,11 +24,12 @@ export async function POST(req: NextRequest) {
       resume: resumeData._id,
       event,
       referrer,
-      device,
-      os,
-      browser,
-      city,
-      country,
+      device:deviceType,
+      os: device.platform,
+      browser: device.browser,
+      city: location.city,
+      country: location.country,
+      region: location.region,
     });
 
     console.log("Analytics created:", analyticsEntry);

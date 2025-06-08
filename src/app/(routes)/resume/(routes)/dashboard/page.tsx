@@ -13,11 +13,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   Eye,
-  Share2,
   Download,
   Upload,
   FileText,
-  TrendingUp,
   Settings,
   Globe,
   Lock,
@@ -26,10 +24,8 @@ import {
   Shield,
   ExternalLink,
   MoreVertical,
-  Plus,
   BarChart3,
   Clock,
-  User,
   LucideShare2,
 } from "lucide-react";
 import Link from "next/link";

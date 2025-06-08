@@ -25,7 +25,6 @@ import PdfViewer from "@/app/(routes)/resume/(routes)/resumes/[resume_id]/pdf";
 import { ClickEvent } from "@/app/actions/analytics";
 import Cookies from "js-cookie";
 import TooltipWrapper from "./tooltip-wrapper";
-import { trackEvent } from "@/app/utils/track";
 import { useLocationBrowserData } from "./fetch-location";
 
 export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
@@ -34,7 +33,7 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
   const { resumeData, fetchResumeData, isLoading, error } = useGetResumeData();
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [firstView] = useState(Cookies.get("firstView") || "true");
-  const { location, browser, fetchData } = useLocationBrowserData();
+  const { location, browser } = useLocationBrowserData();
 
   const fetchResumeDataMemoized = useCallback(() => {
     if (shortUrl) {
@@ -44,16 +43,16 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
 
   useEffect(() => {
     fetchResumeDataMemoized();
-    fetchData()
     Cookies.set("firstView", "false");
-    console.log({ location, browser });
+   
     // trackEvent("page_view", shortUrl);
   }, [fetchResumeDataMemoized, shortUrl]);
 
   const trackDownload = async (event: string) => {
     await ClickEvent({ resume: shortUrl, event });
   };
-
+console.log(location)
+console.log(browser)
   const handleDownload = () => {
     if (resumeData?.fileUrl) {
       const link = document.createElement("a");

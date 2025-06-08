@@ -5,7 +5,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Eye, File, Timer } from "lucide-react";
+import { Eye, File } from "lucide-react";
 import Link from "next/link";
 
 import type { IResume } from "@/models/resume";

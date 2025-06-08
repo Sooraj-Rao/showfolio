@@ -8,7 +8,11 @@ export async function POST(req: NextRequest) {
   try {
     await connectDB();
 
-    const { resumeId: shortUrl, event, data } = await req.json();
+    const {
+      resumeId: shortUrl,
+      event,
+      data: { os, browser, city, country },
+    } = await req.json();
 
     const referrer = req.headers.get("referer") || "direct";
     const userAgent = req.headers.get("user-agent") || "";
@@ -17,22 +21,18 @@ export async function POST(req: NextRequest) {
     parser.setUA(userAgent);
     const device = parser.getDevice()?.type || "desktop";
 
-
-
     const resumeData = await Resume.findOne({ shortUrl });
     if (!resumeData) return NextResponse.json({ success: false });
 
     const analyticsEntry = await Analytics.create({
       resume: resumeData._id,
       event,
-      userAgent,
       referrer,
       device,
-      region,
-
-      // Save client-sent location/browser data
-      location: data.location || {},
-      browser: data.browser || {},
+      os,
+      browser,
+      city,
+      country,
     });
 
     console.log("Analytics created:", analyticsEntry);

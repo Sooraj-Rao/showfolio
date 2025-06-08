@@ -114,8 +114,8 @@ export default function ResumesPage() {
     return <ResumeCardSkeleton />;
   }
 
-  let tags = [];
-  resumes.map((item, i) => {
+  const tags = [];
+  resumes.map((item) => {
     if (item.tags.length != 0) {
       item.tags.forEach((tag) => {
         tags.push(tag);

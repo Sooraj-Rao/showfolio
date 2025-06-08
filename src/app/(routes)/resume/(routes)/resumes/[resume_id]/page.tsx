@@ -5,26 +5,12 @@ import type React from "react";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -39,7 +25,6 @@ import {
   Share2,
   Pencil,
   Trash2,
-  MoreVertical,
   FileText,
   Loader2,
   ArrowLeft,
@@ -50,7 +35,6 @@ import {
   Calendar,
   Globe,
   Lock,
-  Copy,
   BarChart3,
   Clock,
   Star,
@@ -66,7 +50,7 @@ import PdfViewer from "./pdf";
 
 interface TagInputProps {
   tags: string[];
-  setTags: React.Dispatch<React.SetStateAction<string[]>>;
+  setTags: ([]) => void;
 }
 
 function TagInput({ tags, setTags }: TagInputProps) {
@@ -204,7 +188,7 @@ export default function ResumeDetailsPage({
         throw new Error("Failed to update resume. Please try again.");
       }
 
-      setResume((prev) => (prev ? { ...prev, ...updateFields } : null));
+      // setResume((prev) => (prev ? { ...prev, ...updateFields } : null));
 
       const updatedResumes = resumes?.map((item) =>
         item.shortUrl === resume.shortUrl ? { ...item, ...updateFields } : item
@@ -259,7 +243,7 @@ export default function ResumeDetailsPage({
         title: "Link copied!",
         description: "Resume share link copied to clipboard.",
       });
-    } catch (err) {
+    } catch {
       toast({
         title: "Failed to copy",
         description: "Please copy the link manually.",
@@ -681,7 +665,7 @@ export default function ResumeDetailsPage({
             <DialogHeader>
               <DialogTitle>Delete Resume</DialogTitle>
               <DialogDescription>
-                Are you sure you want to delete "{resume?.title}"? This action
+                Are you sure you want to delete {resume?.title}? This action
                 cannot be undone and will permanently remove your resume and all
                 its analytics data.
               </DialogDescription>

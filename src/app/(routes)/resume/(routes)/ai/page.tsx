@@ -16,7 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { Zap, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { FormEvent, useEffect, useState } from "react";

@@ -70,6 +70,7 @@ export default function SettingsPage() {
       }
 
       setUserData({
+        ...userData,
         email,
         name,
         private: { portfolio: isPrivatePortfolio, profile: isPrivateProfile },

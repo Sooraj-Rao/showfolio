@@ -21,7 +21,11 @@ interface BrowserInfo {
 export interface I_LocationBrowserData {
   location: LocationData | null;
   browser: BrowserInfo | null;
-  fetchData: () => void;
+}
+
+interface NavigatorUAData {
+  brands: { brand: string; version: string }[];
+  platform: string;
 }
 
 export const useLocationBrowserData = (): I_LocationBrowserData => {
@@ -29,7 +33,6 @@ export const useLocationBrowserData = (): I_LocationBrowserData => {
   const [browser, setBrowser] = useState<BrowserInfo | null>(null);
 
   const fetchData = async () => {
-    // --- browser info
     const nav = navigator;
     const ua = nav.userAgent;
 
@@ -43,10 +46,11 @@ export const useLocationBrowserData = (): I_LocationBrowserData => {
     };
 
     if ("userAgentData" in nav && nav.userAgentData) {
-      const brands = nav.userAgentData.brands.map((b) => b.brand).join(", ");
+      const uaData = nav.userAgentData as NavigatorUAData;
+      const brands = uaData.brands.map((b) => b.brand).join(", ");
       setBrowser({
         browser: brands,
-        platform: nav.userAgentData.platform,
+        platform: uaData.platform,
         userAgent: ua,
       });
     } else {
@@ -57,15 +61,12 @@ export const useLocationBrowserData = (): I_LocationBrowserData => {
       });
     }
 
-    // --- location info
     const stored = localStorage.getItem("location");
     if (stored) {
       setLocation(JSON.parse(stored));
     } else {
       try {
-        const res = await axios.get(
-          "https://ipinfo.io/json"
-        );
+        const res = await axios.get("https://ipinfo.io/json");
         localStorage.setItem("location", JSON.stringify(res.data));
         setLocation(res.data);
       } catch (err) {
@@ -78,5 +79,5 @@ export const useLocationBrowserData = (): I_LocationBrowserData => {
     fetchData();
   }, []);
 
-  return { location, browser, fetchData };
+  return { location, browser };
 };

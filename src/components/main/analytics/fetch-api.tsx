@@ -60,7 +60,6 @@ export const FetchLocationBrowserData = async () => {
     location = JSON.parse(stored);
   } else {
     try {
-      console.log("going");
       const res = await axios.get("/api/loc");
       localStorage.setItem("location", JSON.stringify(res.data));
       location = res.data;

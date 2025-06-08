@@ -7,10 +7,7 @@ export interface FetchDataParams {
   resumeId: string;
 }
 
-export const AnalyticsData = async ({
-  event,
-  resumeId,
-}: FetchDataParams) => {
+export const AnalyticsData = async ({ event, resumeId }: FetchDataParams) => {
   const isSameEvent = Cookies.get(event);
   if (isSameEvent == resumeId) return;
   if (!resumeId) return;
@@ -18,7 +15,7 @@ export const AnalyticsData = async ({
   const data = await FetchLocationBrowserData();
 
   try {
-    const response = await fetch("/api/analytics", {
+    const response = await fetch("/api/analytics-api", {
       method: "POST",
       body: JSON.stringify({ event, resumeId, data }),
       headers: { "Content-Type": "application/json" },
@@ -27,7 +24,5 @@ export const AnalyticsData = async ({
     if (res.success) {
       Cookies.set(event, resumeId);
     }
-  } catch (err) {
-    console.log(err);
-  }
+  } catch {}
 };

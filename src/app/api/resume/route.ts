@@ -104,8 +104,7 @@ async function deleteResumes(userId: string, body: DeleteResumeBody) {
       message: `Successfully deleted resume`,
       deletedCount: deletedResumes.deletedCount,
     });
-  } catch (error) {
-    console.log(error);
+  } catch  {
     return NextResponse.json(
       {
         message: `Internal Server Error`,

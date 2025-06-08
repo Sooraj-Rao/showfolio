@@ -14,7 +14,6 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // await connectDB();
     await Resume.countDocuments();
     const user = await User.findById(userId)
       .select("-password")
@@ -61,7 +60,6 @@ export async function PUT(req: NextRequest) {
         { isActive: false },
         { new: true }
       ).select("-password");
-      console.log(user?.isActive);
       if (!user) {
         return NextResponse.json({ error: "User not found" }, { status: 404 });
       }

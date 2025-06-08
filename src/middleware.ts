@@ -40,5 +40,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/user", "/api/resume"], // Include auth/login in the matcher
+  matcher: ["/api/user", "/api/resume", "/api/analytics"],
 };

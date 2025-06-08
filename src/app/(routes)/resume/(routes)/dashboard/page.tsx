@@ -1,477 +1,488 @@
-"use client";
+// "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Eye,
-  Download,
-  Upload,
-  FileText,
-  Settings,
-  Globe,
-  Lock,
-  Calendar,
-  Brain,
-  Shield,
-  ExternalLink,
-  MoreVertical,
-  BarChart3,
-  Clock,
-  LucideShare2,
-} from "lucide-react";
-import Link from "next/link";
-import { useZustandStore } from "@/zustand/store";
-import useGetUserData from "@/app/hooks/use-getUserData";
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+// import { Badge } from "@/components/ui/badge";
+// import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+// import { Separator } from "@/components/ui/separator";
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+//   DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu";
+// import {
+//   Eye,
+//   Download,
+//   Upload,
+//   FileText,
+//   Settings,
+//   Globe,
+//   Lock,
+//   Calendar,
+//   Brain,
+//   Shield,
+//   ExternalLink,
+//   MoreVertical,
+//   BarChart3,
+//   Clock,
+//   LucideShare2,
+// } from "lucide-react";
+// import Link from "next/link";
+// import { useZustandStore } from "@/zustand/store";
+// import useGetUserData from "@/app/hooks/use-getUserData";
 
-export default function ResumeDashboard() {
-  useGetUserData();
-  const { userData } = useZustandStore();
-  const resumeData = userData?.resumes;
-  const totalResumes = resumeData?.length;
-  const publicResumes =
-    resumeData?.length !== 0 ? resumeData?.filter((r) => r.isPublic).length : 0;
-  const privateResumes = totalResumes - publicResumes;
-  const totalViews =
-    resumeData?.length !== 0
-      ? resumeData?.reduce((sum, r) => sum + r.analytics.views, 0)
-      : 0;
-  const totalDownloads =
-    resumeData?.length !== 0
-      ? resumeData?.reduce((sum, r) => sum + r.analytics.downloads, 0)
-      : 0;
-  const totalShares =
-    resumeData?.length !== 0
-      ? resumeData?.reduce((sum, r) => sum + r.analytics.shares, 0)
-      : 0;
+// export default function ResumeDashboard() {
+//   useGetUserData();
+//   const { userData } = useZustandStore();
+//   const resumeData = userData?.resumes;
+//   const totalResumes = resumeData?.length;
+//   const publicResumes =
+//     resumeData?.length !== 0 ? resumeData?.filter((r) => r.isPublic).length : 0;
+//   const privateResumes = totalResumes - publicResumes;
+//   const totalViews =
+//     resumeData?.length !== 0
+//       ? resumeData?.reduce((sum, r) => sum + r.analytics.views, 0)
+//       : 0;
+//   const totalDownloads =
+//     resumeData?.length !== 0
+//       ? resumeData?.reduce((sum, r) => sum + r.analytics.downloads, 0)
+//       : 0;
+//   const totalShares =
+//     resumeData?.length !== 0
+//       ? resumeData?.reduce((sum, r) => sum + r.analytics.shares, 0)
+//       : 0;
 
-  const daysSinceJoined = Math.floor(
-    (new Date().getTime() - new Date(userData?.createdAt).getTime()) /
-      (1000 * 60 * 60 * 24)
-  );
+//   const daysSinceJoined = Math.floor(
+//     (new Date().getTime() - new Date(userData?.createdAt).getTime()) /
+//       (1000 * 60 * 60 * 24)
+//   );
 
-  if (!userData) {
-    return <h1>Loading..</h1>;
-  }
+//   if (!userData) {
+//     return <h1>Loading..</h1>;
+//   }
 
-  const hotResume = Array.isArray(resumeData) 
-  ? resumeData.reduce((max, item) => {
-      const views = item?.analytics?.views ?? 0;
-      return views > (max?.analytics?.views ?? 0) ? item : max;
-    }, null)
-  : null;
+//   const hotResume = Array.isArray(resumeData) 
+//   ? resumeData.reduce((max, item) => {
+//       const views = item?.analytics?.views ?? 0;
+//       return views > (max?.analytics?.views ?? 0) ? item : max;
+//     }, null)
+//   : null;
 
 
+//   return (
+//     <div className="min-h-screen  p-6">
+//       <div className="max-w-6xl mx-auto space-y-6">
+//         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+//           <div className="flex items-center gap-4">
+//             <Avatar className="h-16 w-16 border-4 border-white shadow-lg">
+//               <AvatarFallback className="text-lg font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+//                 {userData?.name?.charAt(0).toUpperCase()}
+//               </AvatarFallback>
+//             </Avatar>
+//             <div>
+//               <h1 className="text-3xl font-bold  capitalize">
+//                 Welcome back, {userData?.name}!
+//               </h1>
+//               <p className="text-gray-600 flex items-center gap-2">
+//                 <Calendar className="h-4 w-4" />
+//                 Member for {daysSinceJoined} days
+//               </p>
+//             </div>
+//           </div>
+
+//           <div className="flex items-center gap-3">
+//             <Badge
+//               variant={userData?.isActive ? "default" : "secondary"}
+//               className="flex items-center gap-1"
+//             >
+//               <div
+//                 className={`w-2 h-2 rounded-full ${
+//                   userData?.isActive ? "bg-green-500" : "bg-gray-400"
+//                 }`}
+//               />
+//               {userData?.isActive ? "Active" : "Inactive"}
+//             </Badge>
+//           </div>
+//         </div>
+
+//         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+//           <Card>
+//             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+//               <CardTitle className="text-sm font-medium">
+//                 Total Resumes
+//               </CardTitle>
+//               <FileText className="h-4 w-4 text-green-500" />
+//             </CardHeader>
+//             <CardContent>
+//               <div className="text-2xl font-bold">{totalResumes}</div>
+//               <p className="text-xs text-muted-foreground">
+//                 {publicResumes} public, {privateResumes} private
+//               </p>
+//             </CardContent>
+//           </Card>
+
+//           <Card>
+//             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+//               <CardTitle className="text-sm font-medium">Total Views</CardTitle>
+//               <Eye className="h-4 w-4 text-purple-500" />
+//             </CardHeader>
+//             <CardContent>
+//               <div className="text-2xl font-bold">{totalViews}</div>
+//               <p className="text-xs text-muted-foreground">
+//                 {totalViews === 0
+//                   ? "Share your resume to get views"
+//                   : "Across all resumes"}
+//               </p>
+//             </CardContent>
+//           </Card>
+
+//           <Card>
+//             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+//               <CardTitle className="text-sm font-medium">Downloads</CardTitle>
+//               <Download className="h-4 w-4 text-orange-500" />
+//             </CardHeader>
+//             <CardContent>
+//               <div className="text-2xl font-bold">{totalDownloads}</div>
+//               <p className="text-xs text-muted-foreground">
+//                 {totalDownloads === 0 ? "No downloads yet" : "Total downloads"}
+//               </p>
+//             </CardContent>
+//           </Card>
+//           <Card>
+//             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+//               <CardTitle className="text-sm font-medium">Shares</CardTitle>
+//               <LucideShare2 className="h-4 w-4 text-blue-500" />
+//             </CardHeader>
+//             <CardContent>
+//               <div className="text-2xl font-bold">{totalShares}</div>
+//               <p className="text-xs text-muted-foreground">
+//                 {totalShares === 0 ? "No downloads yet" : "Total shares"}
+//               </p>
+//             </CardContent>
+//           </Card>
+//         </div>
+
+//         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+//           <div className="lg:col-span-2 space-y-6">
+//             {hotResume !== null && (
+//               <Card>
+//                 <CardHeader>
+//                   <div className="flex items-center justify-between">
+//                     <CardTitle className="flex items-center gap-2">
+//                       <FileText className="h-5 w-5" />
+//                       Hot Resume
+//                     </CardTitle>
+//                   </div>
+//                 </CardHeader>
+//                 <CardContent>
+//                   <div className="space-y-4">
+//                     {resumeData?.length !== 0 &&
+//                       Array(
+//                         resumeData?.find(
+//                           (item) => item?.shortUrl == hotResume?.shortUrl
+//                         )
+//                       ).map((resume, i) => (
+//                         <div
+//                           key={i}
+//                           className="flex items-center justify-between p-4 border rounded-lg transition-colors"
+//                         >
+//                           <div className="flex items-center gap-4">
+//                             <div className="w-12 h-12  rounded-lg flex items-center justify-center">
+//                               <FileText className="h-6 w-6 text-blue-600" />
+//                             </div>
+//                             <div>
+//                               <h3 className="font-medium">{resume?.title}</h3>
+//                               <div className="flex items-center gap-2 mt-1">
+//                                 <Badge
+//                                   variant={
+//                                     resume?.isPublic ? "default" : "secondary"
+//                                   }
+//                                   className="text-xs"
+//                                 >
+//                                   {resume?.isPublic ? (
+//                                     <>
+//                                       <Globe className="h-3 w-3 mr-1" />
+//                                       Public
+//                                     </>
+//                                   ) : (
+//                                     <>
+//                                       <Lock className="h-3 w-3 mr-1" />
+//                                       Private
+//                                     </>
+//                                   )}
+//                                 </Badge>
+//                                 {resume?.passwordProtected && (
+//                                   <Badge variant="outline" className="text-xs">
+//                                     <Shield className="h-3 w-3 mr-1" />
+//                                     Protected
+//                                   </Badge>
+//                                 )}
+//                                 <span className="text-xs text-gray-500">
+//                                   Created{" "}
+//                                   {new Date(
+//                                     resume?.createdAt
+//                                   ).toLocaleDateString()}
+//                                 </span>
+//                               </div>
+//                             </div>
+//                           </div>
+
+//                           <div className="flex items-center gap-2">
+//                             <div className="text-right text-sm">
+//                               <div className="font-medium">
+//                                 {resume?.analytics?.views} views
+//                               </div>
+//                               <div className="text-gray-500">
+//                                 {resume?.analytics?.downloads} downloads
+//                               </div>
+//                             </div>
+
+//                             <DropdownMenu>
+//                               <DropdownMenuTrigger asChild>
+//                                 <Button variant="ghost" size="icon">
+//                                   <MoreVertical className="h-4 w-4" />
+//                                 </Button>
+//                               </DropdownMenuTrigger>
+//                               <DropdownMenuContent align="end">
+//                                 <DropdownMenuItem asChild>
+//                                   <Link
+//                                     href={`/${resume?.shortUrl}`}
+//                                     target="_blank"
+//                                   >
+//                                     <ExternalLink className="mr-2 h-4 w-4" />
+//                                     View Live
+//                                   </Link>
+//                                 </DropdownMenuItem>
+//                                 <DropdownMenuItem asChild>
+//                                   <Link
+//                                     href={`/resume/resumes/${resume?.shortUrl}`}
+//                                   >
+//                                     <BarChart3 className="mr-2 h-4 w-4" />
+//                                     View Details
+//                                   </Link>
+//                                 </DropdownMenuItem>
+//                               </DropdownMenuContent>
+//                             </DropdownMenu>
+//                           </div>
+//                         </div>
+//                       ))}
+//                     {resumeData?.length > 1 && (
+//                       <p className=" text-xs">
+//                         Check more
+//                         <Link
+//                           className="text-primary ml-1 "
+//                           href={"/resume/resumes"}
+//                         >
+//                           Resumes
+//                         </Link>
+//                       </p>
+//                     )}
+//                   </div>
+//                 </CardContent>
+//               </Card>
+//             )}
+
+//             {/* <Card>
+//               <CardHeader>
+//                 <CardTitle className="flex items-center gap-2">
+//                   <TrendingUp className="h-5 w-5" />
+//                   Analytics Overview
+//                 </CardTitle>
+//               </CardHeader>
+//               <CardContent>
+//                 {totalViews === 0 ? (
+//                   <div className="text-center py-8">
+//                     <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+//                     <h3 className="text-lg font-medium text-gray-900 mb-2">
+//                       No analytics data yet
+//                     </h3>
+//                     <p className="text-gray-600 mb-4">
+//                       Share your resume to start collecting analytics data
+//                     </p>
+//                     <Button
+//                       variant="outline"
+//                       onClick={() => copyShareLink(resumeData[0].shortUrl)}
+//                       className="mx-auto"
+//                     >
+//                       <Share2 className="h-4 w-4 mr-2" />
+//                       Share Your Resume
+//                     </Button>
+//                   </div>
+//                 ) : (
+//                   <div className="grid grid-cols-3 gap-4">
+//                     <div className="text-center">
+//                       <div className="text-2xl font-bold text-blue-600">
+//                         {totalViews}
+//                       </div>
+//                       <div className="text-sm text-gray-600">Total Views</div>
+//                     </div>
+//                     <div className="text-center">
+//                       <div className="text-2xl font-bold text-green-600">
+//                         {totalDownloads}
+//                       </div>
+//                       <div className="text-sm text-gray-600">Downloads</div>
+//                     </div>
+//                     <div className="text-center">
+//                       <div className="text-2xl font-bold text-purple-600">
+//                         {totalShares}
+//                       </div>
+//                       <div className="text-sm text-gray-600">Shares</div>
+//                     </div>
+//                   </div>
+//                 )}
+//               </CardContent>
+//             </Card> */}
+//             <Card>
+//               <CardHeader>
+//                 <CardTitle className="text-lg">Account Information</CardTitle>
+//               </CardHeader>
+//               <CardContent className="space-y-4">
+//                 <div className="space-y-3">
+//                   <div>
+//                     <label className="text-sm font-medium text-gray-600">
+//                       Email
+//                     </label>
+//                     <p className="text-sm">{userData.email}</p>
+//                   </div>
+//                 </div>
+
+//                 <Separator />
+
+//                 <div>
+//                   <h4 className="text-sm font-medium text-gray-600 mb-2">
+//                     Privacy Settings
+//                   </h4>
+//                   <div className="space-y-2">
+//                     <div className="flex items-center justify-between text-sm">
+//                       <span>Profile</span>
+//                       <Badge
+//                         variant={
+//                           userData.private.profile ? "secondary" : "default"
+//                         }
+//                       >
+//                         {userData.private.profile ? (
+//                           <>
+//                             <Lock className="h-3 w-3 mr-1" />
+//                             Private
+//                           </>
+//                         ) : (
+//                           <>
+//                             <Globe className="h-3 w-3 mr-1" />
+//                             Public
+//                           </>
+//                         )}
+//                       </Badge>
+//                     </div>
+//                     <div className="flex items-center justify-between text-sm">
+//                       <span>Portfolio</span>
+//                       <Badge
+//                         variant={
+//                           userData.private.portfolio ? "secondary" : "default"
+//                         }
+//                       >
+//                         {userData.private.portfolio ? (
+//                           <>
+//                             <Lock className="h-3 w-3 mr-1" />
+//                             Private
+//                           </>
+//                         ) : (
+//                           <>
+//                             <Globe className="h-3 w-3 mr-1" />
+//                             Public
+//                           </>
+//                         )}
+//                       </Badge>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </CardContent>
+//             </Card>
+//           </div>
+
+//           <div className="space-y-6">
+//             <Card>
+//               <CardHeader>
+//                 <CardTitle className="text-lg">Quick Actions</CardTitle>
+//               </CardHeader>
+//               <CardContent className="space-y-3">
+//                 <Button className="w-full justify-start" asChild>
+//                   <Link href="/resume/upload">
+//                     <Upload className="mr-2 h-4 w-4" />
+//                     Upload New Resume
+//                   </Link>
+//                 </Button>
+//                 <Button
+//                   variant="outline"
+//                   className="w-full justify-start"
+//                   asChild
+//                 >
+//                   <Link href="/resume/ai">
+//                     <Brain className="mr-2 h-4 w-4" />
+//                     AI Resume Analysis
+//                   </Link>
+//                 </Button>
+//                 <Button variant="outline" className="w-full justify-start">
+//                   <BarChart3 className="mr-2 h-4 w-4" />
+//                   View All Analytics
+//                 </Button>
+//                 <Button variant="outline" className="w-full justify-start">
+//                   <Settings className="mr-2 h-4 w-4" />
+//                   Account Settings
+//                 </Button>
+//               </CardContent>
+//             </Card>
+
+//             <Card>
+//               <CardHeader>
+//                 <CardTitle className="flex items-center gap-2">
+//                   <Clock className="h-5 w-5" />
+//                   Recent Activity
+//                 </CardTitle>
+//               </CardHeader>
+//               <CardContent>
+//                 <div className="space-y-3">
+//                   <div className="flex items-center gap-3 text-sm">
+//                     <Upload className="h-4 w-4 text-green-500" />
+//                     <div>
+//                       <p className="font-medium">Resume uploaded</p>
+//                       <p className="text-gray-500">
+//                         {resumeData?.length !== 0 &&
+//                           new Date(
+//                             resumeData?.find(
+//                               (item) => item?.shortUrl == hotResume?.shortUrl
+//                             )?.createdAt
+//                           ).toLocaleDateString()}
+//                       </p>
+//                     </div>
+//                   </div>
+//                   {totalViews === 0 && totalDownloads === 0 ? (
+//                     <div className="text-center py-4">
+//                       <p className="text-sm text-gray-500">
+//                         No recent activity
+//                       </p>
+//                       <p className="text-xs text-gray-400">
+//                         Share your resume to see activity here
+//                       </p>
+//                     </div>
+//                   ) : null}
+//                 </div>
+//               </CardContent>
+//             </Card>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+import React from 'react'
+
+const Page = () => {
   return (
-    <div className="min-h-screen  p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <Avatar className="h-16 w-16 border-4 border-white shadow-lg">
-              <AvatarFallback className="text-lg font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
-                {userData?.name?.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <h1 className="text-3xl font-bold  capitalize">
-                Welcome back, {userData?.name}!
-              </h1>
-              <p className="text-gray-600 flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Member for {daysSinceJoined} days
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Badge
-              variant={userData?.isActive ? "default" : "secondary"}
-              className="flex items-center gap-1"
-            >
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  userData?.isActive ? "bg-green-500" : "bg-gray-400"
-                }`}
-              />
-              {userData?.isActive ? "Active" : "Inactive"}
-            </Badge>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total Resumes
-              </CardTitle>
-              <FileText className="h-4 w-4 text-green-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalResumes}</div>
-              <p className="text-xs text-muted-foreground">
-                {publicResumes} public, {privateResumes} private
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Views</CardTitle>
-              <Eye className="h-4 w-4 text-purple-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalViews}</div>
-              <p className="text-xs text-muted-foreground">
-                {totalViews === 0
-                  ? "Share your resume to get views"
-                  : "Across all resumes"}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Downloads</CardTitle>
-              <Download className="h-4 w-4 text-orange-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalDownloads}</div>
-              <p className="text-xs text-muted-foreground">
-                {totalDownloads === 0 ? "No downloads yet" : "Total downloads"}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Shares</CardTitle>
-              <LucideShare2 className="h-4 w-4 text-blue-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalShares}</div>
-              <p className="text-xs text-muted-foreground">
-                {totalShares === 0 ? "No downloads yet" : "Total shares"}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            {hotResume !== null && (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2">
-                      <FileText className="h-5 w-5" />
-                      Hot Resume
-                    </CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {resumeData?.length !== 0 &&
-                      Array(
-                        resumeData?.find(
-                          (item) => item?.shortUrl == hotResume?.shortUrl
-                        )
-                      ).map((resume, i) => (
-                        <div
-                          key={i}
-                          className="flex items-center justify-between p-4 border rounded-lg transition-colors"
-                        >
-                          <div className="flex items-center gap-4">
-                            <div className="w-12 h-12  rounded-lg flex items-center justify-center">
-                              <FileText className="h-6 w-6 text-blue-600" />
-                            </div>
-                            <div>
-                              <h3 className="font-medium">{resume?.title}</h3>
-                              <div className="flex items-center gap-2 mt-1">
-                                <Badge
-                                  variant={
-                                    resume?.isPublic ? "default" : "secondary"
-                                  }
-                                  className="text-xs"
-                                >
-                                  {resume?.isPublic ? (
-                                    <>
-                                      <Globe className="h-3 w-3 mr-1" />
-                                      Public
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Lock className="h-3 w-3 mr-1" />
-                                      Private
-                                    </>
-                                  )}
-                                </Badge>
-                                {resume?.passwordProtected && (
-                                  <Badge variant="outline" className="text-xs">
-                                    <Shield className="h-3 w-3 mr-1" />
-                                    Protected
-                                  </Badge>
-                                )}
-                                <span className="text-xs text-gray-500">
-                                  Created{" "}
-                                  {new Date(
-                                    resume?.createdAt
-                                  ).toLocaleDateString()}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-2">
-                            <div className="text-right text-sm">
-                              <div className="font-medium">
-                                {resume?.analytics?.views} views
-                              </div>
-                              <div className="text-gray-500">
-                                {resume?.analytics?.downloads} downloads
-                              </div>
-                            </div>
-
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                  <MoreVertical className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem asChild>
-                                  <Link
-                                    href={`/${resume?.shortUrl}`}
-                                    target="_blank"
-                                  >
-                                    <ExternalLink className="mr-2 h-4 w-4" />
-                                    View Live
-                                  </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem asChild>
-                                  <Link
-                                    href={`/resume/resumes/${resume?.shortUrl}`}
-                                  >
-                                    <BarChart3 className="mr-2 h-4 w-4" />
-                                    View Details
-                                  </Link>
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
-                        </div>
-                      ))}
-                    {resumeData?.length > 1 && (
-                      <p className=" text-xs">
-                        Check more
-                        <Link
-                          className="text-primary ml-1 "
-                          href={"/resume/resumes"}
-                        >
-                          Resumes
-                        </Link>
-                      </p>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5" />
-                  Analytics Overview
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {totalViews === 0 ? (
-                  <div className="text-center py-8">
-                    <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No analytics data yet
-                    </h3>
-                    <p className="text-gray-600 mb-4">
-                      Share your resume to start collecting analytics data
-                    </p>
-                    <Button
-                      variant="outline"
-                      onClick={() => copyShareLink(resumeData[0].shortUrl)}
-                      className="mx-auto"
-                    >
-                      <Share2 className="h-4 w-4 mr-2" />
-                      Share Your Resume
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">
-                        {totalViews}
-                      </div>
-                      <div className="text-sm text-gray-600">Total Views</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">
-                        {totalDownloads}
-                      </div>
-                      <div className="text-sm text-gray-600">Downloads</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-600">
-                        {totalShares}
-                      </div>
-                      <div className="text-sm text-gray-600">Shares</div>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card> */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Account Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Email
-                    </label>
-                    <p className="text-sm">{userData.email}</p>
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div>
-                  <h4 className="text-sm font-medium text-gray-600 mb-2">
-                    Privacy Settings
-                  </h4>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span>Profile</span>
-                      <Badge
-                        variant={
-                          userData.private.profile ? "secondary" : "default"
-                        }
-                      >
-                        {userData.private.profile ? (
-                          <>
-                            <Lock className="h-3 w-3 mr-1" />
-                            Private
-                          </>
-                        ) : (
-                          <>
-                            <Globe className="h-3 w-3 mr-1" />
-                            Public
-                          </>
-                        )}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span>Portfolio</span>
-                      <Badge
-                        variant={
-                          userData.private.portfolio ? "secondary" : "default"
-                        }
-                      >
-                        {userData.private.portfolio ? (
-                          <>
-                            <Lock className="h-3 w-3 mr-1" />
-                            Private
-                          </>
-                        ) : (
-                          <>
-                            <Globe className="h-3 w-3 mr-1" />
-                            Public
-                          </>
-                        )}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button className="w-full justify-start" asChild>
-                  <Link href="/resume/upload">
-                    <Upload className="mr-2 h-4 w-4" />
-                    Upload New Resume
-                  </Link>
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start"
-                  asChild
-                >
-                  <Link href="/resume/ai">
-                    <Brain className="mr-2 h-4 w-4" />
-                    AI Resume Analysis
-                  </Link>
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <BarChart3 className="mr-2 h-4 w-4" />
-                  View All Analytics
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <Settings className="mr-2 h-4 w-4" />
-                  Account Settings
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Clock className="h-5 w-5" />
-                  Recent Activity
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 text-sm">
-                    <Upload className="h-4 w-4 text-green-500" />
-                    <div>
-                      <p className="font-medium">Resume uploaded</p>
-                      <p className="text-gray-500">
-                        {resumeData?.length !== 0 &&
-                          new Date(
-                            resumeData?.find(
-                              (item) => item?.shortUrl == hotResume?.shortUrl
-                            )?.createdAt
-                          ).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                  {totalViews === 0 && totalDownloads === 0 ? (
-                    <div className="text-center py-4">
-                      <p className="text-sm text-gray-500">
-                        No recent activity
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        Share your resume to see activity here
-                      </p>
-                    </div>
-                  ) : null}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+    <div>Page</div>
+  )
 }
+
+export default Page

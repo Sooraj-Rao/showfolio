@@ -15,7 +15,6 @@ export async function getResumePassword(shortUrl: string) {
         isPasswordProtected: false,
       };
     }
-    console.log(resume);
     return {
       success: true,
       password: resume.password,

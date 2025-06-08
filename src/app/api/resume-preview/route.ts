@@ -1,11 +1,12 @@
+import connectDB from "@/lib/db";
 import Resume from "@/models/resume";
 import User from "@/models/user";
 import { IUser } from "@/models/user";
 import { NextRequest, NextResponse } from "next/server";
 
-
-
 export async function GET(req: NextRequest) {
+  await connectDB();
+  User.countDocuments()
   const { searchParams } = new URL(req.url);
   const shortUrl = searchParams.get("shortUrl");
 
@@ -20,7 +21,6 @@ export async function GET(req: NextRequest) {
 }
 
 async function getResumePreview(shortUrl: string) {
-  console.log(User)
   try {
     const resume = await Resume.findOne({ shortUrl }).populate({
       path: "user",

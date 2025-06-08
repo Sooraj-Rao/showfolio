@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    await connectDB();
+    // await connectDB();
     await Resume.countDocuments();
     const user = await User.findById(userId)
       .select("-password")

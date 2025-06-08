@@ -1,6 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import Resume from "@/models/resume";
+import User from "@/models/user";
 import { IUser } from "@/models/user";
 import { NextRequest, NextResponse } from "next/server";
+
+
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -17,6 +21,7 @@ export async function GET(req: NextRequest) {
 }
 
 async function getResumePreview(shortUrl: string) {
+  // console.log(User)
   try {
     const resume = await Resume.findOne({ shortUrl }).populate({
       path: "user",
@@ -62,7 +67,6 @@ async function getResumePreview(shortUrl: string) {
     console.error("Error fetching resume:", error);
 
     if (error instanceof Error) {
-      // Type guard to check if it's an Error object
       if (error.name === "CastError") {
         return NextResponse.json(
           { error: "Database error occurred while fetching the resume." },

@@ -22,16 +22,15 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import PdfViewer from "@/app/(routes)/resume/(routes)/resumes/[resume_id]/pdf";
-import { ClickEvent } from "@/app/actions/analytics";
 import TooltipWrapper from "./tooltip-wrapper";
 import Analytics from "../analytics/main";
+import { AnalyticsData } from "../analytics/fetch-data";
 
 export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
   const { toast } = useToast();
   const router = useRouter();
   const { resumeData, fetchResumeData, isLoading, error } = useGetResumeData();
   const [isFullScreen, setIsFullScreen] = useState(false);
-  // const { location, device } = useLocationBrowserData();
 
   const fetchResumeDataMemoized = useCallback(() => {
     if (shortUrl) {
@@ -43,8 +42,8 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
     if (!resumeData) fetchResumeDataMemoized();
   }, [fetchResumeDataMemoized, shortUrl]);
 
-  const trackDownload = async (event: string) => {
-    await ClickEvent({ resume: shortUrl, event });
+  const trackEvent = async (event: string) => {
+    AnalyticsData({ resumeId: shortUrl, event });
   };
 
   const handleDownload = () => {
@@ -54,7 +53,7 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      trackDownload("download");
+      trackEvent("download:resume");
       toast({
         title: "Resume Downloaded",
         description: "The resume has been downloaded to your device.",
@@ -69,7 +68,7 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
   };
 
   const handleShare = async () => {
-    ClickEvent({ resume: shortUrl, event: "shares" });
+    trackEvent("share:resume");
     const shareData = {
       title: `${resumeData?.name}'s Resume`,
       text: `Check out ${resumeData?.name}'s Resume`,
@@ -207,10 +206,7 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
                     isFullScreen ? "h-[calc(100vh-120px)]" : "h-[600px]"
                   }`}
                 >
-                  <PdfViewer
-                    fileUrl={shortUrl}
-                    preview={true}
-                  />
+                  <PdfViewer fileUrl={shortUrl} preview={true} />
                 </div>
               </CardContent>
             </Card>

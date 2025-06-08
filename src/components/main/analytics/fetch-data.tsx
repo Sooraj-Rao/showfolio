@@ -1,31 +1,31 @@
 "use client";
 import Cookies from "js-cookie";
-import { I_LocationBrowserData } from "./fetch-api";
+import { FetchLocationBrowserData } from "./fetch-api";
 
 export interface FetchDataParams {
-  eventType: string;
+  event: string;
   resumeId: string;
-  data: I_LocationBrowserData;
 }
 
 export const AnalyticsData = async ({
-  eventType,
+  event,
   resumeId,
-  data,
 }: FetchDataParams) => {
-  const isSameEvent = Cookies.get(eventType);
+  const isSameEvent = Cookies.get(event);
   if (isSameEvent == resumeId) return;
-  if (!resumeId || !data) return;
+  if (!resumeId) return;
+
+  const data = await FetchLocationBrowserData();
 
   try {
     const response = await fetch("/api/analytics", {
       method: "POST",
-      body: JSON.stringify({ event: eventType, resumeId, data }),
+      body: JSON.stringify({ event, resumeId, data }),
       headers: { "Content-Type": "application/json" },
     });
     const res = await response.json();
     if (res.success) {
-      Cookies.set(eventType, resumeId);
+      Cookies.set(event, resumeId);
     }
   } catch (err) {
     console.log(err);

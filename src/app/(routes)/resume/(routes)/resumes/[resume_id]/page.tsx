@@ -337,7 +337,7 @@ export default function ResumeDetailsPage({
                     Total Views
                   </p>
                   <p className="text-2xl font-bold text-blue-600">
-                    {resume?.analytics?.views || 0}
+                    {/* {resume?.analytics?.views || 0} */}
                   </p>
                 </div>
                 <Eye className="h-5 w-5 text-blue-600" />
@@ -351,7 +351,7 @@ export default function ResumeDetailsPage({
                 <div>
                   <p className="text-sm font-medium text-gray-500">Downloads</p>
                   <p className="text-2xl font-bold text-blue-600">
-                    {resume?.analytics?.downloads || 0}
+                    {/* {resume?.analytics?.downloads || 0} */}
                   </p>
                 </div>
                 <Download className="h-5 w-5 text-blue-600" />
@@ -364,7 +364,7 @@ export default function ResumeDetailsPage({
                 <div>
                   <p className="text-sm font-medium text-gray-500">Shares</p>
                   <p className="text-2xl font-bold text-blue-600">
-                    {resume?.analytics?.shares || 0}
+                    {/* {resume?.analytics?.shares || 0} */}
                   </p>
                 </div>
                 <Share2 className="h-5 w-5 text-blue-600" />
@@ -380,7 +380,7 @@ export default function ResumeDetailsPage({
                     Engagement Rate
                   </p>
                   <p className="text-2xl font-bold text-blue-600">
-                    {resume?.analytics?.views
+                    {/* {resume?.analytics?.views
                       ? Math.round(
                           (((resume?.analytics?.downloads || 0) +
                             (resume?.analytics?.shares || 0)) /
@@ -388,7 +388,7 @@ export default function ResumeDetailsPage({
                             100
                         )
                       : 0}
-                    %
+                    % */}
                   </p>
                 </div>
                 <TrendingUp className="h-5 w-5 text-blue-600" />

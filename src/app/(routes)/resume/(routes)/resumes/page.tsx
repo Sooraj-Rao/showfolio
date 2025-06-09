@@ -103,7 +103,7 @@ export default function ResumesPage() {
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
             );
           case "views":
-            return b.analytics.views - a.analytics.views;
+            // return b.analytics.views - a.analytics.views;
           default:
             return 0;
         }

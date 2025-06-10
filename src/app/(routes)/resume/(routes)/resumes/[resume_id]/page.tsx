@@ -20,7 +20,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Eye,
   Download,
   Share2,
   Pencil,
@@ -31,14 +30,14 @@ import {
   ExternalLink,
   X,
   Plus,
-  TrendingUp,
   Calendar,
   Globe,
   Lock,
   BarChart3,
-  Clock,
   Star,
   Settings,
+  Stars,
+  Info,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { IResume } from "@/models/resume";
@@ -97,7 +96,7 @@ function TagInput({ tags, setTags }: TagInputProps) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleInputKeyDown}
-          placeholder="Add tags (press Enter)"
+          placeholder="Add tags (Press Enter)"
           className="flex-1"
         />
         <Button
@@ -162,7 +161,7 @@ export default function ResumeDetailsPage({
   }, [params?.resume_id]);
 
   useEffect(() => {
-    fetchResume();
+    if (!resume) fetchResume();
   }, [fetchResume]);
 
   const handleError = (err: unknown) => {
@@ -236,7 +235,7 @@ export default function ResumeDetailsPage({
   };
 
   const copyShareLink = async () => {
-    const shareUrl = `${window.location.origin}/${resume?.shortUrl}`;
+    const shareUrl = `${window.location.origin}/${resume?.shortUrl}?ref=owner-share`;
     try {
       await navigator.clipboard.writeText(shareUrl);
       toast({
@@ -288,7 +287,6 @@ export default function ResumeDetailsPage({
   return (
     <div className="min-h-screen ">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div>
@@ -328,94 +326,44 @@ export default function ResumeDetailsPage({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">
-                    Total Views
-                  </p>
-                  <p className="text-2xl font-bold text-blue-600">
-                    {/* {resume?.analytics?.views || 0} */}
-                  </p>
-                </div>
-                <Eye className="h-5 w-5 text-blue-600" />
+        <div className=" flex items-center gap-x-24 ">
+          <div className=" flex items-center gap-x-10 ">
+            <div className="flex items-center justify-between text-blue-600">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Total Views</p>
+                <p className="text-2xl font-bold">
+                  {resume?.analytics?.views || 0}
+                </p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Downloads</p>
-                  <p className="text-2xl font-bold text-blue-600">
-                    {/* {resume?.analytics?.downloads || 0} */}
-                  </p>
-                </div>
-                <Download className="h-5 w-5 text-blue-600" />
+            <div className="flex items-center justify-between text-blue-600">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Downloads</p>
+                <p className="text-2xl font-bold">
+                  {resume?.analytics?.downloads || 0}
+                </p>
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Shares</p>
-                  <p className="text-2xl font-bold text-blue-600">
-                    {/* {resume?.analytics?.shares || 0} */}
-                  </p>
-                </div>
-                <Share2 className="h-5 w-5 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">
-                    Engagement Rate
-                  </p>
-                  <p className="text-2xl font-bold text-blue-600">
-                    {/* {resume?.analytics?.views
-                      ? Math.round(
-                          (((resume?.analytics?.downloads || 0) +
-                            (resume?.analytics?.shares || 0)) /
-                            resume.analytics.views) *
-                            100
-                        )
-                      : 0}
-                    % */}
-                  </p>
-                </div>
-                <TrendingUp className="h-5 w-5 text-blue-600" />
+            <div className="flex items-center justify-between text-blue-600">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Shares</p>
+                <p className="text-2xl font-bold">
+                  {resume?.analytics?.shares || 0}
+                </p>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">
-                    Last Updated
-                  </p>
-                  <p className="text-lg font-semibold ">
-                    {new Date(resume?.updatedAt ?? "").toLocaleDateString()}
-                  </p>
-                </div>
-                <Clock className="h-5 w-5 text-gray-500" />
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
+          <Link href={`/resume/analytics?resume=${resume._id || ""}`}>
+            <Button variant="outline">
+              <BarChart3 className="h-4 w-4 mr-2" />
+              View Detailed Analytics
+            </Button>
+          </Link>
         </div>
 
-        {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Resume Preview */}
           <div className="lg:col-span-2">
             <Card className="h-full">
               <CardHeader>
@@ -459,7 +407,17 @@ export default function ResumeDetailsPage({
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Tags</Label>
+                      <div className=" flex relative items-center gap-x-2">
+                        <Label>Tags</Label>
+                        <div className=" group cursor-pointer ">
+                          <span className=" absolute w-80 text-sm bg-background z-50  top-6 left-0 h-fit p-3 rounded-lg border-2  group-hover:visible invisible">
+                            Add tags to describe the resume. Include roles (e.g.
+                            Frontend Developer), skills (e.g. React, Node.js),
+                            or relevant keywords (e.g. Remote, Junior).
+                          </span>
+                          <Info size={16} />
+                        </div>
+                      </div>
                       <TagInput
                         tags={updateFields.tags}
                         setTags={(newTags) =>
@@ -513,6 +471,7 @@ export default function ResumeDetailsPage({
                         <Label className="text-sm font-medium text-gray-500">
                           Tags
                         </Label>
+
                         <div className="flex flex-wrap gap-1 mt-1">
                           {resume?.tags?.length ? (
                             resume.tags.map((tag: string) => (
@@ -594,7 +553,7 @@ export default function ResumeDetailsPage({
                   className="w-full justify-start"
                 >
                   <Link href={`/resume/ai/?shortUrl=${resume?.shortUrl}`}>
-                    <BarChart3 className="h-4 w-4 mr-2" />
+                    <Stars className="h-4 w-4 mr-2" />
                     AI Feedback
                   </Link>
                 </Button>
@@ -611,52 +570,6 @@ export default function ResumeDetailsPage({
                 </Button>
               </CardContent>
             </Card>
-
-            {/* <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5" />
-                  Performance Insights
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>View to Download Rate</span>
-                    <span className="font-medium">
-                      {resume?.analytics?.views
-                        ? Math.round(
-                            ((resume?.analytics?.clicks || 0) /
-                              resume.analytics.views) *
-                              100
-                          )
-                        : 0}
-                      %
-                    </span>
-                  </div>
-                  <div className="w-full  rounded-full h-2">
-                    <div
-                      className="bg-blue-600 h-2 rounded-full"
-                      style={{
-                        width: `${
-                          resume?.analytics?.views
-                            ? Math.round(
-                                ((resume?.analytics?.clicks || 0) /
-                                  resume.analytics.views) *
-                                  100
-                              )
-                            : 0
-                        }%`,
-                      }}
-                    ></div>
-                  </div>
-                </div>
-
-                <div className="text-sm ">
-                  <p>💡 Tip: Add relevant tags to improve discoverability</p>
-                </div>
-              </CardContent>
-            </Card> */}
           </div>
         </div>
 

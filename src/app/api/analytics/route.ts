@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorzised" }, { status: 403 });
     }
     const analyticsData = await Analytics.find({ user: userId }).select(
-      "-resume -user"
+      "-user"
     );
     return NextResponse.json({ data: analyticsData });
   } catch  {

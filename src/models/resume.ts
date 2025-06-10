@@ -8,6 +8,11 @@ export interface IResume extends Document {
   createdAt: Date;
   updatedAt: Date;
   tags: string[];
+  analytics: {
+    views: number;
+    shares: number;
+    downloads: number;
+  };
   shortUrl: string;
   isPublic: boolean;
   passwordProtected: boolean;
@@ -54,6 +59,20 @@ const ResumeSchema: Schema<IResume> = new Schema(
     password: {
       type: String,
       select: false,
+    },
+    analytics: {
+      views: {
+        type: Number,
+        default: 0,
+      },
+      shares: {
+        type: Number,
+        default: 0,
+      },
+      downloads: {
+        type: Number,
+        default: 0,
+      },
     },
   },
   {

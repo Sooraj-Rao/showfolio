@@ -10,33 +10,74 @@ export async function POST(req: NextRequest) {
 
     const { resumeId: shortUrl, event, data } = await req.json();
 
-    const referrer = req.headers.get("referer") || "direct";
+    const referrerHeader = req.headers.get("referer") || "direct";
     const userAgent = req.headers.get("user-agent") || "";
-    const { location, device } = data;
+    const { location, device } = data || {};
+
     const parser = new UAParser();
     parser.setUA(userAgent);
     const deviceType = parser.getDevice()?.type || "desktop";
 
-    const resumeData = await Resume.findOne({ shortUrl }).populate("user");
-    if (!resumeData) return NextResponse.json({ success: false });
+    let ref = null;
+    try {
+      const url = new URL(referrerHeader);
+      ref = url.searchParams.get("ref");
+    } catch {
+      ref = null;
+    }
+
+    const isView = event === "view:resume";
+    const isDownload = event === "download:resume";
+    const isShare = event === "share:resume";
+
+    const incrementField = isView
+      ? { "analytics.views": 1 }
+      : isDownload
+      ? { "analytics.downloads": 1 }
+      : isShare
+      ? { "analytics.shares": 1 }
+      : null;
+
+    let resumeData;
+    if (incrementField) {
+      resumeData = await Resume.findOneAndUpdate(
+        { shortUrl },
+        { $inc: incrementField },
+        { new: true }
+      );
+    } else {
+      resumeData = await Resume.findOne({ shortUrl });
+    }
+    console.log(resumeData);
+    if (!resumeData) {
+      return NextResponse.json(
+        { success: false, message: "Resume not found" },
+        { status: 404 }
+      );
+    }
 
     await Analytics.create({
       user: resumeData.user,
       resume: resumeData._id,
       event,
-      referrer: referrer
-        ? new URLSearchParams(referrer.split("?")[1]).get("ref")
-        : null,
+      referrer: ref,
       device: deviceType,
-      os: device.platform == "Win32" ? "Windows" : device.platform,
-      browser: device.browser,
-      city: location.city,
-      country: location.country,
-      region: location.region,
+      os:
+        device?.platform === "Win32"
+          ? "Windows"
+          : device?.platform || "Unknown",
+      browser: device?.browser || "Unknown",
+      city: location?.city || "Unknown",
+      country: location?.country || "Unknown",
+      region: location?.region || "Unknown",
     });
 
     return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json({ success: false });
+  } catch (error) {
+    console.error("Analytics POST error:", error);
+    return NextResponse.json(
+      { success: false, message: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

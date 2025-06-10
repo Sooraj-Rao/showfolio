@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Copy, Share2, Eye, EyeOff } from "lucide-react";
+import { Copy, Share2, Eye, EyeOff, Info } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import useResumes from "@/app/hooks/get-resumes";
 import {
@@ -36,6 +36,7 @@ export default function SharePage() {
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [ref, setref] = useState("");
 
   useEffect(() => {
     if (resumes && resumes.length > 0 && !selectedResume) {
@@ -55,7 +56,9 @@ export default function SharePage() {
   const handleCopyLink = () => {
     if (selectedResume) {
       navigator.clipboard.writeText(
-        `${window.location.origin}/${selectedResume.shortUrl}`
+        `${window.location.origin}/${selectedResume.shortUrl}${
+          ref && "?ref=" + ref
+        }`
       );
       toast({
         title: "Link Copied",
@@ -93,7 +96,9 @@ export default function SharePage() {
         await navigator.share({
           title: `${selectedResume.title} - Resume`,
           text: "Check out my resume!",
-          url: `${window.location.origin}/${selectedResume.shortUrl}`,
+          url: `${window.location.origin}/${selectedResume.shortUrl}${
+            ref && "?ref=" + ref
+          }`,
         });
       } catch (error) {
         console.error("Error sharing:", error);
@@ -216,19 +221,48 @@ export default function SharePage() {
               <TabsTrigger value="link">Shareable Link</TabsTrigger>
               <TabsTrigger value="qr">QR Code</TabsTrigger>
             </TabsList>
+            <br />
             <TabsContent value="link" className="space-y-4">
-              <div className="space-y-2">
-                <Label>Shareable Link</Label>
-                <div className="flex space-x-2">
+              <div className="space-y-4">
+                <div>
+                  <Label className="block mb-1">Shareable Link</Label>
+                  <Label className="text-sm  relative flex items-center gap-x-2 text-gray-500">
+                    Add a reference to track URL clicks
+                    <div className=" group cursor-pointer ">
+                      <span className=" absolute w-80 text-sm bg-background z-50 top-0 ml-10 h-fit p-3 rounded-lg border-2  group-hover:visible invisible">
+                        Optional tag to track where the link was shared (e.g.,
+                        LinkedIn, WhatsApp)
+                      </span>
+                      <Info size={16} />
+                    </div>
+                  </Label>
                   <Input
-                    value={
-                      selectedResume
-                        ? `${window.location.origin}/${selectedResume.shortUrl}`
-                        : ""
-                    }
-                    readOnly
+                    className="mt-2"
+                    placeholder="e.g. LinkedIn, WhatsApp, Class-group"
+                    value={ref}
+                    onChange={(e) => setref(e.target.value)}
                   />
-                  <Button size="icon" onClick={handleCopyLink}>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <p className="flex-1 break-all text-sm text-muted-foreground">
+                    {selectedResume && (
+                      <>
+                        {`${window.location.origin}/${selectedResume.shortUrl}`}
+                        {ref && (
+                          <span className="bg-foreground/10 text-foreground px-1 rounded ml-1">
+                            ?ref={ref}
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </p>
+
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={handleCopyLink}
+                  >
                     <Copy className="h-4 w-4" />
                   </Button>
                   <Button size="icon" onClick={handleShare}>
@@ -236,6 +270,7 @@ export default function SharePage() {
                   </Button>
                 </div>
               </div>
+
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
@@ -309,7 +344,7 @@ export default function SharePage() {
                   {selectedResume && (
                     <QRCodeSVG
                       id="qr-code"
-                      value={`${window.location.origin}/${selectedResume.shortUrl}`}
+                      value={`${window.location.origin}/${selectedResume.shortUrl}?ref=owner-share-qrcode`}
                       size={192}
                     />
                   )}

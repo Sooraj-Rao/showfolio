@@ -103,7 +103,7 @@ export default function ResumesPage() {
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
             );
           case "views":
-            // return b.analytics.views - a.analytics.views;
+          // return b.analytics.views - a.analytics.views;
           default:
             return 0;
         }
@@ -125,6 +125,12 @@ export default function ResumesPage() {
 
   return (
     <div className="space-y-6 p-3">
+      <div>
+        <h2 className="text-2xl  font-bold tracking-tight">
+          Resumes
+        </h2>
+        <p className="text-muted-foreground text-sm">List of all your resumes</p>
+      </div>
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Link href="/resume/upload">

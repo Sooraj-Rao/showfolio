@@ -5,6 +5,7 @@ import { deleteFileFromStorage, GetUserId } from "../helper/utils";
 import User from "@/models/user";
 import { v4 as uuidv4 } from "uuid";
 import { ResumeNameSplit } from "@/lib/utils";
+import { Analytics } from "@/models/analytics";
 
 export async function POST(req: NextRequest) {
   try {
@@ -78,10 +79,15 @@ async function deleteResumes(userId: string, body: DeleteResumeBody) {
       return NextResponse.json({ error: "Invalid input" }, { status: 400 });
     }
 
-    const resume = await Resume.findOne({
-      shortUrl: selectedResumes,
-      user: userId,
-    });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [resume] = await Promise.all([
+      Resume.findOne({
+        shortUrl: selectedResumes,
+        user: userId,
+      }),
+      Analytics.deleteMany({ user: userId }),
+    ]);
+
     await deleteFileFromStorage(resume?.fileUrl);
 
     const deletedResumes = await Resume.deleteOne({
@@ -104,7 +110,7 @@ async function deleteResumes(userId: string, body: DeleteResumeBody) {
       message: `Successfully deleted resume`,
       deletedCount: deletedResumes.deletedCount,
     });
-  } catch  {
+  } catch {
     return NextResponse.json(
       {
         message: `Internal Server Error`,

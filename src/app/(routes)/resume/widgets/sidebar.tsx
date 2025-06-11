@@ -27,7 +27,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64  h-screen sticky top-0 overflow-auto border-r bg-background">
+    <aside className="w-64  h-screen sticky top-4 overflow-auto border-r bg-background">
       <div className="flex flex-col h-full px-4">
         <nav className="flex-1 space-y-2">
           {sidebarItems.map((item) => {

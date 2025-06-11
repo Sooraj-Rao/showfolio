@@ -38,9 +38,9 @@ import {
   Settings,
   Stars,
   Info,
+  Copy,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import type { IResume } from "@/models/resume";
 import axios from "axios";
 import { DownloadResume } from "@/app/utils/download-file";
 import { useZustandStore } from "@/zustand/store";
@@ -124,7 +124,7 @@ export default function ResumeDetailsPage({
   const router = useRouter();
   const { toast } = useToast();
 
-  const [resume, setResume] = useState<IResume | null>(null);
+  const [resume, setResume] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -187,8 +187,7 @@ export default function ResumeDetailsPage({
         throw new Error("Failed to update resume. Please try again.");
       }
 
-      // setResume((prev) => (prev ? { ...prev, ...updateFields } : null));
-
+      setResume({ ...resume, ...updateFields });
       const updatedResumes = resumes?.map((item) =>
         item.shortUrl === resume.shortUrl ? { ...item, ...updateFields } : item
       );
@@ -233,9 +232,8 @@ export default function ResumeDetailsPage({
       setIsDeleteDialogOpen(false);
     }
   };
-
   const copyShareLink = async () => {
-    const shareUrl = `${window.location.origin}/${resume?.shortUrl}?ref=owner-share`;
+    const shareUrl = `${window.location.origin}/${resume?.shortUrl}?ref=owner_share`;
     try {
       await navigator.clipboard.writeText(shareUrl);
       toast({
@@ -300,22 +298,18 @@ export default function ResumeDetailsPage({
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <Badge
-              variant={resume?.isPublic ? "default" : "secondary"}
-              className="flex items-center gap-1"
+          <div className="flex items-center gap-6">
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={copyShareLink}
             >
-              {resume?.isPublic ? (
-                <Globe className="h-3 w-3" />
-              ) : (
-                <Lock className="h-3 w-3" />
-              )}
-              {resume?.isPublic ? "Public" : "Private"}
-            </Badge>
-
+              <Copy className="h-4 w-4 mr-2" />
+              Copy Resume Link
+            </Button>
             <Button asChild>
               <a
-                href={`/${resume?.shortUrl}`}
+                href={`/${resume?.shortUrl}?ref=demo`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -392,7 +386,7 @@ export default function ResumeDetailsPage({
                 {isEditing ? (
                   <>
                     <div className="space-y-2">
-                      <Label htmlFor="title">Resume Title</Label>
+                      <Label htmlFor="title">Resume Name</Label>
                       <Input
                         id="title"
                         value={updateFields.title}
@@ -402,7 +396,7 @@ export default function ResumeDetailsPage({
                             title: e.target.value,
                           })
                         }
-                        placeholder="Enter resume title"
+                        placeholder="Enter resume name"
                       />
                     </div>
 
@@ -462,15 +456,26 @@ export default function ResumeDetailsPage({
                     <div className="space-y-3">
                       <div>
                         <Label className="text-sm font-medium text-gray-500">
-                          Title
+                          Name
                         </Label>
                         <p className="text-sm font-semibold">{resume?.title}</p>
                       </div>
 
                       <div>
-                        <Label className="text-sm font-medium text-gray-500">
-                          Tags
-                        </Label>
+                        <div className=" flex items-center gap-x-1">
+                          <Label className="text-sm font-medium text-gray-500">
+                            Tags
+                          </Label>
+                          <div className="relative group cursor-pointer ">
+                            <span className=" absolute w-80 text-sm bg-background z-50  -top-2 left-6 h-fit p-3 rounded-lg border-2  group-hover:visible invisible">
+                              Add tags to describe the resume. Include roles
+                              (e.g. Frontend Developer), skills (e.g. React,
+                              Node.js), or relevant keywords (e.g. Remote,
+                              Junior).
+                            </span>
+                            <Info size={16} />
+                          </div>
+                        </div>
 
                         <div className="flex flex-wrap gap-1 mt-1">
                           {resume?.tags?.length ? (
@@ -496,9 +501,17 @@ export default function ResumeDetailsPage({
                           <Label className="text-sm font-medium text-gray-500">
                             Visibility
                           </Label>
-                          <p className="text-sm">
+                          <Badge
+                            variant={resume?.isPublic ? "default" : "secondary"}
+                            className="flex items-center gap-1 mt-1"
+                          >
+                            {resume?.isPublic ? (
+                              <Globe className="h-3 w-3" />
+                            ) : (
+                              <Lock className="h-3 w-3" />
+                            )}
                             {resume?.isPublic ? "Public" : "Private"}
-                          </p>
+                          </Badge>
                         </div>
                       </div>
                     </div>
@@ -523,16 +536,7 @@ export default function ResumeDetailsPage({
                   Quick Actions
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <Button
-                  variant="outline"
-                  className="w-full justify-start"
-                  onClick={copyShareLink}
-                >
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Share Resume Link
-                </Button>
-
+              <CardContent className="flex flex-col gap-y-3">
                 <Button
                   variant="outline"
                   className="w-full justify-start"
@@ -544,20 +548,21 @@ export default function ResumeDetailsPage({
                   }
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Download PDF
+                  Download
                 </Button>
 
-                <Button
-                  asChild
-                  variant="outline"
-                  className="w-full justify-start"
-                >
-                  <Link href={`/resume/ai/?shortUrl=${resume?.shortUrl}`}>
+                <Link href={`/resume/ai/?shortUrl=${resume?.shortUrl}`}>
+                  <Button variant="outline" className="w-full justify-start">
                     <Stars className="h-4 w-4 mr-2" />
                     AI Feedback
-                  </Link>
-                </Button>
-
+                  </Button>
+                </Link>
+                <Link href={`/resume/share?resume=${resume.shortUrl}`}>
+                  <Button variant="outline" className="w-full justify-start">
+                    <Share2 className="h-4 w-4 mr-2" />
+                    More sharing option
+                  </Button>
+                </Link>
                 <Separator />
 
                 <Button

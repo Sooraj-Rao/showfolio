@@ -36,14 +36,14 @@ async function getResumePreview(shortUrl: string) {
       );
     }
 
-    if (resume.passwordProtected) {
+    const user = resume.user as IUser;
+
+    if (user.private.resumes) {
       return NextResponse.json(
-        { error: "Resume is password protected. Access denied." },
+        { error: "Resume is private. Access denied." },
         { status: 401 }
       );
     }
-
-    const user = resume.user as IUser;
 
     if (!user?.isActive) {
       return NextResponse.json(
@@ -68,7 +68,7 @@ async function getResumePreview(shortUrl: string) {
     if (error instanceof Error) {
       if (error.name === "CastError") {
         return NextResponse.json(
-          { error: "Database error occurred while fetching the resume." },
+          { error: "Error occurred while fetching the resume." },
           { status: 500 }
         );
       }

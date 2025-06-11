@@ -28,6 +28,7 @@ export async function GET(req: NextRequest) {
       private: {
         profile: user.private.profile,
         portfolio: user.private.portfolio,
+        resumes: user.private.resumes,
       },
       imageUrl: user.imageUrl,
       resumes: user.resumes,
@@ -53,11 +54,12 @@ export async function PUT(req: NextRequest) {
     const url = new URL(req.url);
     const operation = url.searchParams.get("operation");
 
-    if (operation === "disableAcc") {
+    if (operation == "disableAcc" || operation == "enableAcc") {
+      const type = operation == "disableAcc" ? false : true;
       await connectDB();
       const user = await User.findByIdAndUpdate(
         userId,
-        { isActive: false },
+        { isActive: type },
         { new: true }
       ).select("-password");
       if (!user) {
@@ -65,17 +67,19 @@ export async function PUT(req: NextRequest) {
       }
 
       return NextResponse.json({
-        message: "Account has been disabled successfully.",
+        message: `Account has been ${
+          type ? "Enable" : "Disable"
+        } successfully.`,
         active: user.isActive,
       });
     }
 
-    const { name, email, profile, portfolio } = await req.json();
+    const { name, email, profile, resumes } = await req.json();
 
     await connectDB();
     const user = await User.findByIdAndUpdate(
       userId,
-      { name, email, private: { profile, portfolio } },
+      { name, email, private: { profile, resumes } },
       { new: true }
     ).select("-password");
 
@@ -88,7 +92,7 @@ export async function PUT(req: NextRequest) {
       email: user.email,
       private: {
         profile: user.private.profile,
-        portfolio: user.private.portfolio,
+        resumes: user.private.resumes,
       },
     });
   } catch (error) {

@@ -52,14 +52,6 @@ const ResumeSchema: Schema<IResume> = new Schema(
       type: Boolean,
       default: true,
     },
-    passwordProtected: {
-      type: Boolean,
-      default: false,
-    },
-    password: {
-      type: String,
-      select: false,
-    },
     analytics: {
       views: {
         type: Number,

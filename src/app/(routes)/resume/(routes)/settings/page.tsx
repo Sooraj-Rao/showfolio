@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -28,6 +30,50 @@ import {
 } from "@/components/ui/alert-dialog";
 import axios from "axios";
 
+interface ConfirmationDialogProps {
+  title: string;
+  description: string;
+  confirmText: string;
+  onConfirm: () => void;
+  isLoading: boolean;
+  children: React.ReactNode;
+  variant?: "default" | "destructive";
+}
+
+function ConfirmationDialog({
+  title,
+  description,
+  confirmText,
+  onConfirm,
+  isLoading,
+  children,
+  variant = "default",
+}: ConfirmationDialogProps) {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={onConfirm}
+            disabled={isLoading}
+            className={
+              variant === "destructive" ? "bg-red-600 hover:bg-red-700" : ""
+            }
+          >
+            {isLoading ? "Processing..." : confirmText}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
 export default function SettingsPage() {
   const { toast } = useToast();
   const router = useRouter();
@@ -38,6 +84,12 @@ export default function SettingsPage() {
   const [isPrivatePortfolio, setIsPrivatePortfolio] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isDisabling, setIsDisabling] = useState(false);
+  const [isUpdatingPrivacy, setIsUpdatingPrivacy] = useState("");
+  const [showProfileDialog, setShowProfileDialog] = useState(false);
+  const [showPortfolioDialog, setShowPortfolioDialog] = useState(false);
+  const [tempPrivateProfile, setTempPrivateProfile] = useState(false);
+  const [tempPrivatePortfolio, setTempPrivatePortfolio] = useState(false);
 
   useEffect(() => {
     if (userData) {
@@ -79,7 +131,7 @@ export default function SettingsPage() {
         title: "Settings Updated",
         description: "Your settings have been successfully updated.",
       });
-    } catch  {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to update settings. Please try again.",
@@ -116,7 +168,7 @@ export default function SettingsPage() {
   };
 
   const handleDisableAccount = async () => {
-    setIsDeleting(true);
+    setIsDisabling(true);
     try {
       const response = await axios.put("/api/user?operation=disableAcc");
 
@@ -124,8 +176,13 @@ export default function SettingsPage() {
         throw new Error("Failed to disable account");
       }
 
+      setUserData({
+        ...userData,
+        isActive: false,
+      });
+
       toast({
-        title: "Account Disable",
+        title: "Account Disabled",
         description: "Your account has been successfully disabled.",
       });
     } catch {
@@ -135,7 +192,118 @@ export default function SettingsPage() {
         variant: "destructive",
       });
     } finally {
-      setIsDeleting(false);
+      setIsDisabling(false);
+    }
+  };
+
+  const handleEnableAccount = async () => {
+    setIsDisabling(true);
+    try {
+      const response = await axios.put("/api/user?operation=enableAcc");
+
+      if (response.statusText !== "OK") {
+        throw new Error("Failed to enable account");
+      }
+
+      setUserData({
+        ...userData,
+        isActive: true,
+      });
+
+      toast({
+        title: "Account Enabled",
+        description: "Your account has been successfully enabled.",
+      });
+    } catch {
+      toast({
+        title: "Error",
+        description: "Failed to enable account. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDisabling(false);
+    }
+  };
+
+  const handlePrivateProfileToggle = async (checked: boolean) => {
+    if (checked === isPrivateProfile) {
+      setShowProfileDialog(false);
+      return;
+    }
+
+    setIsUpdatingPrivacy("profile");
+    try {
+      const response = await axios.put("/api/user", {
+        name,
+        email,
+        profile: checked,
+        portfolio: isPrivatePortfolio,
+      });
+
+      if (!response.data) {
+        throw new Error("Failed to update privacy settings");
+      }
+
+      setIsPrivateProfile(checked);
+      setUserData({
+        ...userData,
+        private: { ...userData.private, profile: checked },
+      });
+
+      toast({
+        title: "Privacy Updated",
+        description: `Profile is now ${checked ? "private" : "public"}.`,
+      });
+    } catch {
+      toast({
+        title: "Error",
+        description: "Failed to update privacy settings. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdatingPrivacy("");
+      setShowProfileDialog(false);
+    }
+  };
+
+  const handlePrivatePortfolioToggle = async (checked: boolean) => {
+    if (checked === isPrivatePortfolio) {
+      setShowPortfolioDialog(false);
+      return;
+    }
+
+    setIsUpdatingPrivacy("resume");
+    try {
+      const response = await axios.put("/api/user", {
+        name,
+        email,
+        profile: isPrivateProfile,
+        resumes: checked,
+      });
+
+      if (!response.data) {
+        throw new Error("Failed to update privacy settings");
+      }
+
+      setIsPrivatePortfolio(checked);
+      setUserData({
+        ...userData,
+        private: { ...userData.private, portfolio: checked },
+      });
+
+      toast({
+        title: "Privacy Updated",
+        description: `Resumes are now ${checked ? "private" : "public"}.`,
+      });
+    } catch {
+      toast({
+        title: "Error",
+        description: "Failed to update privacy settings. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdatingPrivacy("");
+      setShowPortfolioDialog(false);
     }
   };
 
@@ -149,124 +317,250 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
+      </div>
       <form onSubmit={handleSaveChanges}>
-        <Card>
-          <CardHeader>
-            <CardTitle>Profile Information</CardTitle>
-            <CardDescription>Update your personal information.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                name="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Your email"
-              />
-            </div>
-          </CardContent>
-        </Card>
+        <div className=" grid grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Profile Information</CardTitle>
+              <CardDescription>
+                Update your personal information
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Your email"
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>Account Privacy</CardTitle>
-            <CardDescription>
-              Control your account&apos;s privacy settings.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="privateAccount">Private Account</Label>
-                <p className="text-sm text-muted-foreground">
-                  Make your profile private by default
-                </p>
+          <Card>
+            <CardHeader>
+              <CardTitle>Account Privacy</CardTitle>
+              <CardDescription>
+                Control your account&apos;s privacy settings
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="privateAccount">Private Profile</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Make your profile access private
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {isUpdatingPrivacy == "profile" && (
+                    <span className="text-sm text-muted-foreground">
+                      Updating...
+                    </span>
+                  )}
+                  <Switch
+                    id="privateAccount"
+                    checked={isPrivateProfile}
+                    disabled={isUpdatingPrivacy !== ""}
+                    onCheckedChange={(checked) => {
+                      if (!isUpdatingPrivacy) {
+                        setTempPrivateProfile(checked);
+                        setShowProfileDialog(true);
+                      }
+                    }}
+                  />
+                </div>
               </div>
-              <Switch
-                id="privateAccount"
-                checked={isPrivateProfile}
-                onCheckedChange={setIsPrivateProfile}
-              />
-            </div>
-            <div className="flex   items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="privatePortfolio">Private Portfolio</Label>
-                <p className="text-sm text-muted-foreground">
-                  Make your Portfolio private
-                </p>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="privatePortfolio">Private Resumes</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Make all your resumes private
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {isUpdatingPrivacy == "resume" && (
+                    <span className="text-sm text-muted-foreground">
+                      Updating...
+                    </span>
+                  )}
+                  <Switch
+                    id="privatePortfolio"
+                    checked={isPrivatePortfolio}
+                    disabled={isUpdatingPrivacy !== ""}
+                    onCheckedChange={(checked) => {
+                      if (!isUpdatingPrivacy) {
+                        setTempPrivatePortfolio(checked);
+                        setShowPortfolioDialog(true);
+                      }
+                    }}
+                  />
+                </div>
               </div>
-              <Switch
-                id="privatePortfolio"
-                checked={isPrivatePortfolio}
-                onCheckedChange={setIsPrivatePortfolio}
-              />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+
+            {/* Profile Privacy Dialog */}
+            <AlertDialog
+              open={showProfileDialog}
+              onOpenChange={setShowProfileDialog}
+            >
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Make Profile {tempPrivateProfile ? "Private" : "Public"}?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to make your profile{" "}
+                    {tempPrivateProfile ? "private" : "public"}? This will{" "}
+                    {tempPrivateProfile ? "restrict" : "allow"} access to your
+                    profile information.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel disabled={isUpdatingPrivacy !== ""}>
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() =>
+                      handlePrivateProfileToggle(tempPrivateProfile)
+                    }
+                    disabled={isUpdatingPrivacy !== ""}
+                  >
+                    {isUpdatingPrivacy
+                      ? "Processing..."
+                      : `Make ${tempPrivateProfile ? "Private" : "Public"}`}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
+            <AlertDialog
+              open={showPortfolioDialog}
+              onOpenChange={setShowPortfolioDialog}
+            >
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Make Resumes {tempPrivatePortfolio ? "Private" : "Public"}?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to make your resumes{" "}
+                    {tempPrivatePortfolio ? "private" : "public"}? This will{" "}
+                    {tempPrivatePortfolio ? "restrict" : "allow"} access to all
+                    your resumes.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel disabled={isUpdatingPrivacy !== ""}>
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() =>
+                      handlePrivatePortfolioToggle(tempPrivatePortfolio)
+                    }
+                    disabled={isUpdatingPrivacy !== ""}
+                  >
+                    {isUpdatingPrivacy
+                      ? "Processing..."
+                      : `Make ${tempPrivatePortfolio ? "Private" : "Public"}`}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </Card>
+        </div>
         {isNewChanges && (
-          <Button className={` mt-6`} type="submit" disabled={isUpdating}>
-            {isUpdating ? "Saving..." : "Save Changes"}
-          </Button>
+          <div className=" w-full  flex justify-end mt-6">
+            <Button className=" w-fit  " type="submit" disabled={isUpdating}>
+              {isUpdating ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
         )}
       </form>
 
       <Card>
         <CardHeader>
           <CardTitle>Account Management</CardTitle>
-          <CardDescription>Manage your account status.</CardDescription>
+          <CardDescription>Manage your account status</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <h3 className="font-semibold">Disable Account</h3>
-            <p className="text-sm text-muted-foreground">
-              Temporarily disable your account. You can reactivate it anytime.
-            </p>
-            <Button onClick={handleDisableAccount} variant="outline">
-              Disable Account
-            </Button>
+          <div className="space-y-2 flex justify-between">
+            <div>
+              <h3 className="font-semibold">
+                {userData?.isActive ? "Disable Account" : "Enable Account"}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {userData?.isActive
+                  ? "Temporarily disable your account. You can reactivate it anytime."
+                  : "Reactivate your disabled account to regain full access."}
+              </p>
+            </div>
+            {userData?.isActive ? (
+              <ConfirmationDialog
+                title="Disable Account?"
+                description="Are you sure you want to disable your account? You won't be able to access your account until you enable it again. This action is reversible."
+                confirmText="Disable Account"
+                onConfirm={handleDisableAccount}
+                isLoading={isDisabling}
+                variant="destructive"
+              >
+                <Button variant="destructive" disabled={isDisabling}>
+                  {isDisabling ? "Disabling..." : "Disable Account"}
+                </Button>
+              </ConfirmationDialog>
+            ) : (
+              <Button
+                onClick={handleEnableAccount}
+                variant="outline"
+                disabled={isDisabling}
+              >
+                {isDisabling ? "Enabling..." : "Enable Account"}
+              </Button>
+            )}
           </div>
-          <div className="space-y-2">
-            <h3 className="font-semibold">Delete Account</h3>
-            <p className="text-sm text-muted-foreground">
-              Permanently delete your account and all associated data. This
-              action cannot be undone.
-            </p>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">Delete Account</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    your account and remove your data from our servers.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDeleteAccount}
-                    disabled={isDeleting}
-                  >
-                    {isDeleting ? "Deleting..." : "Yes, delete my account"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+
+          <div className="space-y-2 flex justify-between">
+            <div>
+              <h3 className="font-semibold">Delete Account</h3>
+              <p className="text-sm text-muted-foreground">
+                Permanently delete your account and all associated data. This
+                action cannot be undone.
+              </p>
+            </div>
+            <ConfirmationDialog
+              title="Delete Account Permanently?"
+              description="This action cannot be undone. This will permanently delete your account and remove all your data from our servers including resumes, profile information, and settings."
+              confirmText="Yes, delete my account"
+              onConfirm={handleDeleteAccount}
+              isLoading={isDeleting}
+              variant="destructive"
+            >
+              <Button
+                variant="destructive"
+                className="bg-red-800 hover:bg-red-900"
+                disabled={isDeleting}
+              >
+                {isDeleting ? "Deleting..." : "Delete Account"}
+              </Button>
+            </ConfirmationDialog>
           </div>
         </CardContent>
       </Card>

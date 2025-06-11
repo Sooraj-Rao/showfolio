@@ -25,7 +25,9 @@ export async function POST(req: NextRequest) {
     } catch {
       ref = null;
     }
-
+    if (ref == "demo") {
+      return NextResponse.json({ success: true, demo: true });
+    }
     const isView = event === "view:resume";
     const isDownload = event === "download:resume";
     const isShare = event === "share:resume";
@@ -48,7 +50,7 @@ export async function POST(req: NextRequest) {
     } else {
       resumeData = await Resume.findOne({ shortUrl });
     }
-    console.log(resumeData);
+
     if (!resumeData) {
       return NextResponse.json(
         { success: false, message: "Resume not found" },

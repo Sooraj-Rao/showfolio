@@ -3,8 +3,9 @@ import { create } from "zustand";
 
 export interface IAuthUser {
   private: {
-    portfolio: boolean;
-    profile: boolean;
+    portfolio?: boolean;
+    profile?: boolean;
+    resumes?:boolean
   };
   name: string;
   email: string;

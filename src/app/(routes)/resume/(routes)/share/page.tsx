@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -11,11 +10,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Copy, Share2, Eye, EyeOff, Info } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
-import useResumes from "@/app/hooks/get-resumes";
 import {
   Select,
   SelectContent,
@@ -23,340 +17,303 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import {
+  Copy,
+  Share2,
+  Info,
+  Link as Link2,
+  X,
+  Download,
+  QrCode,
+} from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { toast } from "@/hooks/use-toast";
+import useResumes from "@/app/hooks/get-resumes";
+import { useSearchParams } from "next/navigation";
 import type { IResume } from "@/models/resume";
-import { updateResumePassword } from "@/app/actions/save-password";
-import { checkResumePasswordProtection } from "./password";
 
 export default function SharePage() {
   const { resumes } = useResumes();
+  const searchParams = useSearchParams();
   const [selectedResume, setSelectedResume] = useState<IResume | null>(null);
-  const [isPasswordProtected, setIsPasswordProtected] = useState(false);
-  const [password, setPassword] = useState("");
-  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [ref, setref] = useState("");
+  const [ref, setRef] = useState("");
+  const [showRefError, setShowRefError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [shortUrl, setShortUrl] = useState("");
+  const [url, setUrl] = useState("");
+  const [qrOpen, setQrOpen] = useState(false);
 
   useEffect(() => {
-    if (resumes && resumes.length > 0 && !selectedResume) {
-      setSelectedResume(resumes[0]);
-      setIsPasswordProtected(resumes[0].passwordProtected);
+    if (resumes?.length && !selectedResume) {
+      const first = resumes[0];
+      setSelectedResume(first);
+      setUrl(window.location.origin + "/" + first.shortUrl);
     }
-  }, [resumes, selectedResume]);
+  }, [resumes]);
 
   useEffect(() => {
-    if (selectedResume) {
-      setIsPasswordProtected(selectedResume.passwordProtected);
-      setPassword("");
-      setHasChanges(false);
-    }
-  }, [selectedResume]);
-
-  const handleCopyLink = () => {
-    if (selectedResume) {
-      navigator.clipboard.writeText(
-        `${window.location.origin}/${selectedResume.shortUrl}${
-          ref && "?ref=" + ref
-        }`
+    if (!selectedResume && resumes && searchParams.get("resume")) {
+      const resume = resumes.find(
+        (r: IResume) => r.shortUrl === searchParams.get("resume")
       );
-      toast({
-        title: "Link Copied",
-        description: "The shareable link has been copied to your clipboard.",
+      if (resume) {
+        setSelectedResume(resume);
+        setUrl(window.location.origin + "/" + resume.shortUrl);
+      }
+    }
+  }, [searchParams, resumes]);
+
+  const handleCopy = (link: string) => {
+    navigator.clipboard.writeText(link);
+    toast({ title: "Link Copied", description: "Copied to clipboard." });
+  };
+
+  const handleShare = async (link: string) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${selectedResume?.title} - Resume`,
+          text: "Check out my resume!",
+          url: link,
+        });
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      handleCopy(link);
+    }
+  };
+
+  const handleRefChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVal = e.target.value;
+    const valid = /^[a-zA-Z0-9_]*$/;
+    if (valid.test(newVal) || newVal === "") {
+      setRef(newVal);
+      setShowRefError(false);
+    } else {
+      setShowRefError(true);
+    }
+  };
+
+  const shortenUrl = async (url: string) => {
+    setLoading(true);
+    try {
+      const res = await fetch("https://sj1.xyz/api", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer quklnk_OQPmKajmPrjrsRGIuVzmVDtk`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ long: url }),
       });
+      const { data } = await res.json();
+      setShortUrl(data?.shortUrl ?? url);
+    } catch {
+      setShortUrl(url);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDownloadQR = () => {
-    if (selectedResume) {
-      const svg = document.getElementById("qr-code");
-      if (svg) {
-        const svgData = new XMLSerializer().serializeToString(svg);
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        const img = new Image();
-        img.onload = () => {
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx?.drawImage(img, 0, 0);
-          const pngFile = canvas.toDataURL("image/png");
-          const downloadLink = document.createElement("a");
-          downloadLink.download = `${selectedResume.title}_QR.png`;
-          downloadLink.href = pngFile;
-          downloadLink.click();
-        };
-        img.src = "data:image/svg+xml;base64," + btoa(svgData);
-      }
+    const svg = document.getElementById("qr-code");
+    if (svg) {
+      const svgData = new XMLSerializer().serializeToString(svg);
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const img = new Image();
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx?.drawImage(img, 0, 0);
+        const png = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.download = `${selectedResume.title}_QR.png`;
+        link.href = png;
+        link.click();
+      };
+      img.src = "data:image/svg+xml;base64," + btoa(svgData);
     }
-  };
-
-  const handleShare = async () => {
-    if (selectedResume && navigator.share) {
-      try {
-        await navigator.share({
-          title: `${selectedResume.title} - Resume`,
-          text: "Check out my resume!",
-          url: `${window.location.origin}/${selectedResume.shortUrl}${
-            ref && "?ref=" + ref
-          }`,
-        });
-      } catch (error) {
-        console.error("Error sharing:", error);
-      }
-    } else {
-      handleCopyLink();
-    }
-  };
-
-  const togglePasswordProtection = () => {
-    setIsPasswordProtected(!isPasswordProtected);
-    setHasChanges(true);
-  };
-
-  const handleSavePassword = async () => {
-    if (selectedResume) {
-      setIsUpdatingPassword(true);
-      const result = await updateResumePassword(
-        selectedResume.shortUrl,
-        password,
-        isPasswordProtected
-      );
-      if (result.success) {
-        toast({
-          title: "Password Settings Updated",
-          description: isPasswordProtected
-            ? "Your resume is now password protected."
-            : "Password protection has been removed from your resume.",
-        });
-        //  @ts-expect-error error here
-        setSelectedResume({
-          ...selectedResume,
-          passwordProtected: isPasswordProtected,
-        });
-        setHasChanges(false);
-      } else {
-        toast({
-          title: "Error",
-          description:
-            "Failed to update resume password settings. Please try again.",
-          variant: "destructive",
-        });
-      }
-      setIsUpdatingPassword(false);
-    }
-  };
-
-  const checkPassword = async () => {
-    if (!selectedResume) return;
-    const result = await checkResumePasswordProtection(selectedResume.shortUrl);
-    if (result.success && result.password) {
-      setPassword(result.password);
-    } else {
-      toast({
-        title: "Error",
-        description: result.message,
-        variant: "destructive",
-      });
-    }
-  };
-
-  const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible);
   };
 
   return (
-    <div className="space-y-6 p-3 mx-auto">
-      <Card>
-        <CardHeader>
-          <CardTitle>Select Resume to Share</CardTitle>
-          <CardDescription>
-            Choose a resume to generate a shareable link or QR code.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Select
-            value={selectedResume?.shortUrl.toString()}
-            onValueChange={(value) => {
-              const resume = resumes?.find(
-                (r: IResume) => r.shortUrl.toString() === value
-              );
-              if (resume) {
-                setSelectedResume(resume);
-              }
-            }}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a resume" />
-            </SelectTrigger>
-            <SelectContent>
-              {resumes?.map((resume) => (
-                <SelectItem
-                  key={resume.shortUrl}
-                  value={resume.shortUrl.toString()}
+    <div className="flex flex-col lg:flex-row gap-6 p-4 w-full">
+      <div className="flex-1 space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Select Resume</CardTitle>
+            <CardDescription>
+              Pick a resume to manage sharing options
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Select
+              value={selectedResume?.shortUrl ?? ""}
+              onValueChange={(value) => {
+                const found = resumes.find((r:IResume) => r.shortUrl === value);
+                if (found) {
+                  setSelectedResume(found);
+                  setUrl(window.location.origin + "/" + found.shortUrl);
+                  setShortUrl("");
+                  setRef("");
+                }
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Choose resume" />
+              </SelectTrigger>
+              <SelectContent>
+                {resumes.map((r:IResume) => (
+                  <SelectItem key={r.shortUrl} value={r.shortUrl}>
+                    {r.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {selectedResume && (
+              <p className="text-sm text-muted-foreground">
+                Last updated:{" "}
+                {new Date(selectedResume.updatedAt).toLocaleDateString()}
+              </p>
+            )}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Share Settings</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-1">
+              <Label>Shareable Link</Label>
+              <div className="flex gap-2 items-center">
+                <p className="text-sm break-all flex-1 text-muted-foreground">
+                  {url}
+                  {ref && (
+                    <span className=" bg-secondary p-1 rounded-md">
+                      ?ref={ref}
+                    </span>
+                  )}
+                </p>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  onClick={() => handleCopy(`${url}${ref && "?ref=" + ref}`)}
                 >
-                  {resume.title}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {selectedResume && (
-            <p className="mt-2 text-sm text-muted-foreground">
-              Last modified:{" "}
-              {new Date(selectedResume.updatedAt).toLocaleDateString()}
-            </p>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Share Options</CardTitle>
-          <CardDescription>
-            Configure sharing settings for {selectedResume?.title}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="link">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="link">Shareable Link</TabsTrigger>
-              <TabsTrigger value="qr">QR Code</TabsTrigger>
-            </TabsList>
-            <br />
-            <TabsContent value="link" className="space-y-4">
-              <div className="space-y-4">
-                <div>
-                  <Label className="block mb-1">Shareable Link</Label>
-                  <Label className="text-sm  relative flex items-center gap-x-2 text-gray-500">
-                    Add a reference to track URL clicks
-                    <div className=" group cursor-pointer ">
-                      <span className=" absolute w-80 text-sm bg-background z-50 top-0 ml-10 h-fit p-3 rounded-lg border-2  group-hover:visible invisible">
-                        Optional tag to track where the link was shared (e.g.,
-                        LinkedIn, WhatsApp)
-                      </span>
-                      <Info size={16} />
-                    </div>
-                  </Label>
-                  <Input
-                    className="mt-2"
-                    placeholder="e.g. LinkedIn, WhatsApp, Class-group"
-                    value={ref}
-                    onChange={(e) => setref(e.target.value)}
-                  />
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <p className="flex-1 break-all text-sm text-muted-foreground">
-                    {selectedResume && (
-                      <>
-                        {`${window.location.origin}/${selectedResume.shortUrl}`}
-                        {ref && (
-                          <span className="bg-foreground/10 text-foreground px-1 rounded ml-1">
-                            ?ref={ref}
-                          </span>
-                        )}
-                      </>
-                    )}
-                  </p>
-
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    onClick={handleCopyLink}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                  <Button size="icon" onClick={handleShare}>
-                    <Share2 className="h-4 w-4" />
-                  </Button>
-                </div>
+                  <Copy size={16} />
+                </Button>
+                <Button
+                  size="icon"
+                  onClick={() => handleShare(`${url}${ref && "?ref=" + ref}`)}
+                >
+                  <Share2 size={16} />
+                </Button>
               </div>
+            </div>
 
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Password Protection</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Require a password to view this specific resume
+            <div className="space-y-1">
+              <Label className="flex items-center gap-2 mb-2">
+                Add Reference
+                <div className="relative  group cursor-pointer">
+                  <Info size={14} className=" text-gray-500" />
+                  <div className="absolute left-6 -top-2  w-80 text-xs bg-background p-2 border rounded shadow-md z-10 hidden group-hover:block">
+                    Add labels like ‘LinkedIn’, ‘Email’, or any label you want
+                    to track to your links, so you can see where people found
+                    your resume.
+                  </div>
+                </div>
+              </Label>
+              <Input
+                placeholder="e.g. linkedin_message, email"
+                value={ref}
+                onChange={handleRefChange}
+              />
+              {showRefError && (
+                <p className="text-xs text-red-500">
+                  Only letters, numbers and underscores allowed.
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              {shortUrl ? (
+                <>
+                  <Label>Short URL</Label>
+                  <div className="flex items-center justify-between">
+                    <p className="break-all text-sm text-muted-foreground">
+                      {shortUrl}
                     </p>
-                  </div>
-                  <Switch
-                    checked={isPasswordProtected}
-                    onCheckedChange={togglePasswordProtection}
-                  />
-                </div>
-                {isPasswordProtected && (
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Set Password</Label>
-                    <div className="flex space-x-2">
-                      <div className="relative w-full">
-                        <Input
-                          type={isPasswordVisible ? "text" : "password"}
-                          id="password"
-                          value={password}
-                          onChange={(e) => {
-                            setPassword(e.target.value);
-                            setHasChanges(true);
-                          }}
-                          placeholder="Enter a secure password"
-                          className="pr-10"
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-0 top-0 h-full px-3"
-                          onClick={togglePasswordVisibility}
-                        >
-                          {isPasswordVisible ? (
-                            <EyeOff className="h-4 w-4" />
-                          ) : (
-                            <Eye className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </div>
+                    <div className="flex gap-2">
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        onClick={() => handleCopy(shortUrl)}
+                      >
+                        <Copy size={16} />
+                      </Button>
+                      <Button size="icon" onClick={() => handleShare(shortUrl)}>
+                        <Share2 size={16} />
+                      </Button>
                     </div>
                   </div>
-                )}
-                {isPasswordProtected &&
-                  !password &&
-                  selectedResume?.passwordProtected && (
-                    <Button onClick={checkPassword} size="sm" variant="link">
-                      View Password
-                    </Button>
-                  )}
-                {hasChanges && (
-                  <Button
-                    size="sm"
-                    disabled={
-                      (isPasswordProtected && password.length <= 3) ||
-                      isUpdatingPassword
-                    }
-                    onClick={handleSavePassword}
-                  >
-                    {isUpdatingPassword ? "Saving..." : "Save Changes"}
-                  </Button>
-                )}
-              </div>
-            </TabsContent>
-            <TabsContent value="qr" className="space-y-4">
-              <div className="flex justify-center">
-                <div className="w-48 h-48 flex items-center justify-center">
-                  {selectedResume && (
-                    <QRCodeSVG
-                      id="qr-code"
-                      value={`${window.location.origin}/${selectedResume.shortUrl}?ref=owner-share-qrcode`}
-                      size={192}
-                    />
-                  )}
-                </div>
-              </div>
-              <Button className="w-full" onClick={handleDownloadQR}>
-                Download QR Code
+                </>
+              ) : (
+                <Button
+                  onClick={() => shortenUrl(`${url}${ref && "?ref=" + ref}`)}
+                >
+                  <Link2 size={20} />
+                  {loading ? "Generating..." : "Generate Short URL"}
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="w-full lg:max-w-sm flex flex-col space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>QR Code</CardTitle>
+            <CardDescription>
+              QR for the resume - &quot;{selectedResume?.title}&quot;
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center">
+            {!qrOpen ? (
+              <Button onClick={() => setQrOpen(!qrOpen)} className="mb-3">
+                <QrCode />
+                View QR Code
               </Button>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+            ) : (
+              <Button
+                variant="secondary"
+                onClick={() => setQrOpen(!qrOpen)}
+                className="mb-3"
+              >
+                <X />
+                Close
+              </Button>
+            )}
+            <div
+              className={` duration-300 overflow-hidden ${
+                qrOpen ? "h-56" : "h-0 "
+              }`}
+            >
+              {selectedResume && (
+                <QRCodeSVG
+                  id="qr-code"
+                  value={`${url}?ref=owner-share-qrcode`}
+                  size={192}
+                />
+              )}
+            </div>
+            <Button variant="outline" onClick={handleDownloadQR}>
+              <Download />
+              Download QR
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -14,15 +14,13 @@ export const AnalyticsData = async ({ event, resumeId }: FetchDataParams) => {
 
   const data = await FetchLocationBrowserData();
 
-  try {
-    const response = await fetch("/api/analytics-api", {
-      method: "POST",
-      body: JSON.stringify({ event, resumeId, data }),
-      headers: { "Content-Type": "application/json" },
-    });
-    const res = await response.json();
-    if (res.success) {
-      Cookies.set(event, resumeId);
-    }
-  } catch {}
+  const response = await fetch("/api/analytics-api", {
+    method: "POST",
+    body: JSON.stringify({ event, resumeId, data }),
+    headers: { "Content-Type": "application/json" },
+  });
+  const res = await response.json();
+  if (res?.success) {
+    Cookies.set(event, resumeId);
+  }
 };

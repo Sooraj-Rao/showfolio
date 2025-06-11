@@ -76,7 +76,7 @@ export function ResumeCard({ resume, searchQuery }: ResumeCardProps) {
           <div className="flex items-center justify-between w-full text-xs text-muted-foreground">
             <div className="flex items-center gap-1">
               <Eye className="h-3.5 w-3.5" />
-              <span>{resume?.analytics?.views}</span>
+              <span>{resume?.analytics?.views} views</span>
             </div>
             <div className="flex items-center gap-1">
               <p>

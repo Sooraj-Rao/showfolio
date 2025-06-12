@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
       process.env.ENVIRONMENT === "local"
         ? "76.66.89.110"
         : forwarded?.split(",")[0] || "8.8.8.8";
-        
+
     const url = `https://ipinfo.io/${ip}/json`;
     const res = await fetch(url);
     const data = await res.json();
@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       city: data.city,
       region: data.region,
+      countryCode: data.country,
       country: lookup.byFips(data.country).country,
     });
   } catch (err) {

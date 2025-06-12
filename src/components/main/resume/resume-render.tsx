@@ -29,7 +29,7 @@ import { AnalyticsData } from "../analytics/fetch-data";
 
 function ResumeViewerSkeleton() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background to-background dark:from-background dark:to-background p-4">
       <div className="container mx-auto max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-3">
@@ -37,10 +37,6 @@ function ResumeViewerSkeleton() {
               <CardContent className="p-0">
                 <div className="relative">
                   <Skeleton className="w-full h-[700px] rounded-t-xl" />
-                  <div className="absolute top-4 right-4 flex gap-2">
-                    <Skeleton className="w-10 h-10 rounded-lg" />
-                    <Skeleton className="w-10 h-10 rounded-lg" />
-                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -138,8 +134,7 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
           title: "📤 Shared Successfully",
           description: "Resume shared successfully!",
         });
-      } catch {
-      }
+      } catch {}
     } else if (navigator.clipboard) {
       try {
         await navigator.clipboard.writeText(window.location.href);
@@ -161,14 +156,13 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
 
   const handleContact = () => {
     if (resumeData?.email) {
-      window.location.href = `mailto:${resumeData.email}?subject=Regarding your resume&body=Hi ${resumeData.name}, I found your resume and would like to connect.`;
+      window.location.href = `mailto:${resumeData.email}?subject=Regarding your resume&body=Hi ${resumeData.name}, I found your resume and would like to talk.`;
       trackEvent("contact:email");
     }
   };
 
   const toggleFullScreen = () => {
     setIsFullScreen(!isFullScreen);
-    trackEvent(isFullScreen ? "minimize:resume" : "maximize:resume");
   };
 
   const getInitials = (name: string) => {
@@ -208,7 +202,7 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-background to-background dark:from-background dark:to-background  transition-colors duration-300">
       {param.get("ref") !== "demo" && <Analytics shortUrl={shortUrl} />}
 
       <div className="container mx-auto max-w-7xl p-4">
@@ -264,7 +258,7 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
 
           {!isFullScreen && (
             <div className="space-y-6">
-              <Card className="border-0 shadow-xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
+              <Card className="border-0 shadow-xl  backdrop-blur-sm">
                 <CardContent className="p-6">
                   <div className="text-center space-y-4">
                     <div className="relative">
@@ -289,20 +283,16 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
 
                     <div className="space-y-1">
                       <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                        {resumeData?.name || "Professional"}
+                        {resumeData?.name || ""}
                       </h2>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Resume Profile
-                      </p>
                     </div>
 
                     <Separator className="my-4" />
 
                     <div className="space-y-3">
                       {resumeData?.email && (
-
                         <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
-                          <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                          <div className="w-8 h-8  rounded-lg flex items-center justify-center">
                             <Mail className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                           </div>
                           <div className="flex-1 text-left">
@@ -310,9 +300,9 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
                               Email
                             </p>
                             <a href={`mailto:${resumeData.email}`}>
-                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                              {resumeData.email}
-                            </p>
+                              <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                                {resumeData.email}
+                              </p>
                             </a>
                           </div>
                         </div>
@@ -354,7 +344,7 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
                 </CardContent>
               </Card>
 
-              <Card className="border-0 shadow-xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
+              <Card className="border-0 shadow-xl  backdrop-blur-sm">
                 <CardHeader className="pb-3">
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                     Quick Actions
@@ -415,7 +405,7 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
                 </CardContent>
               </Card>
 
-              <Card className="border-0 shadow-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-900">
+              <Card className="border-0 shadow-xl ">
                 <CardContent className="p-6">
                   <div className="text-center space-y-2">
                     <div className="text-sm text-gray-600 dark:text-gray-400">

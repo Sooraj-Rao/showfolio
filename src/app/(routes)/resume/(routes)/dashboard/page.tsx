@@ -69,7 +69,7 @@ export default function ResumeDashboard() {
   return (
     <div>
       {showAlert && <AlertMessage type={showAlert} />}
-      <div className="min-h-screen  lg:p-6">
+      <div className="min-h-screen ">
         <div className="max-w-6xl mx-auto space-y-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -79,10 +79,11 @@ export default function ResumeDashboard() {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h1 className="text-3xl font-bold  capitalize">
-                  Welcome back, {userData?.name}!
+                <h1 className="lg:text-2xl text-xl font-bold  capitalize">
+                  Welcome back,
+                  <span className=" text-primary pl-1">{userData?.name}!</span>
                 </h1>
-                <p className="text-gray-600 flex items-center gap-2">
+                <p className="text-gray-600 flex items-center text-sm gap-2">
                   <Calendar className="h-4 w-4" />
                   Member for {daysSinceJoined} days
                 </p>

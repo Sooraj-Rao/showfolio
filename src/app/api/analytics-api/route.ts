@@ -71,6 +71,7 @@ export async function POST(req: NextRequest) {
       browser: device?.browser || "Unknown",
       city: location?.city || "Unknown",
       country: location?.country || "Unknown",
+      countryCode: location?.countryCode || "Unknown",
       region: location?.region || "Unknown",
     });
 

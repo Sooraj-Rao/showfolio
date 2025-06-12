@@ -53,6 +53,7 @@ import axios from "axios";
 import useResumes from "@/app/hooks/get-resumes";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import AnalyticsDesc, { AnalyticsItem } from "./desc";
 
 const COLORS = [
   "#0088FE",
@@ -64,21 +65,7 @@ const COLORS = [
   "#ffc658",
 ];
 
-interface AnalyticsItem {
-  _id: string;
-  resume: string;
-  event: string;
-  referrer: string | null;
-  device: string;
-  os: string;
-  browser: string;
-  city: string;
-  country: string;
-  region: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
+
 
 interface Resume {
   _id: string;
@@ -316,13 +303,12 @@ export default function AnalyticsPage() {
   const totalViews = eventCounts.view || 0;
   const totalDownloads = eventCounts.download || 0;
   const totalShares = eventCounts.share || 0;
+  const totalContact = eventCounts.contact || 0;
   const totalEvents = filteredData.length;
 
-  // Dynamic insights based on actual data
   const generateInsights = () => {
     const insights = [];
 
-    // Mobile usage insight
     const mobilePercentage = Math.round(
       ((deviceCounts.mobile || 0) / totalEvents) * 100
     );
@@ -470,13 +456,12 @@ export default function AnalyticsPage() {
 
   return (
     <div className="flex-1 w-full max-w-7xl mx-auto  space-y-6 overflow-x-hidden">
-      {/* Header Section */}
       <div className="flex flex-col space-y-4">
         <div>
-          <h2 className="text-2xl lg:text-3xl font-bold tracking-tight">
+          <h2 className="text-2xl font-bold tracking-tight">
             Resume Analytics
           </h2>
-          <p className="text-muted-foreground text-sm lg:text-base mt-1">
+          <p className="text-muted-foreground text-sm  mt-1">
             {selectedResumeId === "all"
               ? "Combined analytics for all resumes"
               : selectedResume
@@ -485,7 +470,6 @@ export default function AnalyticsPage() {
           </p>
         </div>
 
-        {/* Controls - Responsive Layout */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-1">
           <Select value={selectedResumeId} onValueChange={handleResumeChange}>
             <SelectTrigger className="w-full sm:w-[240px]">
@@ -526,7 +510,7 @@ export default function AnalyticsPage() {
           </Select>
 
           <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-full p-1 sm:w-[180px]">
+            <SelectTrigger className="w-full p-3 sm:w-[180px]">
               <SelectValue placeholder="Select time range" />
             </SelectTrigger>
             <SelectContent>
@@ -539,7 +523,6 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Metrics Cards */}
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -599,27 +582,25 @@ export default function AnalyticsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium">
-              Engagement
-              <span className="hidden sm:inline"> Rate</span>
+            <CardTitle className="text-xs sm:text-sm font-medium truncate">
+              Contacted
             </CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground shrink-0" />
+            <Share2 className="h-4 w-4 text-muted-foreground shrink-0" />
           </CardHeader>
           <CardContent>
-            <div className="text-lg sm:text-2xl font-bold">
-              {totalViews > 0
-                ? Math.round(
-                    ((totalDownloads + totalShares) / totalViews) * 100
-                  )
-                : 0}
-              %
+            <div className="text-lg sm:text-2xl font-bold">{totalContact}</div>
+            <div className="flex items-center gap-1">
+              <span className="text-xs text-muted-foreground">
+                {totalViews > 0
+                  ? Math.round((totalContact / totalViews) * 100)
+                  : 0}
+                % of views
+              </span>
             </div>
-            <p className="text-xs text-muted-foreground">Actions per view</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Tabs Section */}
       <Tabs defaultValue="overview" className="space-y-6">
         <div className="w-full overflow-x-auto">
           <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-20 sm:h-9  min-w-[320px]">
@@ -632,8 +613,8 @@ export default function AnalyticsPage() {
             <TabsTrigger value="geography" className="text-xs sm:text-sm">
               Geography
             </TabsTrigger>
-            <TabsTrigger value="performance" className="text-xs sm:text-sm">
-              Performance
+            <TabsTrigger value="desc" className="text-xs sm:text-sm">
+              Event Insights
             </TabsTrigger>
           </TabsList>
         </div>
@@ -1070,9 +1051,7 @@ export default function AnalyticsPage() {
                   {filteredData.length > 0 ? (
                     Object.entries(
                       filteredData.reduce((acc, item) => {
-                        const location = `${item.city}, ${
-                          item.country === "IN" ? "India" : item.country
-                        }`;
+                        const location = `${item.city}, ${item.country}`;
                         acc[location] = (acc[location] || 0) + 1;
                         return acc;
                       }, {} as Record<string, number>)
@@ -1096,7 +1075,7 @@ export default function AnalyticsPage() {
                             variant="outline"
                             className="text-xs shrink-0 ml-2"
                           >
-                            {count as number} views
+                            {count as number} events
                           </Badge>
                         </div>
                       ))
@@ -1372,6 +1351,9 @@ export default function AnalyticsPage() {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+        <TabsContent value="desc" className="space-y-6">
+          <AnalyticsDesc data={analyticsData} />
         </TabsContent>
       </Tabs>
     </div>

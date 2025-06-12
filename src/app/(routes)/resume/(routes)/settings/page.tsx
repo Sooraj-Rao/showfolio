@@ -321,7 +321,7 @@ export default function SettingsPage() {
         <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
       </div>
       <form onSubmit={handleSaveChanges}>
-        <div className=" grid grid-cols-2 gap-6">
+        <div className=" grid sm:grid-cols-2 grid-cols-1 gap-6">
           <Card>
             <CardHeader>
               <CardTitle>Profile Information</CardTitle>
@@ -502,7 +502,7 @@ export default function SettingsPage() {
           <CardDescription>Manage your account status</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2 flex justify-between">
+          <div className="space-y-2 flex flex-col sm:flex-row justify-between">
             <div>
               <h3 className="font-semibold">
                 {userData?.isActive ? "Disable Account" : "Enable Account"}
@@ -522,7 +522,7 @@ export default function SettingsPage() {
                 isLoading={isDisabling}
                 variant="destructive"
               >
-                <Button variant="destructive" disabled={isDisabling}>
+                <Button variant="secondary" disabled={isDisabling}>
                   {isDisabling ? "Disabling..." : "Disable Account"}
                 </Button>
               </ConfirmationDialog>
@@ -537,7 +537,7 @@ export default function SettingsPage() {
             )}
           </div>
 
-          <div className="space-y-2 flex justify-between">
+          <div className="space-y-2 flex justify-between flex-col sm:flex-row ">
             <div>
               <h3 className="font-semibold">Delete Account</h3>
               <p className="text-sm text-muted-foreground">

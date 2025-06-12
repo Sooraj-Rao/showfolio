@@ -12,7 +12,7 @@ export default function DashboardLayout({
 
       <div className="flex flex-1 overflow-hidden px-1 pt-3">
         <Sidebar />
-        <main className="flex-1 p-8 pt-6 overflow-auto">{children}</main>
+        <main className="flex-1 lg:p-8 p-4 pt-3 overflow-auto">{children}</main>
       </div>
     </div>
   );

@@ -371,15 +371,14 @@ export default function AnalyticsPage() {
   if (isEmptyState) {
     return (
       <div className="relative flex-1 space-y-4 p-4 md:p-8 pt-6 max-w-7xl mx-auto">
-        {/* Overlay */}
         <div>
-          <h2 className="text-2xl  font-bold tracking-tight">Analytics</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Analytics</h2>
           <p className="text-muted-foreground text-sm">
             Detailed analytics for your resumes
           </p>
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/50  backdrop-blur-[1px] z-10 flex items-center justify-center">
-          <div className="text-center space-y-4 p-8 mt-40 backdrop-blur-md  max-w-md mx-4">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/50 backdrop-blur-[1px] z-10 flex items-center justify-center">
+          <div className="text-center space-y-4 p-8 mt-40 backdrop-blur-md max-w-md mx-4">
             <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
               <FileText className="w-8 h-8 text-primary" />
             </div>
@@ -412,7 +411,6 @@ export default function AnalyticsPage() {
             </div>
           </div>
 
-          {/* Preview metrics */}
           <div className="grid gap-4 grid-cols-2 lg:grid-cols-4 mb-6">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -471,13 +469,14 @@ export default function AnalyticsPage() {
   );
 
   return (
-    <div className=" flex-1 space-y-4 p-4 md:p-8   max-w-7xl mx-auto">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
+    <div className="flex-1 w-full max-w-7xl mx-auto  space-y-6 overflow-x-hidden">
+      {/* Header Section */}
+      <div className="flex flex-col space-y-4">
         <div>
-          <h2 className="text-2xl  font-bold tracking-tight">
+          <h2 className="text-2xl lg:text-3xl font-bold tracking-tight">
             Resume Analytics
           </h2>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground text-sm lg:text-base mt-1">
             {selectedResumeId === "all"
               ? "Combined analytics for all resumes"
               : selectedResume
@@ -485,19 +484,20 @@ export default function AnalyticsPage() {
               : "Track your resume performance"}
           </p>
         </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
-          {/* Resume Selector */}
+
+        {/* Controls - Responsive Layout */}
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-1">
           <Select value={selectedResumeId} onValueChange={handleResumeChange}>
-            <SelectTrigger className="w-full sm:w-[200px]">
+            <SelectTrigger className="w-full sm:w-[240px]">
               <SelectValue placeholder="Select resume">
                 {selectedResumeId === "all" ? (
                   <div className="flex items-center gap-2">
-                    <BarChart3 className="w-4 h-4" />
-                    <span>All Resumes</span>
+                    <BarChart3 className="w-4 h-4 shrink-0" />
+                    <span className="truncate">All Resumes</span>
                   </div>
                 ) : selectedResume ? (
                   <div className="flex items-center gap-2">
-                    <FileText className="w-4 h-4" />
+                    <FileText className="w-4 h-4 shrink-0" />
                     <span className="truncate">{selectedResume.title}</span>
                   </div>
                 ) : (
@@ -516,16 +516,17 @@ export default function AnalyticsPage() {
                 <SelectItem key={resume._id} value={resume._id}>
                   <div className="flex items-center gap-2">
                     <FileText className="w-4 h-4" />
-                    <span>{resume.title}</span>
+                    <span className="truncate max-w-[200px]">
+                      {resume.title}
+                    </span>
                   </div>
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
 
-          {/* Time Range Selector */}
           <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectTrigger className="w-full p-1 sm:w-[180px]">
               <SelectValue placeholder="Select time range" />
             </SelectTrigger>
             <SelectContent>
@@ -538,15 +539,17 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Enhanced Key Metrics with Growth */}
+      {/* Metrics Cards */}
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Views</CardTitle>
-            <Eye className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-xs sm:text-sm font-medium truncate">
+              Total Views
+            </CardTitle>
+            <Eye className="h-4 w-4 text-muted-foreground shrink-0" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalViews}</div>
+            <div className="text-lg sm:text-2xl font-bold">{totalViews}</div>
             <div className="flex items-center gap-1">
               <span className="text-xs text-muted-foreground">
                 {filteredData.length} total events
@@ -556,11 +559,15 @@ export default function AnalyticsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Downloads</CardTitle>
-            <Download className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-xs sm:text-sm font-medium truncate">
+              Downloads
+            </CardTitle>
+            <Download className="h-4 w-4 text-muted-foreground shrink-0" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalDownloads}</div>
+            <div className="text-lg sm:text-2xl font-bold">
+              {totalDownloads}
+            </div>
             <div className="flex items-center gap-1">
               <span className="text-xs text-muted-foreground">
                 {totalViews > 0
@@ -573,11 +580,13 @@ export default function AnalyticsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Shares</CardTitle>
-            <Share2 className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-xs sm:text-sm font-medium truncate">
+              Shares
+            </CardTitle>
+            <Share2 className="h-4 w-4 text-muted-foreground shrink-0" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalShares}</div>
+            <div className="text-lg sm:text-2xl font-bold">{totalShares}</div>
             <div className="flex items-center gap-1">
               <span className="text-xs text-muted-foreground">
                 {totalViews > 0
@@ -590,13 +599,14 @@ export default function AnalyticsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Engagement Rate
+            <CardTitle className="text-xs sm:text-sm font-medium">
+              Engagement
+              <span className="hidden sm:inline"> Rate</span>
             </CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <TrendingUp className="h-4 w-4 text-muted-foreground shrink-0" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-lg sm:text-2xl font-bold">
               {totalViews > 0
                 ? Math.round(
                     ((totalDownloads + totalShares) / totalViews) * 100
@@ -609,22 +619,37 @@ export default function AnalyticsPage() {
         </Card>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="devices">Devices</TabsTrigger>
-          <TabsTrigger value="geography">Geography</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-        </TabsList>
+      {/* Tabs Section */}
+      <Tabs defaultValue="overview" className="space-y-6">
+        <div className="w-full overflow-x-auto">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-20 sm:h-9  min-w-[320px]">
+            <TabsTrigger value="overview" className="text-xs  sm:text-sm">
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="devices" className="text-xs sm:text-sm">
+              Devices
+            </TabsTrigger>
+            <TabsTrigger value="geography" className="text-xs sm:text-sm">
+              Geography
+            </TabsTrigger>
+            <TabsTrigger value="performance" className="text-xs sm:text-sm">
+              Performance
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 lg:grid-cols-7">
-            <Card className="lg:col-span-4">
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid gap-6 xl:grid-cols-2">
+            <Card>
               <CardHeader>
-                <CardTitle>Activity Timeline</CardTitle>
-                <CardDescription>Resume interactions over time</CardDescription>
+                <CardTitle className="text-lg sm:text-xl">
+                  Activity Timeline
+                </CardTitle>
+                <CardDescription className="text-sm">
+                  Resume interactions over time
+                </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-2 sm:p-6 overflow-hidden ">
                 {timeSeriesData.length > 0 ? (
                   <ChartContainer
                     config={{
@@ -641,10 +666,13 @@ export default function AnalyticsPage() {
                         color: "hsl(var(--chart-3))",
                       },
                     }}
-                    className="h-[250px] sm:h-[300px]"
+                    className="h-[200px] w-[250px] md:w-[300px] lg:md:w-[400px] xl:w-full sm:h-[250px] lg:h-[300px]"
                   >
                     <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={timeSeriesData}>
+                      <AreaChart
+                        data={timeSeriesData}
+                        margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                      >
                         <defs>
                           <linearGradient
                             id="colorView"
@@ -684,8 +712,13 @@ export default function AnalyticsPage() {
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" fontSize={12} />
-                        <YAxis fontSize={12} />
+                        <XAxis
+                          dataKey="date"
+                          fontSize={10}
+                          tick={{ fontSize: 10 }}
+                          interval="preserveStartEnd"
+                        />
+                        <YAxis fontSize={10} tick={{ fontSize: 10 }} />
                         <ChartTooltip content={<ChartTooltipContent />} />
                         <Area
                           type="monotone"
@@ -711,20 +744,26 @@ export default function AnalyticsPage() {
                     </ResponsiveContainer>
                   </ChartContainer>
                 ) : (
-                  <div className="h-[250px] sm:h-[300px] flex items-center justify-center text-muted-foreground">
-                    No data available for the selected time range
+                  <div className="h-[200px] sm:h-[250px] lg:h-[300px] flex items-center justify-center text-muted-foreground">
+                    <div className="text-center">
+                      <div className="text-sm sm:text-base">
+                        No data available for the selected time range
+                      </div>
+                    </div>
                   </div>
                 )}
               </CardContent>
             </Card>
-            <Card className="lg:col-span-3">
+            <Card>
               <CardHeader>
-                <CardTitle>Event Distribution</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-lg sm:text-xl">
+                  Event Distribution
+                </CardTitle>
+                <CardDescription className="text-sm">
                   Breakdown of resume interactions
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-2 sm:p-6">
                 {eventChartData.length > 0 ? (
                   <ChartContainer
                     config={{
@@ -732,7 +771,7 @@ export default function AnalyticsPage() {
                         label: "Count",
                       },
                     }}
-                    className="h-[250px] sm:h-[300px]"
+                    className="h-full w-full sm:h-[250px] lg:h-[300px]"
                   >
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
@@ -744,7 +783,7 @@ export default function AnalyticsPage() {
                           label={({ name, percent }) =>
                             `${name} ${(percent * 100).toFixed(0)}%`
                           }
-                          outerRadius={window.innerWidth < 640 ? 60 : 80}
+                          outerRadius="70%"
                           fill="#8884d8"
                           dataKey="value"
                         >
@@ -757,8 +796,12 @@ export default function AnalyticsPage() {
                     </ResponsiveContainer>
                   </ChartContainer>
                 ) : (
-                  <div className="h-[250px] sm:h-[300px] flex items-center justify-center text-muted-foreground">
-                    No events to display
+                  <div className="h-full sm:h-[250px] lg:h-[300px] flex items-center justify-center text-muted-foreground">
+                    <div className="text-center">
+                      <div className="text-sm sm:text-base">
+                        No events to display
+                      </div>
+                    </div>
                   </div>
                 )}
               </CardContent>
@@ -766,17 +809,19 @@ export default function AnalyticsPage() {
           </div>
         </TabsContent>
 
-        <TabsContent value="devices" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <TabsContent value="devices" className="space-y-6">
+          <div className="grid gap-6 grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Monitor className="h-5 w-5" />
-                  Device Types
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Monitor className="h-5 w-5 shrink-0" />
+                  <span className="truncate">Device Types</span>
                 </CardTitle>
-                <CardDescription>How users access your resume</CardDescription>
+                <CardDescription className="text-sm">
+                  How users access your resume
+                </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-2 sm:p-6">
                 {deviceChartData.length > 0 ? (
                   <ChartContainer
                     config={{
@@ -784,7 +829,7 @@ export default function AnalyticsPage() {
                         label: "Count",
                       },
                     }}
-                    className="h-[200px]"
+                    className="h-[180px] sm:h-[200px]"
                   >
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
@@ -792,7 +837,7 @@ export default function AnalyticsPage() {
                           data={deviceChartData}
                           cx="50%"
                           cy="50%"
-                          outerRadius={60}
+                          outerRadius="70%"
                           fill="#8884d8"
                           dataKey="value"
                           label={({ name, percent }) =>
@@ -808,8 +853,8 @@ export default function AnalyticsPage() {
                     </ResponsiveContainer>
                   </ChartContainer>
                 ) : (
-                  <div className="h-[200px] flex items-center justify-center text-muted-foreground">
-                    No device data
+                  <div className="h-[180px] sm:h-[200px] flex items-center justify-center text-muted-foreground">
+                    <div className="text-sm">No device data</div>
                   </div>
                 )}
               </CardContent>
@@ -817,12 +862,12 @@ export default function AnalyticsPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Operating Systems</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-lg">Operating Systems</CardTitle>
+                <CardDescription className="text-sm">
                   OS distribution of your visitors
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-2 sm:p-6">
                 {osChartData.length > 0 ? (
                   <ChartContainer
                     config={{
@@ -831,13 +876,24 @@ export default function AnalyticsPage() {
                         color: "hsl(var(--chart-1))",
                       },
                     }}
-                    className="h-[200px]"
+                    className="h-[180px] sm:h-[200px]"
                   >
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={osChartData}>
+                      <BarChart
+                        data={osChartData}
+                        margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                      >
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" fontSize={12} />
-                        <YAxis fontSize={12} />
+                        <XAxis
+                          dataKey="name"
+                          fontSize={10}
+                          tick={{ fontSize: 10 }}
+                          interval={0}
+                          angle={-45}
+                          textAnchor="end"
+                          height={60}
+                        />
+                        <YAxis fontSize={10} tick={{ fontSize: 10 }} />
                         <ChartTooltip content={<ChartTooltipContent />} />
                         <Bar
                           dataKey="count"
@@ -848,8 +904,8 @@ export default function AnalyticsPage() {
                     </ResponsiveContainer>
                   </ChartContainer>
                 ) : (
-                  <div className="h-[200px] flex items-center justify-center text-muted-foreground">
-                    No OS data
+                  <div className="h-[180px] sm:h-[200px] flex items-center justify-center text-muted-foreground">
+                    <div className="text-sm">No OS data</div>
                   </div>
                 )}
               </CardContent>
@@ -857,36 +913,41 @@ export default function AnalyticsPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Browsers</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-lg">Browsers</CardTitle>
+                <CardDescription className="text-sm">
                   Browser preferences of visitors
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
+              <CardContent className="p-4 sm:p-6">
+                <div className="space-y-3 max-h-[180px] sm:max-h-[200px] overflow-y-auto">
                   {browserChartData.length > 0 ? (
                     browserChartData.map((browser, index) => (
                       <div
                         key={browser.name}
                         className="flex items-center justify-between"
                       >
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
                           <div
-                            className="w-3 h-3 rounded-full"
+                            className="w-3 h-3 rounded-full shrink-0"
                             style={{
                               backgroundColor: COLORS[index % COLORS.length],
                             }}
                           />
-                          <span className="text-sm font-medium">
+                          <span className="text-sm font-medium truncate">
                             {browser.name}
                           </span>
                         </div>
-                        <Badge variant="secondary">{browser.count}</Badge>
+                        <Badge
+                          variant="secondary"
+                          className="text-xs shrink-0 ml-2"
+                        >
+                          {browser.count}
+                        </Badge>
                       </div>
                     ))
                   ) : (
-                    <div className="text-center text-muted-foreground">
-                      No browser data
+                    <div className="text-center text-muted-foreground py-8">
+                      <div className="text-sm">No browser data</div>
                     </div>
                   )}
                 </div>
@@ -895,19 +956,19 @@ export default function AnalyticsPage() {
           </div>
         </TabsContent>
 
-        <TabsContent value="geography" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <Card>
+        <TabsContent value="geography" className="space-y-6">
+          <div className="grid gap-6 lg:grid-cols-3">
+            <Card className="lg:col-span-1">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Globe className="h-5 w-5" />
-                  Geographic Distribution
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Globe className="h-5 w-5 shrink-0" />
+                  <span className="truncate">Geographic Distribution</span>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm">
                   Where your resume is being viewed
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 sm:p-6">
                 {countryChartData.length > 0 ? (
                   <div className="space-y-6">
                     {/* Donut Chart */}
@@ -918,7 +979,7 @@ export default function AnalyticsPage() {
                             label: "Views",
                           },
                         }}
-                        className="h-[150px] w-[150px] sm:h-[200px] sm:w-[200px]"
+                        className="h-[150px] w-[150px] sm:h-[180px] sm:w-[180px]"
                       >
                         <ResponsiveContainer width="100%" height="100%">
                           <PieChart>
@@ -926,8 +987,8 @@ export default function AnalyticsPage() {
                               data={countryChartData}
                               cx="50%"
                               cy="50%"
-                              innerRadius={window.innerWidth < 640 ? 45 : 60}
-                              outerRadius={window.innerWidth < 640 ? 60 : 80}
+                              innerRadius="50%"
+                              outerRadius="80%"
                               paddingAngle={2}
                               dataKey="count"
                             >
@@ -944,8 +1005,10 @@ export default function AnalyticsPage() {
                                   const data = payload[0].payload;
                                   return (
                                     <div className="bg-background border rounded-lg p-2 shadow-md">
-                                      <p className="font-medium">{data.name}</p>
-                                      <p className="text-sm text-muted-foreground">
+                                      <p className="font-medium text-sm">
+                                        {data.name}
+                                      </p>
+                                      <p className="text-xs text-muted-foreground">
                                         {data.count} views (
                                         {Math.round(
                                           (data.count / totalEvents) * 100
@@ -961,65 +1024,6 @@ export default function AnalyticsPage() {
                           </PieChart>
                         </ResponsiveContainer>
                       </ChartContainer>
-                    </div>
-
-                    {/* Country List with Progress Bars */}
-                    <div className="space-y-3">
-                      {countryChartData
-                        .sort((a, b) => b.count - a.count)
-                        .map((country, index) => {
-                          const percentage = Math.round(
-                            (country.count / totalEvents) * 100
-                          );
-                          const getCountryFlag = (countryName: string) => {
-                            const flags: Record<string, string> = {
-                              Canada: "🇨🇦",
-                              India: "🇮🇳",
-                              USA: "🇺🇸",
-                              UK: "🇬🇧",
-                              Australia: "🇦🇺",
-                              Germany: "🇩🇪",
-                              France: "🇫🇷",
-                              Japan: "🇯🇵",
-                              Brazil: "🇧🇷",
-                              China: "🇨🇳",
-                            };
-                            return flags[countryName] || "🌍";
-                          };
-
-                          return (
-                            <div key={country.name} className="space-y-2">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-lg">
-                                    {getCountryFlag(country.name)}
-                                  </span>
-                                  <span className="font-medium text-sm sm:text-base">
-                                    {country.name}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-xs sm:text-sm text-muted-foreground">
-                                    {percentage}%
-                                  </span>
-                                  <Badge variant="outline" className="text-xs">
-                                    {country.count}
-                                  </Badge>
-                                </div>
-                              </div>
-                              <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div
-                                  className="h-2 rounded-full transition-all duration-500 ease-out"
-                                  style={{
-                                    width: `${percentage}%`,
-                                    backgroundColor:
-                                      COLORS[index % COLORS.length],
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          );
-                        })}
                     </div>
 
                     {/* Summary Stats */}
@@ -1046,19 +1050,23 @@ export default function AnalyticsPage() {
                   </div>
                 ) : (
                   <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-                    No geographic data
+                    <div className="text-center">
+                      <div className="text-sm">No geographic data</div>
+                    </div>
                   </div>
                 )}
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="lg:col-span-1">
               <CardHeader>
-                <CardTitle>Top Locations</CardTitle>
-                <CardDescription>Cities with most engagement</CardDescription>
+                <CardTitle className="text-lg">Top Locations</CardTitle>
+                <CardDescription className="text-sm">
+                  Cities with most engagement
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
+              <CardContent className="p-4 sm:p-6">
+                <div className="space-y-4 max-h-[300px] overflow-y-auto">
                   {filteredData.length > 0 ? (
                     Object.entries(
                       filteredData.reduce((acc, item) => {
@@ -1070,41 +1078,46 @@ export default function AnalyticsPage() {
                       }, {} as Record<string, number>)
                     )
                       .sort(([, a], [, b]) => (b as number) - (a as number))
-                      .slice(0, 5)
+                      .slice(0, 8)
                       .map(([location, count], index) => (
                         <div
                           key={location}
                           className="flex items-center justify-between"
                         >
-                          <div className="flex items-center gap-3">
-                            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-xs font-medium">
+                          <div className="flex items-center gap-3 min-w-0 flex-1">
+                            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-xs font-medium shrink-0">
                               {index + 1}
                             </div>
-                            <span className="font-medium text-sm sm:text-base">
+                            <span className="font-medium text-sm truncate">
                               {location}
                             </span>
                           </div>
-                          <Badge variant="outline" className="text-xs">
+                          <Badge
+                            variant="outline"
+                            className="text-xs shrink-0 ml-2"
+                          >
                             {count as number} views
                           </Badge>
                         </div>
                       ))
                   ) : (
-                    <div className="text-center text-muted-foreground">
-                      No location data available
+                    <div className="text-center text-muted-foreground py-8">
+                      <div className="text-sm">No location data available</div>
                     </div>
                   )}
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="lg:col-span-1">
               <CardHeader>
-                <CardTitle>Traffic Sources</CardTitle>
-                <CardDescription>How users found your resume</CardDescription>
+                <CardTitle className="text-lg">Traffic Sources</CardTitle>
+                <CardDescription className="text-sm">
+                  How users found your resume
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
+              <CardContent className="p-4 sm:p-6">
+                <div className="space-y-4 max-h-[300px] overflow-y-auto">
                   {Object.keys(referrerCounts).length > 0 ? (
                     Object.entries(referrerCounts)
                       .sort(([, a], [, b]) => (b as number) - (a as number))
@@ -1151,26 +1164,26 @@ export default function AnalyticsPage() {
                           if (source.includes("google.com"))
                             return "Google Search";
                           if (source.includes("github.com")) return "GitHub";
-                          return source.length > 20
-                            ? source.substring(0, 20) + "..."
+                          return source.length > 15
+                            ? source.substring(0, 15) + "..."
                             : source;
                         };
 
                         return (
                           <div key={referrer} className="space-y-2">
                             <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                <span className="text-lg">
+                              <div className="flex items-center gap-3 min-w-0 flex-1">
+                                <span className="text-lg shrink-0">
                                   {getSourceIcon(referrer)}
                                 </span>
-                                <div className="flex flex-col">
-                                  <span className="font-medium text-xs sm:text-sm">
+                                <div className="flex flex-col min-w-0 flex-1">
+                                  <span className="font-medium text-xs sm:text-sm truncate">
                                     {getSourceLabel(referrer)}
                                   </span>
                                   {referrer !== "Direct" &&
-                                    referrer.length > 20 && (
+                                    referrer.length > 15 && (
                                       <span
-                                        className="text-xs text-muted-foreground truncate max-w-[100px] sm:max-w-[150px]"
+                                        className="text-xs text-muted-foreground truncate"
                                         title={referrer}
                                       >
                                         {referrer}
@@ -1178,7 +1191,7 @@ export default function AnalyticsPage() {
                                     )}
                                 </div>
                               </div>
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-2 shrink-0">
                                 <span className="text-xs text-muted-foreground">
                                   {percentage}%
                                 </span>
@@ -1241,26 +1254,26 @@ export default function AnalyticsPage() {
           </div>
         </TabsContent>
 
-        <TabsContent value="performance" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
+        <TabsContent value="performance" className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>Conversion Funnel</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-lg">Conversion Funnel</CardTitle>
+                <CardDescription className="text-sm">
                   User journey from view to action
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 sm:p-6">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-4  rounded-lg">
                     <div className="flex items-center gap-3">
-                      <Eye className="h-5 w-5 text-blue-600" />
+                      <Eye className="h-5 w-5 text-blue-600 shrink-0" />
                       <span className="font-medium text-sm sm:text-base">
                         Views
                       </span>
                     </div>
                     <div className="text-right">
-                      <div className="text-xl sm:text-2xl font-bold text-blue-600">
+                      <div className="text-lg sm:text-2xl font-bold text-blue-600">
                         {totalViews}
                       </div>
                       <div className="text-xs sm:text-sm text-muted-foreground">
@@ -1268,15 +1281,15 @@ export default function AnalyticsPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between p-4  rounded-lg">
+                  <div className="flex items-center justify-between p-4 rounded-lg">
                     <div className="flex items-center gap-3">
-                      <Download className="h-5 w-5 text-green-600" />
+                      <Download className="h-5 w-5 text-green-600 shrink-0" />
                       <span className="font-medium text-sm sm:text-base">
                         Downloads
                       </span>
                     </div>
                     <div className="text-right">
-                      <div className="text-xl sm:text-2xl font-bold text-green-600">
+                      <div className="text-lg sm:text-2xl font-bold text-green-600">
                         {totalDownloads}
                       </div>
                       <div className="text-xs sm:text-sm text-muted-foreground">
@@ -1289,13 +1302,13 @@ export default function AnalyticsPage() {
                   </div>
                   <div className="flex items-center justify-between p-4  rounded-lg">
                     <div className="flex items-center gap-3">
-                      <Share2 className="h-5 w-5 text-orange-600" />
+                      <Share2 className="h-5 w-5 text-orange-600 shrink-0" />
                       <span className="font-medium text-sm sm:text-base">
                         Shares
                       </span>
                     </div>
                     <div className="text-right">
-                      <div className="text-xl sm:text-2xl font-bold text-orange-600">
+                      <div className="text-lg sm:text-2xl font-bold text-orange-600">
                         {totalShares}
                       </div>
                       <div className="text-xs sm:text-sm text-muted-foreground">
@@ -1312,21 +1325,31 @@ export default function AnalyticsPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Key Insights</CardTitle>
-                <CardDescription>Data-driven recommendations</CardDescription>
+                <CardTitle className="text-lg">Key Insights</CardTitle>
+                <CardDescription className="text-sm">
+                  Data-driven recommendations
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
+              <CardContent className="p-4 sm:p-6">
+                <div className="space-y-4 max-h-[300px] overflow-y-auto">
                   {insights.length > 0 ? (
                     insights.map((insight, index) => (
                       <div key={index} className="p-4 border rounded-lg">
                         <div className="flex items-start gap-3">
                           <div
-                            className={`w-2 h-2 rounded-full mt-2 bg-${insight.color}-500`}
+                            className={`w-2 h-2 rounded-full mt-2 shrink-0 ${
+                              insight.color === "green"
+                                ? "bg-green-500"
+                                : "bg-blue-500"
+                            }`}
                           />
-                          <div>
+                          <div className="min-w-0 flex-1">
                             <h4
-                              className={`font-medium text-sm sm:text-base text-${insight.color}-700`}
+                              className={`font-medium text-sm sm:text-base ${
+                                insight.color === "green"
+                                  ? "text-green-700"
+                                  : "text-blue-700"
+                              }`}
                             >
                               {insight.title}
                             </h4>
@@ -1338,9 +1361,11 @@ export default function AnalyticsPage() {
                       </div>
                     ))
                   ) : (
-                    <div className="text-center text-muted-foreground">
-                      Not enough data for insights yet. Keep sharing your
-                      resume!
+                    <div className="text-center text-muted-foreground py-8">
+                      <div className="text-sm">
+                        Not enough data for insights yet. Keep sharing your
+                        resume!
+                      </div>
                     </div>
                   )}
                 </div>

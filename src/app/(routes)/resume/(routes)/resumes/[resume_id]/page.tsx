@@ -46,6 +46,7 @@ import { DownloadResume } from "@/app/utils/download-file";
 import { useZustandStore } from "@/zustand/store";
 import Link from "next/link";
 import PdfViewer from "./pdf";
+import { truncateText } from "@/app/utils/truncate-text";
 
 interface TagInputProps {
   tags: string[];
@@ -284,47 +285,47 @@ export default function ResumeDetailsPage({
 
   return (
     <div className="min-h-screen ">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="max-w-7xl mx-auto oversflow-x-hidden space-y-6">
+        <div className="flex flex-col sm:flex-row items-center justify-between">
           <div className="flex items-center gap-4">
             <div>
-              <h1 className="text-2xl font-bold dark:text-gray-400 text-gray-700 ">
-                {resume?.title}
+              <h1 className=" text-lg lg:text-2xl font-bold dark:text-gray-400 text-gray-700 ">
+                {truncateText(resume?.title, 45)}
               </h1>
-              <p className="text-gray-500 flex items-center gap-2 mt-1">
+              <p className="text-gray-500 text-sm sm:text-base flex items-center gap-2 mt-1">
                 <Calendar className="h-4 w-4" />
                 Created {new Date(resume?.createdAt ?? "").toLocaleDateString()}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex m-3 sm:m-0    items-center gap-3 lg:gap-6">
             <Button
               variant="outline"
-              className="w-full justify-start"
+              className="w-full justify-start text-xs sm:text-base"
               onClick={copyShareLink}
             >
               <Copy className="h-4 w-4 mr-2" />
-              Copy Resume Link
+              Copy Link
             </Button>
-            <Button asChild>
-              <a
-                href={`/${resume?.shortUrl}?ref=demo`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+            <a
+              href={`/${resume?.shortUrl}?ref=demo`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button className="text-xs sm:text-base">
                 <ExternalLink className="h-4 w-4 mr-2" />
                 View Live
-              </a>
-            </Button>
+              </Button>
+            </a>
           </div>
         </div>
 
-        <div className=" flex items-center gap-x-24 ">
-          <div className=" flex items-center gap-x-10 ">
+        <div className=" flex flex-col sm:flex-row items-center gap-x-24 ">
+          <div className=" flex items-center text-xs sm:text-base gap-x-10 ">
             <div className="flex items-center justify-between text-blue-600">
               <div>
-                <p className="text-sm font-medium text-gray-500">Total Views</p>
+                <p className="font-medium text-gray-500">Total Views</p>
                 <p className="text-2xl font-bold">
                   {resume?.analytics?.views || 0}
                 </p>
@@ -333,7 +334,7 @@ export default function ResumeDetailsPage({
 
             <div className="flex items-center justify-between text-blue-600">
               <div>
-                <p className="text-sm font-medium text-gray-500">Downloads</p>
+                <p className="font-medium text-gray-500">Downloads</p>
                 <p className="text-2xl font-bold">
                   {resume?.analytics?.downloads || 0}
                 </p>
@@ -342,15 +343,16 @@ export default function ResumeDetailsPage({
 
             <div className="flex items-center justify-between text-blue-600">
               <div>
-                <p className="text-sm font-medium text-gray-500">Shares</p>
+                <p className="font-medium text-gray-500">Shares</p>
                 <p className="text-2xl font-bold">
                   {resume?.analytics?.shares || 0}
                 </p>
               </div>
             </div>
           </div>
+
           <Link href={`/resume/analytics?resume=${resume._id || ""}`}>
-            <Button variant="outline">
+            <Button variant="outline" className=" mt-4 sm:mt-0">
               <BarChart3 className="h-4 w-4 mr-2" />
               View Detailed Analytics
             </Button>
@@ -404,7 +406,7 @@ export default function ResumeDetailsPage({
                       <div className=" flex relative items-center gap-x-2">
                         <Label>Tags</Label>
                         <div className=" group cursor-pointer ">
-                          <span className=" absolute w-80 text-sm bg-background z-50  top-6 left-0 h-fit p-3 rounded-lg border-2  group-hover:visible invisible">
+                          <span className=" absolute sm:w-80 w-72 sm:text-sm text-xs bg-background z-50  top-6 left-0 h-fit p-3 rounded-lg border-2  group-hover:visible invisible">
                             Add tags to describe the resume. Include roles (e.g.
                             Frontend Developer), skills (e.g. React, Node.js),
                             or relevant keywords (e.g. Remote, Junior).
@@ -458,7 +460,9 @@ export default function ResumeDetailsPage({
                         <Label className="text-sm font-medium text-gray-500">
                           Name
                         </Label>
-                        <p className="text-sm font-semibold">{resume?.title}</p>
+                        <p className="text-sm font-semibold">
+                          {truncateText(resume?.title, 30)}
+                        </p>
                       </div>
 
                       <div>
@@ -467,7 +471,7 @@ export default function ResumeDetailsPage({
                             Tags
                           </Label>
                           <div className="relative group cursor-pointer ">
-                            <span className=" absolute w-80 text-sm bg-background z-50  -top-2 left-6 h-fit p-3 rounded-lg border-2  group-hover:visible invisible">
+                            <span className=" absolute sm:w-80 w-72 sm:text-sm bg-background z-50 text-xs  -top-2 sm:left-6 -left-10 h-fit p-3 rounded-lg border-2  group-hover:visible invisible">
                               Add tags to describe the resume. Include roles
                               (e.g. Frontend Developer), skills (e.g. React,
                               Node.js), or relevant keywords (e.g. Remote,
@@ -583,9 +587,9 @@ export default function ResumeDetailsPage({
             <DialogHeader>
               <DialogTitle>Delete Resume</DialogTitle>
               <DialogDescription>
-                Are you sure you want to delete {resume?.title}? This action
-                cannot be undone and will permanently remove your resume and all
-                its analytics data.
+                Are you sure you want to delete &quot;{resume?.title}&quot;?
+                This action cannot be undone and will permanently remove your
+                resume and all its analytics data.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -595,7 +599,7 @@ export default function ResumeDetailsPage({
               >
                 Cancel
               </Button>
-              <Button variant="destructive" onClick={handleDelete}>
+              <Button variant="destructive" className=" mb-2" onClick={handleDelete}>
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete Resume
               </Button>

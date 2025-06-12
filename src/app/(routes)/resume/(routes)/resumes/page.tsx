@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -30,8 +30,6 @@ import { IResume } from "@/models/resume";
 type SortOption = "name" | "date" | "views";
 
 export default function ResumesPage() {
-  // const { userData } = useZustandStore();
-  // const { loadingUserData } = useGetUserData();
   const { resumes, loadingResumes, fetchResumes } = useResumes();
   const [selectedResumes, setSelectedResumes] = useState<string[]>([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -40,22 +38,6 @@ export default function ResumesPage() {
   const [sortBy, setSortBy] = useState<SortOption>("date");
   const [filterFolder, setFilterFolder] = useState("all");
   const { toast } = useToast();
-
-  useEffect(() => {
-    // const searchParams = new URLSearchParams(window.location.search);
-    // const redirect = searchParams.get("redirect");
-    // const fetchData = searchParams.get("fetchData");
-    // if (redirect === "true" && fetchData === "true") {
-    // }
-  }, []);
-
-  // const toggleResumeSelection = (id: string) => {
-  //   setSelectedResumes((prev) =>
-  //     prev.includes(id)
-  //       ? prev.filter((resumeId) => resumeId !== id)
-  //       : [...prev, id]
-  //   );
-  // };
 
   const confirmDelete = async () => {
     setIsDeleting(true);
@@ -91,7 +73,9 @@ export default function ResumesPage() {
         const matchesSearch = resume?.title
           .toLowerCase()
           .includes(searchQuery.toLowerCase());
-        const matchesFolder = filterFolder === "all";
+        const matchesFolder =
+          filterFolder === "all" || resume.tags.includes(filterFolder);
+
         return matchesSearch && matchesFolder;
       })
       .sort((a, b) => {
@@ -103,7 +87,7 @@ export default function ResumesPage() {
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
             );
           case "views":
-          // return b.analytics.views - a.analytics.views;
+            return b.analytics.views - a.analytics.views;
           default:
             return 0;
         }
@@ -123,13 +107,15 @@ export default function ResumesPage() {
     }
   });
 
+  console.log(filterFolder);
+
   return (
     <div className="space-y-6 p-3">
       <div>
-        <h2 className="text-2xl  font-bold tracking-tight">
-          Resumes
-        </h2>
-        <p className="text-muted-foreground text-sm">List of all your resumes</p>
+        <h2 className="text-2xl  font-bold tracking-tight">Resumes</h2>
+        <p className="text-muted-foreground text-sm">
+          List of all your resumes
+        </p>
       </div>
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
@@ -149,32 +135,34 @@ export default function ResumesPage() {
             placeholder="Search resumes..."
             className="max-w-sm"
           />
-          <Select value={filterFolder} onValueChange={setFilterFolder}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by folder" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Tags</SelectItem>
-              {tags.map((item) => (
-                <SelectItem key={item} value={item}>
-                  {item}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select
-            value={sortBy}
-            onValueChange={(value) => setSortBy(value as SortOption)}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="name">Name</SelectItem>
-              <SelectItem value="date">Upload Date</SelectItem>
-              <SelectItem value="views">Most Views</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className=" flex items-center gap-x-2">
+            <Select value={filterFolder} onValueChange={setFilterFolder}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by folder" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Tags</SelectItem>
+                {tags.map((item) => (
+                  <SelectItem key={item} value={item}>
+                    {item}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={sortBy}
+              onValueChange={(value) => setSortBy(value as SortOption)}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="name">Name</SelectItem>
+                <SelectItem value="date">Upload Date</SelectItem>
+                <SelectItem value="views">Most Views</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       )}
 

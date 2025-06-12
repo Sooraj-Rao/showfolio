@@ -32,6 +32,7 @@ import { toast } from "@/hooks/use-toast";
 import useResumes from "@/app/hooks/get-resumes";
 import { useSearchParams } from "next/navigation";
 import type { IResume } from "@/models/resume";
+import { truncateText } from "@/app/utils/truncate-text";
 
 export default function SharePage() {
   const { resumes } = useResumes();
@@ -138,7 +139,7 @@ export default function SharePage() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 p-4 w-full">
+    <div className="flex flex-col xl:flex-row gap-6 sm:p-4 p-1 w-full">
       <div className="flex-1 space-y-6">
         <Card>
           <CardHeader>
@@ -151,7 +152,9 @@ export default function SharePage() {
             <Select
               value={selectedResume?.shortUrl ?? ""}
               onValueChange={(value) => {
-                const found = resumes.find((r:IResume) => r.shortUrl === value);
+                const found = resumes.find(
+                  (r: IResume) => r.shortUrl === value
+                );
                 if (found) {
                   setSelectedResume(found);
                   setUrl(window.location.origin + "/" + found.shortUrl);
@@ -164,16 +167,16 @@ export default function SharePage() {
                 <SelectValue placeholder="Choose resume" />
               </SelectTrigger>
               <SelectContent>
-                {resumes.map((r:IResume) => (
+                {resumes.map((r: IResume) => (
                   <SelectItem key={r.shortUrl} value={r.shortUrl}>
-                    {r.title}
+                    {truncateText(r.title, window.innerWidth > 400 ? 40 : 20)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             {selectedResume && (
               <p className="text-sm text-muted-foreground">
-                Last updated:{" "}
+                Last updated:
                 {new Date(selectedResume.updatedAt).toLocaleDateString()}
               </p>
             )}
@@ -186,28 +189,42 @@ export default function SharePage() {
           <CardContent className="space-y-4">
             <div className="space-y-1">
               <Label>Shareable Link</Label>
-              <div className="flex gap-2 items-center">
+              <div className="flex flex-col sm:flex-row gap-2 items-center">
                 <p className="text-sm break-all flex-1 text-muted-foreground">
-                  {url}
+                  {truncateText(url, window.innerWidth > 400 ? 40 : 25)}
+
+                  <button
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      const button = e.target as HTMLButtonElement;
+                      const span = button.previousSibling as HTMLSpanElement;
+
+                      span!.textContent = url;
+                      button.style.display = "none";
+                    }}
+                  >
+                    more
+                  </button>
                   {ref && (
                     <span className=" bg-secondary p-1 rounded-md">
                       ?ref={ref}
                     </span>
                   )}
                 </p>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={() => handleCopy(`${url}${ref && "?ref=" + ref}`)}
-                >
-                  <Copy size={16} />
-                </Button>
-                <Button
-                  size="icon"
-                  onClick={() => handleShare(`${url}${ref && "?ref=" + ref}`)}
-                >
-                  <Share2 size={16} />
-                </Button>
+                <div className=" flex gap-x-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => handleCopy(`${url}${ref && "?ref=" + ref}`)}
+                  >
+                    <Copy size={16} />
+                    Copy
+                  </Button>
+                  <Button
+                    onClick={() => handleShare(`${url}${ref && "?ref=" + ref}`)}
+                  >
+                    <Share2 size={16} />
+                    Share
+                  </Button>
+                </div>
               </div>
             </div>
 
@@ -216,7 +233,7 @@ export default function SharePage() {
                 Add Reference
                 <div className="relative  group cursor-pointer">
                   <Info size={14} className=" text-gray-500" />
-                  <div className="absolute left-6 -top-2  w-80 text-xs bg-background p-2 border rounded shadow-md z-10 hidden group-hover:block">
+                  <div className="absolute sm:left-6 -top-2  sm:w-80 w-60 -left-10 text-xs bg-background p-2 border rounded shadow-md z-10 hidden group-hover:block">
                     Add labels like ‘LinkedIn’, ‘Email’, or any label you want
                     to track to your links, so you can see where people found
                     your resume.
@@ -235,10 +252,14 @@ export default function SharePage() {
               )}
             </div>
 
-            <div className="space-y-2">
-              {shortUrl ? (
-                <>
-                  <Label>Short URL</Label>
+            <div className="">
+              <>
+                <Label className="">Short URL</Label>
+                <p className="text-sm text-muted-foreground mb-4">
+                  In case the shared URL looks too long, you can generate a
+                  shortened version below
+                </p>
+                {shortUrl ? (
                   <div className="flex items-center justify-between">
                     <p className="break-all text-sm text-muted-foreground">
                       {shortUrl}
@@ -256,15 +277,15 @@ export default function SharePage() {
                       </Button>
                     </div>
                   </div>
-                </>
-              ) : (
-                <Button
-                  onClick={() => shortenUrl(`${url}${ref && "?ref=" + ref}`)}
-                >
-                  <Link2 size={20} />
-                  {loading ? "Generating..." : "Generate Short URL"}
-                </Button>
-              )}
+                ) : (
+                  <Button
+                    onClick={() => shortenUrl(`${url}${ref && "?ref=" + ref}`)}
+                  >
+                    <Link2 size={20} />
+                    {loading ? "Generating..." : "Generate Short URL"}
+                  </Button>
+                )}
+              </>
             </div>
           </CardContent>
         </Card>

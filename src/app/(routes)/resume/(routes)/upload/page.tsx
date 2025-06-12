@@ -19,6 +19,7 @@ import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import useResumes from "@/app/hooks/get-resumes";
 import { useRouter } from "next/navigation";
+import { truncateText } from "@/app/utils/truncate-text";
 
 export default function UploadPage() {
   const storage = getStorage(app);
@@ -136,7 +137,7 @@ export default function UploadPage() {
           Upload your new resumes here
         </p>
       </div>
-      <div className=" grid grid-cols-2">
+      <div className=" grid sm:grid-cols-2 grid-cols-1">
         <Card className="border-2 border-dashed">
           <CardContent className="">
             {files.length === 0 ? (
@@ -255,10 +256,10 @@ export default function UploadPage() {
         </Card>
         {resumes?.length !== 0 ? (
           <Card className=" bg-transparent border-none">
-            <CardHeader>
+            <CardHeader className="">
               <CardTitle>Recently Uploaded Resumes</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className=" p-0 sm:px-6">
               <ul className="space-y-3">
                 {resumes?.map((resume) => (
                   <Link
@@ -271,7 +272,10 @@ export default function UploadPage() {
                     <li className="flex items-center justify-between p-3 bg-muted/30 w-full rounded-lg text-sm">
                       <div className="flex items-center space-x-3">
                         <File className="h-5 w-5 text-primary mr-2" />
-                        {resume.title}
+                        {truncateText(
+                          resume?.title,
+                          window.innerWidth > 400 ? 35 : 14
+                        )}
                       </div>
                       <p className="text-xs text-muted-foreground">
                         {formatDistanceToNow(new Date(resume.createdAt), {

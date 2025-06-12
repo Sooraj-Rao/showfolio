@@ -10,14 +10,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bell, User } from "lucide-react";
+import { Bell, Menu, User } from "lucide-react";
+import { useState } from "react";
+import { MobileSidebar } from "./sidebar";
 
 export function DashboardHeader() {
+  const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => setMobileSidebarOpen((prev) => !prev);
+
   return (
     <header className="border-b bg-background/90 z-[99] backdrop-blur w-full sticky top-0 ">
       <div className="flex h-16 items-center px-4">
         <h2 className="flex-1">Resume Org</h2>
-        <div className="flex items-center space-x-4">
+        <div className="items-center space-x-4 lg:flex hidden">
           <ModeToggle />
           <Button variant="ghost" size="icon">
             <Bell className="h-5 w-5" />
@@ -37,6 +43,13 @@ export function DashboardHeader() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+        <Button className=" lg:hidden" onClick={toggleSidebar} variant="ghost">
+          <Menu  />
+        </Button>
+        <MobileSidebar
+          isOpen={isMobileSidebarOpen}
+          toggleSidebar={toggleSidebar}
+        />
       </div>
     </header>
   );

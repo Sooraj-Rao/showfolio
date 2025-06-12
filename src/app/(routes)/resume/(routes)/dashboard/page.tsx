@@ -15,7 +15,6 @@ import {
   Lock,
   Calendar,
   Brain,
-  Shield,
   BarChart3,
   Clock,
   LucideShare2,
@@ -24,6 +23,7 @@ import Link from "next/link";
 import { useZustandStore } from "@/zustand/store";
 import useGetUserData from "@/app/hooks/use-getUserData";
 import { AlertMessage } from "@/components/main/dashboard/resumes/disable-message";
+import { truncateText } from "@/app/utils/truncate-text";
 
 export default function ResumeDashboard() {
   useGetUserData();
@@ -61,17 +61,15 @@ export default function ResumeDashboard() {
         return views >= (max?.analytics?.views ?? 0) ? item : max;
       }, null)
     : null;
-    
+
   const showAlert =
     (!userData.isActive && "Disable") ||
     (userData.private.resumes && "Private");
 
-
-
   return (
     <div>
       {showAlert && <AlertMessage type={showAlert} />}
-      <div className="min-h-screen  p-6">
+      <div className="min-h-screen  lg:p-6">
         <div className="max-w-6xl mx-auto space-y-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -167,7 +165,7 @@ export default function ResumeDashboard() {
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid xl:grid-cols-3 grid-cols-1  gap-y-6 xl:gap-x-6">
             <div className="lg:col-span-2 space-y-6">
               {hotResume !== null && (
                 <Card>
@@ -186,7 +184,7 @@ export default function ResumeDashboard() {
                           resumeData?.find(
                             (item) => item?.shortUrl == hotResume?.shortUrl
                           )
-                        ).map((resume, i) => (
+                        )?.map((resume, i) => (
                           <Link
                             key={i}
                             className=" group"
@@ -194,12 +192,12 @@ export default function ResumeDashboard() {
                           >
                             <div className="flex items-center justify-between group-hover:border-primary group-hover:bg-secondary/20 p-4 border rounded-lg transition-colors">
                               <div className="flex items-center gap-4">
-                                <div className="w-12 h-12  rounded-lg flex items-center justify-center">
-                                  <FileText className="h-6 w-6 text-blue-600" />
+                                <div className="sm:w-12 sm:h-12  rounded-lg flex items-center justify-center">
+                                  <FileText className="h-4 w-4 sm:h-6 sm:w-6  text-blue-600" />
                                 </div>
                                 <div>
-                                  <h3 className="font-medium">
-                                    {resume?.title}
+                                  <h3 className="font-medium text-sm lg:text-base">
+                                    {truncateText(resume?.title)}
                                   </h3>
                                   <div className="flex items-center gap-2 mt-1">
                                     <Badge
@@ -222,16 +220,8 @@ export default function ResumeDashboard() {
                                         </>
                                       )}
                                     </Badge>
-                                    {resume?.passwordProtected && (
-                                      <Badge
-                                        variant="outline"
-                                        className="text-xs"
-                                      >
-                                        <Shield className="h-3 w-3 mr-1" />
-                                        Protected
-                                      </Badge>
-                                    )}
-                                    <span className="text-xs text-gray-500">
+
+                                    <span className="text-xs sm:block hidden text-gray-500">
                                       Created{" "}
                                       {new Date(
                                         resume?.createdAt
@@ -243,11 +233,19 @@ export default function ResumeDashboard() {
 
                               <div className="flex items-center gap-2">
                                 <div className="text-right text-sm">
-                                  <div className="font-medium">
-                                    {resume?.analytics?.views} views
+                                  <div className=" font-medium flex items-center justify-end gap-x-3">
+                                    <Eye className="h-4 w-4 sm:h-6 sm:w-6  sm:hidden" />
+                                    {resume?.analytics?.views}
+                                    <span className=" hidden sm:block">
+                                      views
+                                    </span>
                                   </div>
-                                  <div className="text-gray-500">
-                                    {resume?.analytics?.downloads} downloads
+                                  <div className="text-gray-500 flex items-center justify-end gap-x-3">
+                                    <Download className="h-4 w-4 sm:h-6 sm:w-6  sm:hidden" />
+                                    {resume?.analytics?.downloads}
+                                    <span className=" hidden sm:block">
+                                      downloads
+                                    </span>
                                   </div>
                                 </div>
                               </div>
@@ -270,56 +268,6 @@ export default function ResumeDashboard() {
                 </Card>
               )}
 
-              {/* <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5" />
-                  Analytics Overview
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {totalViews === 0 ? (
-                  <div className="text-center py-8">
-                    <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No analytics data yet
-                    </h3>
-                    <p className="text-gray-600 mb-4">
-                      Share your resume to start collecting analytics data
-                    </p>
-                    <Button
-                      variant="outline"
-                      onClick={() => copyShareLink(resumeData[0].shortUrl)}
-                      className="mx-auto"
-                    >
-                      <Share2 className="h-4 w-4 mr-2" />
-                      Share Your Resume
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">
-                        {totalViews}
-                      </div>
-                      <div className="text-sm text-gray-600">Total Views</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">
-                        {totalDownloads}
-                      </div>
-                      <div className="text-sm text-gray-600">Downloads</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-600">
-                        {totalShares}
-                      </div>
-                      <div className="text-sm text-gray-600">Shares</div>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card> */}
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">Account Information</CardTitle>
@@ -387,14 +335,17 @@ export default function ResumeDashboard() {
               </Card>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-6  xl:w-full w-fits  ">
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">Quick Actions</CardTitle>
                 </CardHeader>
-                <CardContent className=" flex flex-col gap-y-3">
+                <CardContent className=" flex flex-col   w-fit lg:w-full gap-y-3">
                   <Link href="/resume/upload">
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button
+                      variant="outline"
+                      className="w-full text-sm justify-start"
+                    >
                       <Upload className="mr-2 h-4 w-4" />
                       Upload New Resume
                     </Button>

@@ -24,6 +24,7 @@ import useResumes from "@/app/hooks/get-resumes";
 import { IResume } from "@/models/resume";
 import { useSearchParams } from "next/navigation";
 import { Label } from "@/components/ui/label";
+import { truncateText } from "@/app/utils/truncate-text";
 
 export default function AIFeedbackPage() {
   const searchParams = useSearchParams();
@@ -77,9 +78,9 @@ export default function AIFeedbackPage() {
   }, [searchParams.get("shortUrl"), resumes]);
 
   return (
-    <div className="space-y-6 p-3">
+    <div className="space-y-6 sm:p-3 p-1">
       <form className="space-y-6">
-        <Card className="w-full  ">
+        <Card className="w-full   ">
           <CardHeader>
             <CardTitle className="text-xl">
               <span className=" mr-4">Generate Resume Feedback</span>
@@ -161,11 +162,19 @@ export default function AIFeedbackPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">
-              Generated Feedback for {selectedResume?.title}
+              Generated Feedback for
+              <span className="text-muted-foreground ml-1">
+                &quot;
+                {truncateText(
+                  selectedResume.title,
+                  window.innerWidth > 500 ? 50 : 25
+                )}
+                &quot;
+              </span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4 text-justify">
+            <div className="space-y-4 sm:text-justify">
               <HighlightedText text={result.desc} />
             </div>
           </CardContent>

@@ -345,7 +345,7 @@ export default function AnalyticsDesc({ data }: AnalyticsDescProps) {
                                 {item.countryCode ? (
                                   <Flag
                                     code={item?.countryCode}
-                                    style={{ width: "40px" }}
+                                    style={{ width: "20px" }}
                                   />
                                 ) : (
                                   <Globe className="w-3 h-3" />
@@ -494,8 +494,9 @@ export default function AnalyticsDesc({ data }: AnalyticsDescProps) {
                                           <span className="text-lg">
                                             {item.countryCode ? (
                                               <Flag
+                                                className="w-5 h-5"
                                                 code={item?.countryCode}
-                                                style={{ width: "40px" }}
+                                                style={{ width: "20px" }}
                                               />
                                             ) : (
                                               <Globe className="w-3 h-3" />

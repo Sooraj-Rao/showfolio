@@ -16,8 +16,8 @@ import {
 import { ModeToggle } from "@/components/main/theme/theme-toggle";
 import { Separator } from "@/components/ui/separator";
 
-const sidebarItems = [
-  { name: "Overview", href: "/resume/dashboard", icon: Home },
+export const ResumeSidebarItems = [
+  { name: "Dashboard", href: "/resume/dashboard", icon: Home },
   { name: "Resumes", href: "/resume/resumes", icon: List },
   { name: "Upload", href: "/resume/upload", icon: Upload },
   { name: "Analytics", href: "/resume/analytics", icon: BarChart2 },
@@ -33,7 +33,7 @@ export function Sidebar() {
     <aside className="w-64 lg:block hidden  h-screen sticky top-4 overflow-auto border-r bg-background">
       <div className="flex flex-col h-full px-4">
         <nav className="flex-1 space-y-2">
-          {sidebarItems.map((item) => {
+          {ResumeSidebarItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link key={item.href} href={item.href}>
@@ -52,7 +52,7 @@ export function Sidebar() {
           })}
           <div>
             <Link href="/portfolio/dashboard/">
-              <Button>
+              <Button className="w-full justify-start">
                 <StarsIcon className="mr-4 h-4 w-4" />
                 Portfolio
               </Button>
@@ -64,8 +64,9 @@ export function Sidebar() {
   );
 }
 
-export function MobileSidebar({ isOpen, toggleSidebar }) {
+export function MobileSidebar({ isOpen, toggleSidebar, SidebarItems }) {
   const pathname = usePathname();
+  const isResume = pathname.startsWith("/resume");
   return (
     <aside
       className={cn(
@@ -81,7 +82,7 @@ export function MobileSidebar({ isOpen, toggleSidebar }) {
           <X />
         </button>
         <nav className="flex flex-col space-y-2  mx-auto  bg-background py-5">
-          {sidebarItems.map((item) => {
+          {SidebarItems?.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link onClick={toggleSidebar} key={item.href} href={item.href}>
@@ -97,11 +98,23 @@ export function MobileSidebar({ isOpen, toggleSidebar }) {
               </Link>
             );
           })}
-          <Link onClick={toggleSidebar} href="/portfolio/dashboard/">
-            <Button>
-              <StarsIcon className="mr-2 h-4 w-4" />
-              Portfolio
-            </Button>
+          <Link
+            onClick={toggleSidebar}
+            href={`${
+              isResume ? "/portfolio/dashboard/" : "/resume/dashboard/"
+            }`}
+          >
+            {!isResume ? (
+              <Button>
+                <StarsIcon className="mr-2 h-4 w-4" />
+                Resumes
+              </Button>
+            ) : (
+              <Button>
+                <StarsIcon className="mr-2 h-4 w-4" />
+                Portfolio
+              </Button>
+            )}
           </Link>
           <div className=" py-3">
             <Separator />

@@ -12,13 +12,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Bell, Menu, User } from "lucide-react";
 import { useState } from "react";
-import { MobileSidebar } from "./sidebar";
+import { MobileSidebar, ResumeSidebarItems } from "./sidebar";
+import { usePathname } from "next/navigation";
+import { PortfolioSidebarItems } from "../../portfolio/widgets/sidebar";
 
 export function DashboardHeader() {
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
+  const path = usePathname();
   const toggleSidebar = () => setMobileSidebarOpen((prev) => !prev);
-
+  const isResumePage = path.startsWith("/resume");
+  const isPortfolioPage = path.startsWith("/portfolio");
   return (
     <header className="border-b bg-background/90 z-[99] backdrop-blur w-full sticky top-0 ">
       <div className="flex h-16 items-center px-4">
@@ -44,12 +47,21 @@ export function DashboardHeader() {
           </DropdownMenu>
         </div>
         <Button className=" lg:hidden" onClick={toggleSidebar} variant="ghost">
-          <Menu  />
+          <Menu />
         </Button>
-        <MobileSidebar
-          isOpen={isMobileSidebarOpen}
-          toggleSidebar={toggleSidebar}
-        />
+        {isResumePage ? (
+          <MobileSidebar
+            SidebarItems={ResumeSidebarItems}
+            isOpen={isMobileSidebarOpen}
+            toggleSidebar={toggleSidebar}
+          />
+        ) : isPortfolioPage ? (
+          <MobileSidebar
+            SidebarItems={PortfolioSidebarItems}
+            isOpen={isMobileSidebarOpen}
+            toggleSidebar={toggleSidebar}
+          />
+        ) : null}
       </div>
     </header>
   );

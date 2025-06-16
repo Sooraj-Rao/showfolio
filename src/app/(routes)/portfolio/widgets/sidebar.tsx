@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-const sidebarItems = [
+export const PortfolioSidebarItems = [
   {
     name: "Dashboard",
     href: "/portfolio/dashboard",
@@ -37,12 +37,11 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 h-screen sticky top-0 overflow-auto border-r bg-background">
+    <aside className="w-64 lg:block hidden  h-screen sticky top-0 overflow-auto border-r bg-background">
       <div className="flex flex-col h-full px-4">
         <nav className="flex-1 space-y-2">
-          {sidebarItems.map((item) => {
+          {PortfolioSidebarItems.map((item) => {
             const isActive = pathname === item.href;
-
 
             return (
               <Link key={item.href} href={"" + item.href}>
@@ -60,12 +59,11 @@ export function Sidebar() {
             );
           })}
           <div>
-            <Link
-              href="/resume/dashboard/"
-              className=" bg-rose-600 mt-10 text-white  rounded  w-full py-2 px-4 text-sm flex items-center"
-            >
-              <StarsIcon className="mr-4 h-4 w-4" />
-              Resumes
+            <Link href="/resume/dashboard/">
+              <Button>
+                <StarsIcon className="mr-4 h-4 w-4" />
+                Resumes
+              </Button>
             </Link>
           </div>
         </nav>

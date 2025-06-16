@@ -1,8 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import type React from "react";
+
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  FileUp,
+  Upload,
+  User,
+  Loader2,
+  Trash2,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,8 +24,18 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
 
 // Define types for our form data
 type SocialLink = {
@@ -101,6 +122,28 @@ const initialFormData: FormData = {
   ],
 };
 
+// Mock data for existing resumes
+const mockResumes = [
+  {
+    id: "1",
+    name: "My Professional Resume",
+    date: "2023-05-15",
+    shortUrl: "resume-1",
+  },
+  {
+    id: "2",
+    name: "Technical Resume",
+    date: "2023-08-22",
+    shortUrl: "resume-2",
+  },
+  {
+    id: "3",
+    name: "Creative Portfolio Resume",
+    date: "2024-01-10",
+    shortUrl: "resume-3",
+  },
+];
+
 // Steps for the form
 const steps = [
   "Personal Information",
@@ -114,8 +157,8 @@ const steps = [
 
 export default function CreatePortfolioPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
-  // Update the useState hook to load data from localStorage
   const [formData, setFormData] = useState<FormData>(() => {
     // Check if we're in the browser environment
     if (typeof window !== "undefined") {
@@ -128,11 +171,170 @@ export default function CreatePortfolioPage() {
     "right"
   );
 
+  // State for AI extraction
+  const [showDataSourceSelection, setShowDataSourceSelection] = useState(true);
+  const [dataSource, setDataSource] = useState<"manual" | "ai">("manual");
+  const [aiOption, setAiOption] = useState<"upload" | "existing">("upload");
+  const [selectedResume, setSelectedResume] = useState<string>("");
+  const [file, setFile] = useState<File | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  // Handle file selection
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  // Process resume with AI
+  const processResumeWithAI = async (resumeSource: string) => {
+    setIsProcessing(true);
+    try {
+      const formData = new FormData();
+      if (aiOption === "upload" && file) {
+        formData.append("pdf", file); // File upload case
+      } else if (aiOption === "existing" && resumeSource) {
+        formData.append("firebaseUrl", resumeSource); // Firebase URL case
+      } else {
+        alert("Missing resume input");
+        return;
+      }
+
+      const response = await fetch("/api/portfolio/ai-parse", {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error("Failed to process resume");
+      }
+
+      const { result: data } = await response.json();
+      if (!response.ok) {
+        throw new Error("Failed to process resume");
+      }
+      if (!data) {
+        throw new Error("No data returned from AI processing");
+      }
+      // Map the API response to our form data structure
+      const newFormData = { ...initialFormData };
+
+      // Personal info
+      newFormData.personalInfo.name = data.name || "";
+      newFormData.personalInfo.email = data.email || "";
+      newFormData.personalInfo.phone = data.phone || "";
+      newFormData.personalInfo.location = data.location || "";
+
+      // Social links
+      if (data.socialLinks && data.socialLinks.length > 0) {
+        newFormData.socialLinks = data.socialLinks.map((link) => {
+          // Simple logic to determine platform from URL
+          let platform = "Website";
+          if (link.includes("linkedin")) platform = "LinkedIn";
+          else if (link.includes("github")) platform = "GitHub";
+          else if (link.includes("twitter")) platform = "Twitter";
+
+          return {
+            platform,
+            url: link.startsWith("http") ? link : `https://${link}`,
+          };
+        });
+      }
+
+      // Work experience
+      if (data.workExperience && data.workExperience.length > 0) {
+        newFormData.workExperience = data.workExperience.map((exp) => ({
+          company: exp.company || "",
+          position: exp.position || "",
+          startDate: exp.startDate || "",
+          endDate: exp.endDate || "",
+          description: exp.description || "",
+        }));
+      }
+
+      // Skills
+      if (data.skills && data.skills.length > 0) {
+        newFormData.skills = data.skills;
+      }
+
+      // Education
+      if (data.education && data.education.length > 0) {
+        newFormData.education = data.education.map((edu) => ({
+          institution: edu.institution || "",
+          degree: edu.degree || "",
+          field: edu.field || "",
+          startDate: edu.startDate || "",
+          endDate: edu.endDate || "",
+        }));
+      }
+
+      // Certifications
+      if (data.certifications && data.certifications.length > 0) {
+        newFormData.certifications = data.certifications.map((cert) => ({
+          name: cert.name || "",
+          issuer: cert.issuer || "",
+          date: cert.date || "",
+          url: cert.url || "",
+        }));
+      } else {
+        // Keep the default empty certification
+      }
+
+      // Update form data
+      setFormData(newFormData);
+
+      // Save to localStorage
+      localStorage.setItem("portfolioFormData", JSON.stringify(newFormData));
+
+      toast({
+        title: "Resume processed successfully",
+        description:
+          "Your portfolio information has been extracted from your resume.",
+      });
+
+      // Move to the first step of the form
+      setShowDataSourceSelection(false);
+    } catch (error) {
+      console.error("Error processing resume:", error);
+      toast({
+        title: "Error processing resume",
+        description:
+          "There was an error extracting information from your resume. Please try again or fill the form manually.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Start the form process
+  const startFormProcess = () => {
+    if (dataSource === "manual") {
+      setShowDataSourceSelection(false);
+    } else if (dataSource === "ai") {
+      if (aiOption === "upload" && file) {
+        processResumeWithAI("upload");
+      } else if (aiOption === "existing" && selectedResume) {
+        processResumeWithAI(selectedResume);
+      } else {
+        toast({
+          title: "Missing information",
+          description:
+            aiOption === "upload"
+              ? "Please select a resume file to upload"
+              : "Please select a resume from your existing resumes",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   // Handle next step
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setSlideDirection("right");
       setCurrentStep(currentStep + 1);
+      // Save to localStorage
+      localStorage.setItem("portfolioFormData", JSON.stringify(formData));
     }
   };
 
@@ -343,17 +545,158 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Add useEffect to save form data to localStorage when it changes
-  useEffect(() => {
-    localStorage.setItem("portfolioFormData", JSON.stringify(formData));
-  }, [formData]);
+  // If we're showing the data source selection
+  if (showDataSourceSelection) {
+    return (
+      <div className=" px-4">
+        <h1 className="text-2xl font-bold mb-6">Create Your Portfolio</h1>
 
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Choose How to Create Your Portfolio</CardTitle>
+            <CardDescription>
+              You can either fill in your information manually or let AI extract
+              it from your resume.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs
+              defaultValue="manual"
+              className="w-full"
+              onValueChange={(value) => setDataSource(value as "manual" | "ai")}
+            >
+              <TabsList className="grid w-full grid-cols-2 mb-8">
+                <TabsTrigger value="manual">
+                  <User className="mr-2 h-4 w-4" />
+                  Manual Entry
+                </TabsTrigger>
+                <TabsTrigger value="ai">
+                  <FileUp className="mr-2 h-4 w-4" />
+                  Extract from Resume
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="manual" className="space-y-4">
+                <div className="text-center py-8">
+                  <h3 className="text-lg font-medium mb-2">
+                    Fill in Your Information Manually
+                  </h3>
+                  <p className="text-muted-foreground mb-6">
+                    You'll be guided through a step-by-step form to create your
+                    portfolio.
+                  </p>
+                  <Button onClick={startFormProcess}>Start Creating</Button>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="ai" className="space-y-6">
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div
+                      className={`border rounded-lg p-4 cursor-pointer ${
+                        aiOption === "upload"
+                          ? "border-primary bg-primary/5"
+                          : "border-muted"
+                      }`}
+                      onClick={() => setAiOption("upload")}
+                    >
+                      <div className="flex flex-col items-center justify-center py-4">
+                        <Upload className="h-8 w-8 mb-2 text-primary" />
+                        <h3 className="font-medium">Upload New Resume</h3>
+                        <p className="text-sm text-muted-foreground text-center mt-1">
+                          Upload a new resume file to extract information
+                        </p>
+                      </div>
+                    </div>
+
+                    <div
+                      className={`border rounded-lg p-4 cursor-pointer ${
+                        aiOption === "existing"
+                          ? "border-primary bg-primary/5"
+                          : "border-muted"
+                      }`}
+                      onClick={() => setAiOption("existing")}
+                    >
+                      <div className="flex flex-col items-center justify-center py-4">
+                        <FileUp className="h-8 w-8 mb-2 text-primary" />
+                        <h3 className="font-medium">Use Existing Resume</h3>
+                        <p className="text-sm text-muted-foreground text-center mt-1">
+                          Select from your previously uploaded resumes
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {aiOption === "upload" && (
+                    <div className="space-y-4 p-4 border rounded-lg">
+                      <Label htmlFor="resume-upload">Upload Resume</Label>
+                      <Input
+                        id="resume-upload"
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={handleFileChange}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Supported formats: PDF, DOC, DOCX. Maximum size: 5MB
+                      </p>
+                    </div>
+                  )}
+
+                  {aiOption === "existing" && (
+                    <div className="space-y-4 p-4 border rounded-lg">
+                      <Label htmlFor="resume-select">Select Resume</Label>
+                      <Select
+                        onValueChange={setSelectedResume}
+                        value={selectedResume}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a resume" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mockResumes.map((resume) => (
+                            <SelectItem key={resume.id} value={resume.shortUrl}>
+                              {resume.name} (
+                              {new Date(resume.date).toLocaleDateString()})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex justify-center pt-4">
+                  <Button onClick={startFormProcess} disabled={isProcessing}>
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>Extract Information</>
+                    )}
+                  </Button>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+          <CardFooter className="justify-between">
+            <Button variant="outline" onClick={() => router.push("/portfolio")}>
+              Cancel
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
+
+  // Regular form steps
   return (
-    <div className="">
+    <div className=" px-4">
       <div className="mb-8">
         <h1 className="text-2xl font-bold mb-4">Create Your Portfolio</h1>
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0">
             {steps.map((step, index) => (
               <div key={index} className="flex items-center">
                 <div

@@ -21,6 +21,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import useGetUserData from "@/app/hooks/use-getUserData";
 
 // Mock data for the dashboard
 const mockPortfolioData = {
@@ -51,13 +52,29 @@ const mockPortfolioData = {
 };
 
 export default function DashboardPage() {
-  const [portfolioData, setPortfolioData] = useState<
-    typeof mockPortfolioData | null
-  >(mockPortfolioData);
+  const { userData } = useGetUserData();
   const [loading, setLoading] = useState(false);
+  const [portfolioData, setportfolioData] = useState(mockPortfolioData);
+
+  const fetchPortfolioData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("/api/portfolio/portfolio-data");
+      if (!response.ok) {
+        throw new Error("Failed to fetch portfolio data");
+      }
+      const data = await response.json();
+      setportfolioData(mockPortfolioData);
+      localStorage.setItem("portfolioData", JSON.stringify(data.portfolio));
+    } catch (error) {
+      console.error("Error fetching portfolio data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  console.log(portfolioData);
   useEffect(() => {
-    setPortfolioData(mockPortfolioData);
-    setLoading(false);
+    fetchPortfolioData();
   }, []);
 
   if (loading) {
@@ -107,7 +124,11 @@ export default function DashboardPage() {
             </Link>
           </Button>
           <Button asChild>
-            <a href="#" target="_blank" rel="noopener noreferrer">
+            <a
+              href={`/p/${userData?.portfolio}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Eye className="mr-2 h-4 w-4" />
               View Portfolio
             </a>

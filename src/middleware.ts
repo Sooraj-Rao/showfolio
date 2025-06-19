@@ -14,7 +14,7 @@ export async function middleware(req: NextRequest) {
 
       // If token exists, redirect to home or any other page as they are already authenticated
       if (token) {
-        return NextResponse.redirect(new URL("/dashboard", req.url));
+        return NextResponse.redirect(new URL("/resume/dashboard", req.url));
       }
     }
 
@@ -40,5 +40,10 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/user", "/api/resume", "/api/analytics"],
+  matcher: [
+    "/api/user",
+    "/api/resume",
+    "/api/analytics",
+    "/api/portfolio/portfolio-data",
+  ],
 };

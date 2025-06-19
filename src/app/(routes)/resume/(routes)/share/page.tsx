@@ -266,19 +266,21 @@ export default function SharePage() {
                     </p>
                     <div className="flex gap-2">
                       <Button
-                        size="icon"
                         variant="outline"
                         onClick={() => handleCopy(shortUrl)}
                       >
                         <Copy size={16} />
+                        Copy
                       </Button>
-                      <Button size="icon" onClick={() => handleShare(shortUrl)}>
+                      <Button  onClick={() => handleShare(shortUrl)}>
                         <Share2 size={16} />
+                        Share
                       </Button>
                     </div>
                   </div>
                 ) : (
                   <Button
+                    disabled={loading}
                     onClick={() => shortenUrl(`${url}${ref && "?ref=" + ref}`)}
                   >
                     <Link2 size={20} />

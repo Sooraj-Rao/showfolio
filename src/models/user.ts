@@ -11,6 +11,7 @@ export interface IUser extends Document {
   updatedAt: Date;
   isActive: boolean;
   portfolio: string;
+  portfolioData: string;
   aiCredits: number;
   private: {
     portfolio: boolean;
@@ -57,6 +58,9 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       default: 5,
     },
     portfolio: {
+      type: String,
+    },
+    portfolioData: {
       type: String,
     },
     private: {

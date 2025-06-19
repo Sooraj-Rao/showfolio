@@ -205,32 +205,6 @@ export function LandingPage() {
                   </motion.div>
                 </div>
               </ScrollReveal>
-
-              {/* Trusted By */}
-              <ScrollReveal delay={0.4}>
-                <div className="pt-8 border-t">
-                  <div className="text-sm text-muted-foreground mb-4">
-                    Trusted by professionals from
-                  </div>
-                  <div className="flex flex-wrap gap-8 items-center">
-                    {[
-                      { width: "w-20", delay: 0 },
-                      { width: "w-24", delay: 0.1 },
-                      { width: "w-16", delay: 0.2 },
-                      { width: "w-28", delay: 0.3 },
-                    ].map((item, index) => (
-                      <motion.div
-                        key={index}
-                        className={`h-6 ${item.width} bg-foreground/20 dark:bg-foreground/10 rounded`}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5 + item.delay, duration: 0.5 }}
-                        whileHover={{ opacity: 0.8 }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </ScrollReveal>
             </div>
 
             <div className="relative">
@@ -312,46 +286,6 @@ export function LandingPage() {
                 </motion.div>
               </ScrollReveal>
             </div>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto mt-20">
-            {[
-              { icon: Users, value: "50K+", label: "Active Users" },
-              { icon: FileText, value: "100K+", label: "Resumes Created" },
-              { icon: Award, value: "85%", label: "Success Rate" },
-              { icon: Star, value: "4.9/5", label: "User Rating" },
-            ].map((stat, index) => (
-              <ScrollReveal key={index} delay={0.1 * index}>
-                <motion.div
-                  className="text-center p-6 rounded-xl border border-transparent hover:border-primary/10 hover:bg-primary/5 transition-colors"
-                  whileHover={{ y: -5 }}
-                >
-                  <motion.div
-                    className="mx-auto mb-3 h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center"
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                  >
-                    <stat.icon className="h-5 w-5 text-primary" />
-                  </motion.div>
-                  <motion.div
-                    className="text-4xl font-bold text-primary"
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 100,
-                      delay: 0.2 + index * 0.1,
-                    }}
-                  >
-                    {stat.value}
-                  </motion.div>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    {stat.label}
-                  </div>
-                </motion.div>
-              </ScrollReveal>
-            ))}
           </div>
         </div>
       </section>
@@ -1123,7 +1057,7 @@ export function LandingPage() {
               &copy; {new Date().getFullYear()} ResumeHub. All rights reserved.
             </p>
             <p className="text-muted-foreground text-sm">
-              Designed & Developed by{" "}
+              Developed by{" "}
               <a
                 className="text-primary hover:underline"
                 target="_blank"

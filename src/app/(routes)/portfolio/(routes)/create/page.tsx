@@ -36,6 +36,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import axios from "axios";
+import useGetUserData from "@/app/hooks/use-getUserData";
+import type { IResume } from "@/models/resume";
+import Link from "next/link";
 
 // Define types for our form data
 type SocialLink = {
@@ -66,6 +70,19 @@ type Certification = {
   url: string;
 };
 
+type Project = {
+  name: string;
+  description: string;
+  technology: string;
+  link: string;
+  imageUrl: string;
+};
+
+type Achievement = {
+  description: string;
+  link: string;
+};
+
 type FormData = {
   personalInfo: {
     name: string;
@@ -78,6 +95,8 @@ type FormData = {
   socialLinks: SocialLink[];
   workExperience: WorkExperience[];
   skills: string[];
+  projects: Project[];
+  achievements: Achievement[];
   education: Education[];
   certifications: Certification[];
 };
@@ -103,6 +122,21 @@ const initialFormData: FormData = {
     },
   ],
   skills: [""],
+  projects: [
+    {
+      name: "",
+      description: "",
+      technology: "",
+      link: "",
+      imageUrl: "",
+    },
+  ],
+  achievements: [
+    {
+      description: "",
+      link: "",
+    },
+  ],
   education: [
     {
       institution: "",
@@ -150,6 +184,8 @@ const steps = [
   "Social Links",
   "Work Experience",
   "Skills",
+  "Projects",
+  "Achievements",
   "Education",
   "Certifications",
   "Review",
@@ -158,6 +194,7 @@ const steps = [
 export default function CreatePortfolioPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { userData } = useGetUserData();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<FormData>(() => {
     // Check if we're in the browser environment
@@ -185,7 +222,6 @@ export default function CreatePortfolioPage() {
       setFile(e.target.files[0]);
     }
   };
-
   // Process resume with AI
   const processResumeWithAI = async (resumeSource: string) => {
     setIsProcessing(true);
@@ -256,6 +292,25 @@ export default function CreatePortfolioPage() {
         newFormData.skills = data.skills;
       }
 
+      // Projects
+      if (data.projects && data.projects.length > 0) {
+        newFormData.projects = data.projects.map((project) => ({
+          name: project.name || "",
+          description: project.description || "",
+          technology: project.technology || "",
+          link: project.link || "",
+          imageUrl: project.imageUrl || "",
+        }));
+      }
+
+      // Achievements
+      if (data.achievements && data.achievements.length > 0) {
+        newFormData.achievements = data.achievements.map((achievement) => ({
+          description: achievement.description || "",
+          link: achievement.link || "",
+        }));
+      }
+
       // Education
       if (data.education && data.education.length > 0) {
         newFormData.education = data.education.map((edu) => ({
@@ -283,7 +338,7 @@ export default function CreatePortfolioPage() {
       setFormData(newFormData);
 
       // Save to localStorage
-      localStorage.setItem("portfolioFormData", JSON.stringify(newFormData));
+      localStorage.setItem("portfolioData", JSON.stringify(newFormData));
 
       toast({
         title: "Resume processed successfully",
@@ -334,7 +389,7 @@ export default function CreatePortfolioPage() {
       setSlideDirection("right");
       setCurrentStep(currentStep + 1);
       // Save to localStorage
-      localStorage.setItem("portfolioFormData", JSON.stringify(formData));
+      localStorage.setItem("portfolioData", JSON.stringify(formData));
     }
   };
 
@@ -347,11 +402,35 @@ export default function CreatePortfolioPage() {
   };
 
   // Handle form submission
-  const handleSubmit = () => {
-    console.log("Form submitted:", formData);
-    // In a real app, you would save the data to a database here
-    localStorage.removeItem("portfolioFormData"); // Clear form data after submission
-    router.push("/portfolio/dashboard");
+  const handleSubmit = async () => {
+    localStorage.setItem("portfolioFormData", JSON.stringify(formData));
+
+    try {
+      const res = await axios.post("/api/portfolio/portfolio-data", {
+        portfolio: formData,
+      });
+      if (res.status === 200) {
+        toast({
+          title: "Portfolio saved successfully",
+          description: "Your portfolio has been created.",
+        });
+        localStorage.setItem("datafetched", "true");
+      } else {
+        toast({
+          title: "Error saving portfolio",
+          description: "There was an error saving your portfolio.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error saving portfolio:", error);
+      toast({
+        title: "Error saving portfolio",
+        description: "There was an error saving your portfolio.",
+        variant: "destructive",
+      });
+    }
+    // router.push("/portfolio/dashboard");
   };
 
   // Update personal info
@@ -472,6 +551,88 @@ export default function CreatePortfolioPage() {
     });
   };
 
+  // Add project
+  const addProject = () => {
+    setFormData({
+      ...formData,
+      projects: [
+        ...formData.projects,
+        {
+          name: "",
+          description: "",
+          technology: "",
+          link: "",
+          imageUrl: "",
+        },
+      ],
+    });
+  };
+
+  // Update project
+  const updateProject = (
+    index: number,
+    field: keyof Project,
+    value: string
+  ) => {
+    const updatedProjects = [...formData.projects];
+    updatedProjects[index] = { ...updatedProjects[index], [field]: value };
+    setFormData({
+      ...formData,
+      projects: updatedProjects,
+    });
+  };
+
+  // Remove project
+  const removeProject = (index: number) => {
+    const updatedProjects = [...formData.projects];
+    updatedProjects.splice(index, 1);
+    setFormData({
+      ...formData,
+      projects: updatedProjects,
+    });
+  };
+
+  // Add achievement
+  const addAchievement = () => {
+    setFormData({
+      ...formData,
+      achievements: [
+        ...formData.achievements,
+        {
+          description: "",
+          link: "",
+        },
+      ],
+    });
+  };
+
+  // Update achievement
+  const updateAchievement = (
+    index: number,
+    field: keyof Achievement,
+    value: string
+  ) => {
+    const updatedAchievements = [...formData.achievements];
+    updatedAchievements[index] = {
+      ...updatedAchievements[index],
+      [field]: value,
+    };
+    setFormData({
+      ...formData,
+      achievements: updatedAchievements,
+    });
+  };
+
+  // Remove achievement
+  const removeAchievement = (index: number) => {
+    const updatedAchievements = [...formData.achievements];
+    updatedAchievements.splice(index, 1);
+    setFormData({
+      ...formData,
+      achievements: updatedAchievements,
+    });
+  };
+
   // Add education
   const addEducation = () => {
     setFormData({
@@ -545,10 +706,13 @@ export default function CreatePortfolioPage() {
     });
   };
 
+
+  
+
   // If we're showing the data source selection
   if (showDataSourceSelection) {
     return (
-      <div className=" px-4">
+      <div className=" ">
         <h1 className="text-2xl font-bold mb-6">Create Your Portfolio</h1>
 
         <Card className="mb-8">
@@ -646,6 +810,7 @@ export default function CreatePortfolioPage() {
                     <div className="space-y-4 p-4 border rounded-lg">
                       <Label htmlFor="resume-select">Select Resume</Label>
                       <Select
+                        disabled={userData?.resumes?.length === 0}
                         onValueChange={setSelectedResume}
                         value={selectedResume}
                       >
@@ -653,10 +818,9 @@ export default function CreatePortfolioPage() {
                           <SelectValue placeholder="Select a resume" />
                         </SelectTrigger>
                         <SelectContent>
-                          {mockResumes.map((resume) => (
-                            <SelectItem key={resume.id} value={resume.shortUrl}>
-                              {resume.name} (
-                              {new Date(resume.date).toLocaleDateString()})
+                          {userData?.resumes?.map((r: IResume) => (
+                            <SelectItem key={r.shortUrl} value={r.fileUrl}>
+                              {r.title}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -1106,6 +1270,209 @@ export default function CreatePortfolioPage() {
           {currentStep === 4 && (
             <Card>
               <CardHeader>
+                <CardTitle>Projects</CardTitle>
+                <CardDescription>
+                  Add your projects. All fields are optional.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {formData.projects.map((project, index) => (
+                  <div key={index} className="space-y-4 p-4 border rounded-lg">
+                    <div className="flex justify-between items-center">
+                      <h3 className="font-medium">Project {index + 1}</h3>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeProject(index)}
+                        disabled={formData.projects.length === 1}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label
+                          htmlFor={`projectName-${index}`}
+                          className="text-sm font-medium"
+                        >
+                          Project Name
+                        </label>
+                        <Input
+                          id={`projectName-${index}`}
+                          placeholder="My Awesome Project"
+                          value={project.name}
+                          onChange={(e) =>
+                            updateProject(index, "name", e.target.value)
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label
+                          htmlFor={`projectLink-${index}`}
+                          className="text-sm font-medium"
+                        >
+                          Project Link
+                        </label>
+                        <Input
+                          id={`projectLink-${index}`}
+                          placeholder="https://github.com/username/project"
+                          value={project.link}
+                          onChange={(e) =>
+                            updateProject(index, "link", e.target.value)
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label
+                          htmlFor={`projectTechnology-${index}`}
+                          className="text-sm font-medium"
+                        >
+                          Technologies Used
+                        </label>
+                        <Input
+                          id={`projectTechnology-${index}`}
+                          placeholder="React, Node.js, MongoDB"
+                          value={project.technology}
+                          onChange={(e) =>
+                            updateProject(index, "technology", e.target.value)
+                          }
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          Separate technologies with commas
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        <label
+                          htmlFor={`projectImage-${index}`}
+                          className="text-sm font-medium"
+                        >
+                          Image URL
+                        </label>
+                        <Input
+                          id={`projectImage-${index}`}
+                          placeholder="https://example.com/project-image.jpg"
+                          value={project.imageUrl}
+                          onChange={(e) =>
+                            updateProject(index, "imageUrl", e.target.value)
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <label
+                          htmlFor={`projectDescription-${index}`}
+                          className="text-sm font-medium"
+                        >
+                          Description
+                        </label>
+                        <Textarea
+                          id={`projectDescription-${index}`}
+                          placeholder="Describe your project, its features, and what you learned..."
+                          className="min-h-[100px]"
+                          value={project.description}
+                          onChange={(e) =>
+                            updateProject(index, "description", e.target.value)
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <Button variant="outline" onClick={addProject}>
+                  Add Another Project
+                </Button>
+              </CardContent>
+              <CardFooter className="justify-between">
+                <Button variant="outline" onClick={handlePrevious}>
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+                </Button>
+                <Button onClick={handleNext}>
+                  Next <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </CardFooter>
+            </Card>
+          )}
+
+          {currentStep === 5 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Achievements</CardTitle>
+                <CardDescription>
+                  Add your achievements and awards. All fields are optional.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {formData.achievements.map((achievement, index) => (
+                  <div key={index} className="space-y-4 p-4 border rounded-lg">
+                    <div className="flex justify-between items-center">
+                      <h3 className="font-medium">Achievement {index + 1}</h3>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeAchievement(index)}
+                        disabled={formData.achievements.length === 1}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="space-y-2">
+                        <label
+                          htmlFor={`achievementDescription-${index}`}
+                          className="text-sm font-medium"
+                        >
+                          Achievement Description
+                        </label>
+                        <Textarea
+                          id={`achievementDescription-${index}`}
+                          placeholder="Describe your achievement, award, or recognition..."
+                          className="min-h-[100px]"
+                          value={achievement.description}
+                          onChange={(e) =>
+                            updateAchievement(
+                              index,
+                              "description",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label
+                          htmlFor={`achievementLink-${index}`}
+                          className="text-sm font-medium"
+                        >
+                          Link (Optional)
+                        </label>
+                        <Input
+                          id={`achievementLink-${index}`}
+                          placeholder="https://example.com/certificate or news article"
+                          value={achievement.link}
+                          onChange={(e) =>
+                            updateAchievement(index, "link", e.target.value)
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <Button variant="outline" onClick={addAchievement}>
+                  Add Another Achievement
+                </Button>
+              </CardContent>
+              <CardFooter className="justify-between">
+                <Button variant="outline" onClick={handlePrevious}>
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+                </Button>
+                <Button onClick={handleNext}>
+                  Next <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </CardFooter>
+            </Card>
+          )}
+
+          {currentStep === 6 && (
+            <Card>
+              <CardHeader>
                 <CardTitle>Education</CardTitle>
                 <CardDescription>
                   Add your education. All fields are optional.
@@ -1234,7 +1601,7 @@ export default function CreatePortfolioPage() {
             </Card>
           )}
 
-          {currentStep === 5 && (
+          {currentStep === 7 && (
             <Card>
               <CardHeader>
                 <CardTitle>Certifications</CardTitle>
@@ -1339,7 +1706,7 @@ export default function CreatePortfolioPage() {
             </Card>
           )}
 
-          {currentStep === 6 && (
+          {currentStep === 8 && (
             <Card>
               <CardHeader>
                 <CardTitle>Review Your Portfolio</CardTitle>
@@ -1425,6 +1792,63 @@ export default function CreatePortfolioPage() {
                     </div>
                   ) : (
                     <p className="text-sm">No skills provided</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Projects</h3>
+                  {formData.projects.length > 0 && formData.projects[0].name ? (
+                    <div className="space-y-4">
+                      {formData.projects.map((project, index) => (
+                        <div key={index} className="text-sm">
+                          <div className="font-medium">{project.name}</div>
+                          <div className="text-muted-foreground">
+                            Technologies: {project.technology}
+                          </div>
+                          <div className="mt-1">{project.description}</div>
+                          {project.link && (
+                            <div className="text-primary underline">
+                              <a
+                                href={project.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                View Project
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm">No projects provided</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Achievements</h3>
+                  {formData.achievements.length > 0 &&
+                  formData.achievements[0].description ? (
+                    <div className="space-y-4">
+                      {formData.achievements.map((achievement, index) => (
+                        <div key={index} className="text-sm">
+                          <div className="mt-1">{achievement.description}</div>
+                          {achievement.link && (
+                            <div className="text-primary underline">
+                              <a
+                                href={achievement.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                View Achievement
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm">No achievements provided</p>
                   )}
                 </div>
 

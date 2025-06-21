@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
     await connectDB();
     const url = new URL(req.url);
     const username = url.searchParams.get("username");
-    const user = await User.findOne({ name: username }).select("portfolioData templateId");
+    const user = await User.findOne({ portfolio: username }).select("portfolioData templateId");
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }

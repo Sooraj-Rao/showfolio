@@ -5,7 +5,7 @@ import User from "@/models/user";
 export async function POST(req: NextRequest) {
   try {
     const userId = GetUserId(req);
-    const { portfolio } = await req.json();
+    const { portfolio, portfolioData } = await req.json();
     if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized..Login again" },
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     }
     const res = await User.findByIdAndUpdate(
       userId,
-      { portfolioData: JSON.stringify(portfolio) },
+      { portfolio, portfolioData: JSON.stringify(portfolioData) },
       { new: true }
     );
     if (!res) {
@@ -65,21 +65,46 @@ export async function PATCH(req: NextRequest) {
         { status: 401 }
       );
     }
-    const { templateId } = await req.json();
-    const res = await User.findByIdAndUpdate(
-      userId,
-      {
-        templateId,
-      },
-      { new: true, upsert: true }
-    );
-    if (res.templateId == templateId) {
-      return NextResponse.json(
-        { message: "Successfully saved template for portfolio" },
-        { status: 200 }
+
+    const { templateId, portfolio } = await req.json();
+    if (templateId) {
+      const res = await User.findByIdAndUpdate(
+        userId,
+        {
+          templateId,
+        },
+        { new: true, upsert: true }
       );
-    } else {
-      return NextResponse.json({ error: "Failed to save template" }, { status: 500 });
+      if (res.templateId == templateId) {
+        return NextResponse.json(
+          { message: "Successfully saved template for portfolio" },
+          { status: 200 }
+        );
+      } else {
+        return NextResponse.json(
+          { error: "Failed to save template" },
+          { status: 500 }
+        );
+      }
+    } else if (portfolio) {
+      const res = await User.findByIdAndUpdate(
+        userId,
+        {
+          portfolio,
+        },
+        { new: true, upsert: true }
+      );
+      if (res.portfolio == portfolio) {
+        return NextResponse.json(
+          { message: "Successfully saved for portfolio link" },
+          { status: 200 }
+        );
+      } else {
+        return NextResponse.json(
+          { error: "Failed to save portfolio link" },
+          { status: 500 }
+        );
+      }
     }
   } catch (error) {
     console.log(error);

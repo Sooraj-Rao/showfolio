@@ -414,7 +414,8 @@ export default function CreatePortfolioPage() {
 
     try {
       const res = await axios.post("/api/portfolio/portfolio-data", {
-        portfolio: formData,
+        portfolioData: formData,
+        portfolio:userData.name
       });
       if (res.status === 200) {
         toast({

@@ -81,9 +81,7 @@ export type T_PortfolioData = {
 
 export default function One({
   portfolioData,
-  loading,
 }: {
-  loading: boolean;
   portfolioData: T_PortfolioData | null;
 }) {
   const [activeSection, setActiveSection] = useState("home");
@@ -184,19 +182,6 @@ export default function One({
       );
     });
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-xl font-semibold text-gray-700">
-            Loading portfolio...
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   if (!portfolioData) {
     return (

@@ -19,6 +19,11 @@ export interface IUser extends Document {
     profile: boolean;
     resumes: boolean;
   };
+  portfolioSettings: {
+    theme: string;
+    themeColor: string;
+    roundedCorners: string;
+  };
 }
 
 const userSchema: Schema<IUser> = new mongoose.Schema(
@@ -86,6 +91,17 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
     },
     imageUrl: {
       type: String,
+    },
+    portfolioSettings: {
+      theme: {
+        type: String,
+      },
+      themeColor: {
+        type: String,
+      },
+      roundedCorners: {
+        type: String,
+      },
     },
   },
   {

@@ -24,14 +24,20 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
+import useGetUserData from "@/app/hooks/use-getUserData";
+import axios from "axios";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SettingsPage() {
   const [theme, setTheme] = useState("light");
+  const { toast } = useToast();
+  const { userData, setUserData } = useGetUserData();
+  const [portfolioUrl, setportfolioUrl] = useState(
+    userData?.portfolio || userData?.name || ""
+  );
   const [isPublic, setIsPublic] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [browserNotifications, setBrowserNotifications] = useState(false);
-
   const handleThemeChange = (value: string) => {
     setTheme(value);
     // In a real app, you would apply the theme here
@@ -41,6 +47,34 @@ export default function SettingsPage() {
       document.documentElement.classList.remove("dark");
     } else {
       // System theme would be handled with media queries
+    }
+  };
+
+  const SavePortfolioUrl = async () => {
+    try {
+      const res = await axios.patch("/api/portfolio/portfolio-data", {
+        portfolio: portfolioUrl,
+      });
+      if (res.status === 200) {
+        toast({
+          title: "Success",
+          description: "Template selection was Successfull",
+        });
+        setUserData({ ...userData, portfolio: portfolioUrl });
+      } else {
+        toast({
+          title: "Error saving portfolio",
+          description: "There was an error saving your portfolio.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error saving portfolio:", error);
+      toast({
+        title: "Error saving portfolio",
+        description: "There was an error saving your portfolio.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -76,65 +110,6 @@ export default function SettingsPage() {
         <TabsContent value="profile" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Profile Information</CardTitle>
-              <CardDescription>Update your profile information</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input
-                    id="name"
-                    placeholder="John Doe"
-                    defaultValue="John Doe"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="john@example.com"
-                    defaultValue="john@example.com"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="title">Professional Title</Label>
-                  <Input
-                    id="title"
-                    placeholder="Software Engineer"
-                    defaultValue="Full Stack Developer"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="location">Location</Label>
-                  <Input
-                    id="location"
-                    placeholder="New York, NY"
-                    defaultValue="San Francisco, CA"
-                  />
-                </div>
-                <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="bio">Bio</Label>
-                  <Textarea
-                    id="bio"
-                    placeholder="Tell us about yourself..."
-                    className="min-h-[120px]"
-                    defaultValue="Full Stack Developer with 5 years of experience building web applications with React, Node.js, and TypeScript."
-                  />
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button>
-                <Save className="mr-2 h-4 w-4" />
-                Save Changes
-              </Button>
-            </CardFooter>
-          </Card>
-
-          <Card>
-            <CardHeader>
               <CardTitle>Portfolio URL</CardTitle>
               <CardDescription>Customize your portfolio URL</CardDescription>
             </CardHeader>
@@ -143,55 +118,17 @@ export default function SettingsPage() {
                 <span className="text-muted-foreground">
                   https://portfolio.app/
                 </span>
-                <Input className="max-w-[200px]" defaultValue="johndoe" />
+                <Input
+                  onChange={(e) => setportfolioUrl(e.target.value)}
+                  className="max-w-[200px]"
+                  defaultValue={userData?.portfolio || userData?.name}
+                />
               </div>
             </CardContent>
             <CardFooter>
-              <Button>Save URL</Button>
-            </CardFooter>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Account Settings</CardTitle>
-              <CardDescription>Manage your account settings</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="language">Language</Label>
-                <Select defaultValue="en">
-                  <SelectTrigger id="language">
-                    <SelectValue placeholder="Select language" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="en">English</SelectItem>
-                    <SelectItem value="es">Spanish</SelectItem>
-                    <SelectItem value="fr">French</SelectItem>
-                    <SelectItem value="de">German</SelectItem>
-                    <SelectItem value="zh">Chinese</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="timezone">Timezone</Label>
-                <Select defaultValue="pst">
-                  <SelectTrigger id="timezone">
-                    <SelectValue placeholder="Select timezone" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pst">Pacific Time (PST)</SelectItem>
-                    <SelectItem value="mst">Mountain Time (MST)</SelectItem>
-                    <SelectItem value="cst">Central Time (CST)</SelectItem>
-                    <SelectItem value="est">Eastern Time (EST)</SelectItem>
-                    <SelectItem value="utc">
-                      Coordinated Universal Time (UTC)
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button>Save Settings</Button>
+              {portfolioUrl !== "" && portfolioUrl !== userData?.portfolio && (
+                <Button onClick={SavePortfolioUrl}>Save URL</Button>
+              )}
             </CardFooter>
           </Card>
         </TabsContent>

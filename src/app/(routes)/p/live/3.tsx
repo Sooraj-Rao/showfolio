@@ -25,9 +25,7 @@ import { T_PortfolioData } from "./1";
 
 export default function Three({
   portfolioData,
-  loading,
 }: {
-  loading: boolean;
   portfolioData: T_PortfolioData | null;
 }) {
   const [activeSection, setActiveSection] = useState("hero");
@@ -96,23 +94,6 @@ export default function Three({
     ref.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
-        <div className="text-center text-white">
-          <div className="relative">
-            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-purple-400"></div>
-            <div className="absolute inset-0 animate-pulse">
-              <Sparkles className="w-8 h-8 text-purple-400 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
-            </div>
-          </div>
-          <p className="mt-4 text-xl font-semibold">
-            Loading amazing portfolio...
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   if (!portfolioData) {
     return (

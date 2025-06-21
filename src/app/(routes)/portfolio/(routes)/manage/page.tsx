@@ -1,7 +1,6 @@
 "use client";
 
 import { CardFooter } from "@/components/ui/card";
-
 import { useState, useEffect } from "react";
 import {
   ArrowDown,
@@ -20,6 +19,11 @@ import {
   User,
   Trophy,
   Loader2,
+  Code,
+  Database,
+  Smartphone,
+  Wrench,
+  Palette,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -93,11 +97,16 @@ type Blog = {
   description: string;
 };
 
+type SkillCategory = {
+  name: string;
+  skills: string[];
+};
+
 type PortfolioData = {
   personalInfo: PersonalInfo;
   socialLinks: SocialLink[];
   workExperience: WorkExperience[];
-  skills: string[];
+  skills: Record<string, string[]>; // Changed from string[] to categorized format
   projects: Project[];
   achievements: Achievement[];
   education: Education[];
@@ -125,7 +134,11 @@ const defaultPortfolioData: PortfolioData = {
       description: "",
     },
   ],
-  skills: [""],
+  skills: {
+    Frontend: [""],
+    Backend: [""],
+    Tools: [""],
+  },
   projects: [
     {
       name: "",
@@ -167,14 +180,27 @@ const defaultPortfolioData: PortfolioData = {
   ],
 };
 
-export default function ManagePage() {
+// Skill category icons
+const skillCategoryIcons: Record<string, any> = {
+  frontend: Code,
+  backend: Database,
+  mobile: Smartphone,
+  tools: Wrench,
+  languages: Code,
+  frameworks: Code,
+  databases: Database,
+  devops: Wrench,
+  design: Palette,
+  other: Wrench,
+};
+
+export default function ManagePortfolio() {
   const { toast } = useToast();
   const [portfolioData, setPortfolioData] =
     useState<PortfolioData>(defaultPortfolioData);
   const [activeSection, setActiveSection] = useState("personal");
   const [editMode, setEditMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
 
   // Load portfolio data from localStorage on component mount
   useEffect(() => {
@@ -182,6 +208,12 @@ export default function ManagePage() {
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData);
+        // Convert old skills format to new format if needed
+        if (Array.isArray(parsedData.skills)) {
+          parsedData.skills = {
+            General: parsedData.skills,
+          };
+        }
         setPortfolioData(parsedData);
       } catch (error) {
         console.error("Error parsing portfolio data:", error);
@@ -191,8 +223,41 @@ export default function ManagePage() {
           variant: "destructive",
         });
       }
+    } else {
+      fetchPortfolioData();
     }
   }, [toast]);
+
+  const fetchPortfolioData = async () => {
+    try {
+      const response = await fetch(`/api/portfolio/portfolio-data`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch portfolio data");
+      }
+      const data = await response.json();
+      if (data?.portfolio) {
+        // Convert old skills format to new format if needed
+        if (Array.isArray(data.portfolio.skills)) {
+          data.portfolio.skills = {
+            General: data.portfolio.skills,
+          };
+        }
+        setPortfolioData(data?.portfolio);
+        localStorage.setItem("portfolioData", JSON.stringify(data.portfolio));
+      } else
+        toast({
+          title: "Error",
+          description: data?.error?.message || "Failed to load portfolio data",
+          variant: "destructive",
+        });
+    } catch {
+      toast({
+        title: "Error loading data",
+        description: "There was an error loading your portfolio data.",
+        variant: "destructive",
+      });
+    }
+  };
 
   // Function to handle saving changes
   const handleSave = async () => {
@@ -207,8 +272,8 @@ export default function ManagePage() {
           title: "Portfolio saved successfully",
           description: "Your portfolio has been updated.",
         });
-        setHasChanges(false);
         setEditMode(false);
+        localStorage.setItem('portfolioData',JSON.stringify(portfolioData))
       } else {
         throw new Error("Failed to save portfolio");
       }
@@ -223,6 +288,103 @@ export default function ManagePage() {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  // Function to update personal info
+  const updatePersonalInfo = (field: keyof PersonalInfo, value: string) => {
+    setPortfolioData({
+      ...portfolioData,
+      personalInfo: {
+        ...portfolioData.personalInfo,
+        [field]: value,
+      },
+    });
+  };
+
+  // Function to add a new skill category
+  const addSkillCategory = () => {
+    const categoryName = prompt(
+      "Enter category name (e.g., Frontend, Backend, Tools):"
+    );
+    if (!categoryName) return;
+
+    setPortfolioData({
+      ...portfolioData,
+      skills: {
+        ...portfolioData.skills,
+        [categoryName]: [""],
+      },
+    });
+  };
+
+  // Function to remove a skill category
+  const removeSkillCategory = (categoryName: string) => {
+    const newSkills = { ...portfolioData.skills };
+    delete newSkills[categoryName];
+    setPortfolioData({
+      ...portfolioData,
+      skills: newSkills,
+    });
+  };
+
+  // Function to update skill category name
+  const updateSkillCategoryName = (oldName: string, newName: string) => {
+    if (oldName === newName) return;
+
+    const newSkills = { ...portfolioData.skills };
+    newSkills[newName] = newSkills[oldName];
+    delete newSkills[oldName];
+
+    setPortfolioData({
+      ...portfolioData,
+      skills: newSkills,
+    });
+  };
+
+  // Function to add skill to category
+  const addSkillToCategory = (categoryName: string) => {
+    setPortfolioData({
+      ...portfolioData,
+      skills: {
+        ...portfolioData.skills,
+        [categoryName]: [...portfolioData.skills[categoryName], ""],
+      },
+    });
+  };
+
+  // Function to update skill in category
+  const updateSkillInCategory = (
+    categoryName: string,
+    skillIndex: number,
+    value: string
+  ) => {
+    const newSkills = [...portfolioData.skills[categoryName]];
+    newSkills[skillIndex] = value;
+
+    setPortfolioData({
+      ...portfolioData,
+      skills: {
+        ...portfolioData.skills,
+        [categoryName]: newSkills,
+      },
+    });
+  };
+
+  // Function to remove skill from category
+  const removeSkillFromCategory = (
+    categoryName: string,
+    skillIndex: number
+  ) => {
+    const newSkills = [...portfolioData.skills[categoryName]];
+    newSkills.splice(skillIndex, 1);
+
+    setPortfolioData({
+      ...portfolioData,
+      skills: {
+        ...portfolioData.skills,
+        [categoryName]: newSkills,
+      },
+    });
   };
 
   // Function to move a section up
@@ -265,7 +427,6 @@ export default function ManagePage() {
   const addItem = (section: keyof PortfolioData, item: any) => {
     let sectionData;
     const newData = { ...portfolioData };
-    console.log(newData);
     if (section == "blogs" && !portfolioData?.blogs) {
       portfolioData.blogs = item;
       sectionData = [item];
@@ -305,27 +466,6 @@ export default function ManagePage() {
     setPortfolioData({
       ...newData,
       [section]: sectionData,
-    });
-  };
-
-  // Function to update personal info
-  const updatePersonalInfo = (field: keyof PersonalInfo, value: string) => {
-    setPortfolioData({
-      ...portfolioData,
-      personalInfo: {
-        ...portfolioData.personalInfo,
-        [field]: value,
-      },
-    });
-  };
-
-  // Function to update skills
-  const updateSkill = (index: number, value: string) => {
-    const newSkills = [...portfolioData.skills];
-    newSkills[index] = value;
-    setPortfolioData({
-      ...portfolioData,
-      skills: newSkills,
     });
   };
 
@@ -389,7 +529,11 @@ export default function ManagePage() {
               {editMode ? "Editing Mode" : "Edit Portfolio"}
             </Button>
             <Button asChild variant="outline" className="w-full sm:w-auto">
-              <a href="#" target="_blank" rel="noopener noreferrer">
+              <a
+                href={`/portfolio-preview`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Eye className="mr-2 h-4 w-4" />
                 Preview
               </a>
@@ -525,7 +669,8 @@ export default function ManagePage() {
                 {activeSection === "social" && "Manage your social media links"}
                 {activeSection === "work" &&
                   "Add and edit your work experience"}
-                {activeSection === "skills" && "Showcase your skills"}
+                {activeSection === "skills" &&
+                  "Organize your skills by category"}
                 {activeSection === "projects" && "Showcase your projects"}
                 {activeSection === "achievements" &&
                   "Add your achievements and awards"}
@@ -873,66 +1018,112 @@ export default function ManagePage() {
                 </div>
               )}
 
-              {/* Skills Section */}
+              {/* Skills Section - New Categorized Format */}
               {activeSection === "skills" && (
-                <div className="space-y-4">
-                  {portfolioData.skills.map((skill, index) => (
-                    <div key={index} className="flex items-center gap-4">
-                      <div className="flex-1 space-y-2">
-                        <Label htmlFor={`skill-${index}`}>
-                          Skill {index + 1}
-                        </Label>
-                        <Input
-                          id={`skill-${index}`}
-                          value={skill}
-                          onChange={(e) => updateSkill(index, e.target.value)}
-                          disabled={!editMode}
-                          placeholder="JavaScript, Project Management, etc."
-                        />
-                      </div>
-                      {editMode && (
-                        <div className="flex gap-2 mt-6">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => moveUp("skills", index)}
-                            disabled={index === 0}
-                          >
-                            <ArrowUp className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() =>
-                              moveDown(
-                                "skills",
-                                index,
-                                portfolioData.skills.length
-                              )
-                            }
-                            disabled={index === portfolioData.skills.length - 1}
-                          >
-                            <ArrowDown className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => removeItem("skills", index)}
-                            disabled={portfolioData.skills.length === 1}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                <div className="space-y-6">
+                  {Object.entries(portfolioData.skills).map(
+                    ([categoryName, skills]) => {
+                      const IconComponent =
+                        skillCategoryIcons[categoryName.toLowerCase()] || Code;
+                      return (
+                        <div
+                          key={categoryName}
+                          className="p-4 border rounded-lg space-y-4"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <IconComponent className="w-5 h-5 text-muted-foreground" />
+                              {editMode ? (
+                                <Input
+                                  value={categoryName}
+                                  onChange={(e) =>
+                                    updateSkillCategoryName(
+                                      categoryName,
+                                      e.target.value
+                                    )
+                                  }
+                                  className="font-medium text-lg w-auto min-w-[150px]"
+                                  placeholder="Category name"
+                                />
+                              ) : (
+                                <h3 className="font-medium text-lg capitalize">
+                                  {categoryName}
+                                </h3>
+                              )}
+                            </div>
+                            {editMode && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() =>
+                                  removeSkillCategory(categoryName)
+                                }
+                                disabled={
+                                  Object.keys(portfolioData.skills).length === 1
+                                }
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {skills.map((skill, skillIndex) => (
+                              <div
+                                key={skillIndex}
+                                className="flex items-center gap-2"
+                              >
+                                <Input
+                                  value={skill}
+                                  onChange={(e) =>
+                                    updateSkillInCategory(
+                                      categoryName,
+                                      skillIndex,
+                                      e.target.value
+                                    )
+                                  }
+                                  disabled={!editMode}
+                                  placeholder="Skill name"
+                                  className="flex-1"
+                                />
+                                {editMode && (
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() =>
+                                      removeSkillFromCategory(
+                                        categoryName,
+                                        skillIndex
+                                      )
+                                    }
+                                    disabled={skills.length === 1}
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </Button>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+
+                          {editMode && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => addSkillToCategory(categoryName)}
+                            >
+                              <Plus className="mr-2 h-3 w-3" />
+                              Add Skill to {categoryName}
+                            </Button>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  ))}
+                      );
+                    }
+                  )}
+
                   {editMode && (
-                    <Button
-                      variant="outline"
-                      onClick={() => addItem("skills", "")}
-                    >
+                    <Button variant="outline" onClick={addSkillCategory}>
                       <Plus className="mr-2 h-4 w-4" />
-                      Add Skill
+                      Add Skill Category
                     </Button>
                   )}
                 </div>

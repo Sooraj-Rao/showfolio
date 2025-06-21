@@ -96,12 +96,19 @@ const Page = ({ params: { username } }: { params: { username: string } }) => {
     <div className=" h-screen flex justify-center items-center">{isError}</div>;
   }
 
+  if (loading) {
+    return (
+      <div className="h-screen flex justify-center items-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
   const templates = {
-    "1": <One loading={loading} portfolioData={portfolioData} />,
-    "2": <Two loading={loading} portfolioData={portfolioData} />,
-    "3": <Three loading={loading} portfolioData={portfolioData} />,
+    "1": <One  portfolioData={portfolioData} />,
+    "2": <Two  portfolioData={portfolioData} />,
+    "3": <Three  portfolioData={portfolioData} />,
   };
-  console.log(template);
 
   return templates[template];
 };

@@ -194,8 +194,6 @@ export default function ManagePage() {
     }
   }, [toast]);
 
-
-
   // Function to handle saving changes
   const handleSave = async () => {
     setIsSaving(true);
@@ -265,8 +263,15 @@ export default function ManagePage() {
 
   // Function to add a new item to a section
   const addItem = (section: keyof PortfolioData, item: any) => {
+    let sectionData;
     const newData = { ...portfolioData };
-    const sectionData = [...(newData[section] as any[]), item];
+    console.log(newData);
+    if (section == "blogs" && !portfolioData?.blogs) {
+      portfolioData.blogs = item;
+      sectionData = [item];
+    } else {
+      sectionData = [...(newData[section] as any[]), item];
+    }
 
     setPortfolioData({
       ...newData,
@@ -479,7 +484,7 @@ export default function ManagePage() {
               </div>
             </CardContent>
             <CardFooter>
-              {editMode  && (
+              {editMode && (
                 <Button
                   className="w-full"
                   onClick={handleSave}
@@ -1520,7 +1525,7 @@ export default function ManagePage() {
               {/* Blogs Section */}
               {activeSection === "blogs" && (
                 <div className="space-y-4">
-                  {portfolioData.blogs.map((blog, index) => (
+                  {portfolioData?.blogs?.map((blog, index) => (
                     <div key={index} className="p-4 border rounded-lg">
                       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2">
                         <h3 className="font-medium">Blog Post {index + 1}</h3>

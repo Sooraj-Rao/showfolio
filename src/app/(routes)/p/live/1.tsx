@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect, useRef } from "react"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 import {
   Github,
   Linkedin,
@@ -23,81 +23,79 @@ import {
   Menu,
   X,
   ChevronDown,
-} from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useToast } from "@/hooks/use-toast"
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-type PortfolioData = {
+export type T_PortfolioData = {
   personalInfo: {
-    name: string
-    title: string
-    email: string
-    phone: string
-    location: string
-    bio: string
-  }
+    name: string;
+    title: string;
+    email: string;
+    phone: string;
+    location: string;
+    bio: string;
+  };
   socialLinks: Array<{
-    platform: string
-    url: string
-  }>
+    platform: string;
+    url: string;
+  }>;
   workExperience: Array<{
-    company: string
-    position: string
-    startDate: string
-    endDate: string
-    description: string
-  }>
-  skills: string[]
+    company: string;
+    position: string;
+    startDate: string;
+    endDate: string;
+    description: string;
+  }>;
+  skills: string[];
   projects: Array<{
-    name: string
-    description: string
-    technology: string
-    link: string
-    imageUrl: string
-  }>
+    name: string;
+    description: string;
+    technology: string;
+    link: string;
+    imageUrl: string;
+  }>;
   achievements: Array<{
-    description: string
-    link: string
-  }>
+    description: string;
+    link: string;
+  }>;
   education: Array<{
-    institution: string
-    degree: string
-    field: string
-    startDate: string
-    endDate: string
-  }>
+    institution: string;
+    degree: string;
+    field: string;
+    startDate: string;
+    endDate: string;
+  }>;
   certifications: Array<{
-    name: string
-    issuer: string
-    date: string
-    url: string
-  }>
+    name: string;
+    issuer: string;
+    date: string;
+    url: string;
+  }>;
   blogs: Array<{
-    title: string
-    date: string
-    description: string
-  }>
-}
+    title: string;
+    date: string;
+    description: string;
+  }>;
+};
 
-export default function PortfolioMixed() {
-  const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [activeSection, setActiveSection] = useState("home")
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [selectedBlog, setSelectedBlog] = useState<number | null>(null)
-  const { toast } = useToast()
+export default function One({
+  portfolioData,
+  loading,
+}: {
+  loading: boolean;
+  portfolioData: T_PortfolioData | null;
+}) {
+  const [activeSection, setActiveSection] = useState("home");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedBlog, setSelectedBlog] = useState<number | null>(null);
 
-  const homeRef = useRef<HTMLElement>(null)
-  const aboutRef = useRef<HTMLElement>(null)
-  const projectsRef = useRef<HTMLElement>(null)
-  const skillsRef = useRef<HTMLElement>(null)
-  const achievementsRef = useRef<HTMLElement>(null)
-  const blogRef = useRef<HTMLElement>(null)
-
-  useEffect(() => {
-    fetchPortfolioData()
-  }, [])
+  const homeRef = useRef<HTMLElement>(null);
+  const aboutRef = useRef<HTMLElement>(null);
+  const projectsRef = useRef<HTMLElement>(null);
+  const skillsRef = useRef<HTMLElement>(null);
+  const achievementsRef = useRef<HTMLElement>(null);
+  const blogRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -108,82 +106,64 @@ export default function PortfolioMixed() {
         { id: "skills", ref: skillsRef },
         { id: "achievements", ref: achievementsRef },
         { id: "blog", ref: blogRef },
-      ]
+      ];
 
-      const scrollPosition = window.scrollY + 100
+      const scrollPosition = window.scrollY + 100;
 
       for (const section of sections) {
         if (section.ref.current) {
-          const { offsetTop, offsetHeight } = section.ref.current
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section.id)
-            break
+          const { offsetTop, offsetHeight } = section.ref.current;
+          if (
+            scrollPosition >= offsetTop &&
+            scrollPosition < offsetTop + offsetHeight
+          ) {
+            setActiveSection(section.id);
+            break;
           }
         }
       }
-    }
+    };
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
-
-  const fetchPortfolioData = async () => {
-    try {
-      const response = await fetch("/api/portfolio/portfolio-data")
-      if (!response.ok) {
-        throw new Error("Failed to fetch portfolio data")
-      }
-      const data = await response.json()
-      setPortfolioData(data.portfolio || data)
-    } catch (error) {
-      console.error("Error fetching portfolio data:", error)
-      const savedData = localStorage.getItem("portfolioData")
-      if (savedData) {
-        setPortfolioData(JSON.parse(savedData))
-      } else {
-        toast({
-          title: "Error loading portfolio",
-          description: "Could not load portfolio data",
-          variant: "destructive",
-        })
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const hasData = (section: keyof PortfolioData) => {
-    if (!portfolioData) return false
-    const data = portfolioData[section]
+    if (!portfolioData) return false;
+    const data = portfolioData[section];
     if (Array.isArray(data)) {
       return (
         data.length > 0 &&
         data.some((item) => {
-          if (typeof item === "string") return item.trim() !== ""
-          return Object.values(item).some((value) => value && value.toString().trim() !== "")
+          if (typeof item === "string") return item.trim() !== "";
+          return Object.values(item).some(
+            (value) => value && value.toString().trim() !== ""
+          );
         })
-      )
+      );
     }
     if (typeof data === "object") {
-      return Object.values(data).some((value) => value && value.toString().trim() !== "")
+      return Object.values(data).some(
+        (value) => value && value.toString().trim() !== ""
+      );
     }
-    return false
-  }
+    return false;
+  };
 
   const scrollToSection = (ref: React.RefObject<HTMLElement>) => {
-    ref.current?.scrollIntoView({ behavior: "smooth" })
-  }
+    ref.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const renderBlogContent = (blog: any) => {
     return blog.description.split("\n").map((paragraph: string, i: number) => {
-      const linkRegex = /\[([^\]]+)\]$$([^)]+)$$/g
-      const parts = paragraph.split(linkRegex)
+      const linkRegex = /\[([^\]]+)\]$$([^)]+)$$/g;
+      const parts = paragraph.split(linkRegex);
 
       return (
         <p key={i} className="mb-4 text-gray-600 leading-relaxed">
           {parts.map((part, j) => {
             if (j % 3 === 1) {
-              const url = parts[j + 1]
+              const url = parts[j + 1];
               return (
                 <a
                   key={j}
@@ -194,37 +174,43 @@ export default function PortfolioMixed() {
                 >
                   {part}
                 </a>
-              )
+              );
             } else if (j % 3 === 2) {
-              return null
+              return null;
             }
-            return part
+            return part;
           })}
         </p>
-      )
-    })
-  }
+      );
+    });
+  };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-xl font-semibold text-gray-700">Loading portfolio...</p>
+          <p className="mt-4 text-xl font-semibold text-gray-700">
+            Loading portfolio...
+          </p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!portfolioData) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-2xl font-bold text-gray-800">Portfolio data not found</p>
-          <p className="text-gray-600 mt-2">Please check your portfolio setup</p>
+          <p className="text-2xl font-bold text-gray-800">
+            Portfolio data not found
+          </p>
+          <p className="text-gray-600 mt-2">
+            Please check your portfolio setup
+          </p>
         </div>
       </div>
-    )
+    );
   }
 
   const availableSections = [
@@ -234,10 +220,25 @@ export default function PortfolioMixed() {
       label: "About",
       icon: User,
       ref: aboutRef,
-      condition: portfolioData.personalInfo?.bio || hasData("workExperience") || hasData("education"),
+      condition:
+        portfolioData.personalInfo?.bio ||
+        hasData("workExperience") ||
+        hasData("education"),
     },
-    { key: "projects", label: "Projects", icon: FolderOpen, ref: projectsRef, condition: hasData("projects") },
-    { key: "skills", label: "Skills", icon: Code, ref: skillsRef, condition: hasData("skills") },
+    {
+      key: "projects",
+      label: "Projects",
+      icon: FolderOpen,
+      ref: projectsRef,
+      condition: hasData("projects"),
+    },
+    {
+      key: "skills",
+      label: "Skills",
+      icon: Code,
+      ref: skillsRef,
+      condition: hasData("skills"),
+    },
     {
       key: "achievements",
       label: "Achievements",
@@ -245,8 +246,14 @@ export default function PortfolioMixed() {
       ref: achievementsRef,
       condition: hasData("achievements"),
     },
-    { key: "blog", label: "Blog", icon: MessageSquare, ref: blogRef, condition: hasData("blogs") },
-  ].filter((section) => section.condition !== false)
+    {
+      key: "blog",
+      label: "Blog",
+      icon: MessageSquare,
+      ref: blogRef,
+      condition: hasData("blogs"),
+    },
+  ].filter((section) => section.condition !== false);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -255,13 +262,15 @@ export default function PortfolioMixed() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">{portfolioData.personalInfo?.name || "Portfolio"}</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {portfolioData.personalInfo?.name || "Portfolio"}
+              </h1>
             </div>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-8">
               {availableSections.map((section) => {
-                const Icon = section.icon
+                const Icon = section.icon;
                 return (
                   <button
                     key={section.key}
@@ -275,7 +284,7 @@ export default function PortfolioMixed() {
                     <Icon className="w-4 h-4" />
                     <span>{section.label}</span>
                   </button>
-                )
+                );
               })}
             </nav>
 
@@ -285,7 +294,11 @@ export default function PortfolioMixed() {
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {mobileMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
               </button>
             </div>
           </div>
@@ -295,13 +308,13 @@ export default function PortfolioMixed() {
             <div className="md:hidden border-t border-gray-200 py-4">
               <div className="space-y-2">
                 {availableSections.map((section) => {
-                  const Icon = section.icon
+                  const Icon = section.icon;
                   return (
                     <button
                       key={section.key}
                       onClick={() => {
-                        scrollToSection(section.ref)
-                        setMobileMenuOpen(false)
+                        scrollToSection(section.ref);
+                        setMobileMenuOpen(false);
                       }}
                       className={`flex items-center space-x-2 w-full px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                         activeSection === section.key
@@ -312,7 +325,7 @@ export default function PortfolioMixed() {
                       <Icon className="w-4 h-4" />
                       <span>{section.label}</span>
                     </button>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -321,7 +334,10 @@ export default function PortfolioMixed() {
       </header>
 
       {/* Home Section */}
-      <section ref={homeRef} className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center">
+      <section
+        ref={homeRef}
+        className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
           <div className="relative inline-block mb-8">
             <div className="w-48 h-48 mx-auto rounded-full overflow-hidden border-4 border-blue-200 shadow-xl">
@@ -339,7 +355,9 @@ export default function PortfolioMixed() {
           <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-4">
             {portfolioData.personalInfo?.name || "Your Name"}
           </h1>
-          <p className="text-2xl md:text-3xl text-gray-600 mb-8">{portfolioData.personalInfo?.title || "Your Title"}</p>
+          <p className="text-2xl md:text-3xl text-gray-600 mb-8">
+            {portfolioData.personalInfo?.title || "Your Title"}
+          </p>
 
           {portfolioData.personalInfo?.bio && (
             <p className="text-lg text-gray-700 max-w-3xl mx-auto mb-12 leading-relaxed">
@@ -374,7 +392,9 @@ export default function PortfolioMixed() {
                 <CardContent className="p-6 text-center">
                   <Mail className="w-8 h-8 text-blue-600 mx-auto mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
-                  <p className="text-gray-600 text-sm">{portfolioData.personalInfo.email}</p>
+                  <p className="text-gray-600 text-sm">
+                    {portfolioData.personalInfo.email}
+                  </p>
                 </CardContent>
               </Card>
             )}
@@ -384,7 +404,9 @@ export default function PortfolioMixed() {
                 <CardContent className="p-6 text-center">
                   <MapPin className="w-8 h-8 text-blue-600 mx-auto mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-1">Location</h3>
-                  <p className="text-gray-600 text-sm">{portfolioData.personalInfo.location}</p>
+                  <p className="text-gray-600 text-sm">
+                    {portfolioData.personalInfo.location}
+                  </p>
                 </CardContent>
               </Card>
             )}
@@ -394,7 +416,9 @@ export default function PortfolioMixed() {
                 <CardContent className="p-6 text-center">
                   <span className="text-3xl mb-3 block">📞</span>
                   <h3 className="font-semibold text-gray-900 mb-1">Phone</h3>
-                  <p className="text-gray-600 text-sm">{portfolioData.personalInfo.phone}</p>
+                  <p className="text-gray-600 text-sm">
+                    {portfolioData.personalInfo.phone}
+                  </p>
                 </CardContent>
               </Card>
             )}
@@ -409,11 +433,17 @@ export default function PortfolioMixed() {
                   onClick={() => window.open(link.url, "_blank")}
                   className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-110"
                 >
-                  {link.platform.toLowerCase().includes("linkedin") && <Linkedin className="w-6 h-6" />}
-                  {link.platform.toLowerCase().includes("github") && <Github className="w-6 h-6" />}
-                  {link.platform.toLowerCase().includes("twitter") && <Twitter className="w-6 h-6" />}
+                  {link.platform.toLowerCase().includes("linkedin") && (
+                    <Linkedin className="w-6 h-6" />
+                  )}
+                  {link.platform.toLowerCase().includes("github") && (
+                    <Github className="w-6 h-6" />
+                  )}
+                  {link.platform.toLowerCase().includes("twitter") && (
+                    <Twitter className="w-6 h-6" />
+                  )}
                   {!["linkedin", "github", "twitter"].some((platform) =>
-                    link.platform.toLowerCase().includes(platform),
+                    link.platform.toLowerCase().includes(platform)
                   ) && <ExternalLink className="w-6 h-6" />}
                 </button>
               ))}
@@ -433,7 +463,9 @@ export default function PortfolioMixed() {
         hasData("certifications")) && (
         <section ref={aboutRef} className="min-h-screen py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-16 text-center">About Me</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-16 text-center">
+              About Me
+            </h2>
 
             {portfolioData.personalInfo?.bio && (
               <Card className="mb-12 shadow-lg">
@@ -444,7 +476,9 @@ export default function PortfolioMixed() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-700 leading-relaxed text-lg">{portfolioData.personalInfo.bio}</p>
+                  <p className="text-gray-700 leading-relaxed text-lg">
+                    {portfolioData.personalInfo.bio}
+                  </p>
                 </CardContent>
               </Card>
             )}
@@ -461,13 +495,22 @@ export default function PortfolioMixed() {
                   <CardContent>
                     <div className="space-y-6">
                       {portfolioData.workExperience?.map((exp, index) => (
-                        <div key={index} className="border-l-4 border-blue-200 pl-6 pb-6 last:pb-0">
-                          <h3 className="text-xl font-semibold text-gray-900">{exp.position}</h3>
-                          <p className="text-blue-600 font-medium">{exp.company}</p>
+                        <div
+                          key={index}
+                          className="border-l-4 border-blue-200 pl-6 pb-6 last:pb-0"
+                        >
+                          <h3 className="text-xl font-semibold text-gray-900">
+                            {exp.position}
+                          </h3>
+                          <p className="text-blue-600 font-medium">
+                            {exp.company}
+                          </p>
                           <p className="text-gray-500 text-sm mb-3">
                             {exp.startDate} - {exp.endDate}
                           </p>
-                          {exp.description && <p className="text-gray-700">{exp.description}</p>}
+                          {exp.description && (
+                            <p className="text-gray-700">{exp.description}</p>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -486,11 +529,16 @@ export default function PortfolioMixed() {
                   <CardContent>
                     <div className="space-y-6">
                       {portfolioData.education?.map((edu, index) => (
-                        <div key={index} className="border-l-4 border-green-200 pl-6 pb-6 last:pb-0">
+                        <div
+                          key={index}
+                          className="border-l-4 border-green-200 pl-6 pb-6 last:pb-0"
+                        >
                           <h3 className="text-xl font-semibold text-gray-900">
                             {edu.degree} {edu.field && `in ${edu.field}`}
                           </h3>
-                          <p className="text-green-600 font-medium">{edu.institution}</p>
+                          <p className="text-green-600 font-medium">
+                            {edu.institution}
+                          </p>
                           <p className="text-gray-500 text-sm">
                             {edu.startDate} - {edu.endDate}
                           </p>
@@ -517,11 +565,21 @@ export default function PortfolioMixed() {
                         key={index}
                         className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all duration-300 transform hover:scale-105"
                       >
-                        <h3 className="font-semibold text-gray-900 mb-1">{cert.name}</h3>
-                        <p className="text-gray-600 text-sm mb-2">{cert.issuer}</p>
-                        <p className="text-gray-500 text-xs mb-3">{cert.date}</p>
+                        <h3 className="font-semibold text-gray-900 mb-1">
+                          {cert.name}
+                        </h3>
+                        <p className="text-gray-600 text-sm mb-2">
+                          {cert.issuer}
+                        </p>
+                        <p className="text-gray-500 text-xs mb-3">
+                          {cert.date}
+                        </p>
                         {cert.url && (
-                          <Button variant="outline" size="sm" onClick={() => window.open(cert.url, "_blank")}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => window.open(cert.url, "_blank")}
+                          >
                             <ExternalLink className="mr-1 h-3 w-3" />
                             View
                           </Button>
@@ -540,7 +598,9 @@ export default function PortfolioMixed() {
       {hasData("projects") && (
         <section ref={projectsRef} className="min-h-screen py-20 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-16 text-center">My Projects</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-16 text-center">
+              My Projects
+            </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {portfolioData.projects?.map((project, index) => (
@@ -559,16 +619,26 @@ export default function PortfolioMixed() {
                     </div>
                   )}
                   <CardContent className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">{project.name}</h3>
-                    <p className="text-gray-600 mb-4 text-sm leading-relaxed">{project.description}</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                      {project.name}
+                    </h3>
+                    <p className="text-gray-600 mb-4 text-sm leading-relaxed">
+                      {project.description}
+                    </p>
 
                     {project.technology && (
                       <div className="flex flex-wrap gap-2 mb-4">
-                        {project.technology.split(",").map((tech, techIndex) => (
-                          <Badge key={techIndex} variant="secondary" className="text-xs">
-                            {tech.trim()}
-                          </Badge>
-                        ))}
+                        {project.technology
+                          .split(",")
+                          .map((tech, techIndex) => (
+                            <Badge
+                              key={techIndex}
+                              variant="secondary"
+                              className="text-xs"
+                            >
+                              {tech.trim()}
+                            </Badge>
+                          ))}
                       </div>
                     )}
 
@@ -591,9 +661,14 @@ export default function PortfolioMixed() {
 
       {/* Skills Section */}
       {hasData("skills") && (
-        <section ref={skillsRef} className="min-h-screen py-20 bg-white flex items-center">
+        <section
+          ref={skillsRef}
+          className="min-h-screen py-20 bg-white flex items-center"
+        >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-16 text-center">Skills & Technologies</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-16 text-center">
+              Skills & Technologies
+            </h2>
 
             <Card className="shadow-xl">
               <CardContent className="p-12">
@@ -618,19 +693,35 @@ export default function PortfolioMixed() {
 
       {/* Achievements Section */}
       {hasData("achievements") && (
-        <section ref={achievementsRef} className="min-h-screen py-20 bg-gray-50 flex items-center">
+        <section
+          ref={achievementsRef}
+          className="min-h-screen py-20 bg-gray-50 flex items-center"
+        >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-16 text-center">Achievements</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-16 text-center">
+              Achievements
+            </h2>
 
             <div className="space-y-6">
               {portfolioData.achievements?.map((achievement, index) => (
-                <Card key={index} className="hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                <Card
+                  key={index}
+                  className="hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+                >
                   <CardContent className="p-6 flex items-start gap-4">
                     <Trophy className="w-8 h-8 text-yellow-500 flex-shrink-0 mt-1" />
                     <div className="flex-1">
-                      <p className="text-gray-700 mb-3 text-lg">{achievement.description}</p>
+                      <p className="text-gray-700 mb-3 text-lg">
+                        {achievement.description}
+                      </p>
                       {achievement.link && (
-                        <Button variant="outline" size="sm" onClick={() => window.open(achievement.link, "_blank")}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            window.open(achievement.link, "_blank")
+                          }
+                        >
                           <ExternalLink className="mr-1 h-3 w-3" />
                           View Achievement
                         </Button>
@@ -650,7 +741,11 @@ export default function PortfolioMixed() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {selectedBlog !== null ? (
               <div>
-                <Button variant="outline" onClick={() => setSelectedBlog(null)} className="mb-6">
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedBlog(null)}
+                  className="mb-6"
+                >
                   ← Back to Blog
                 </Button>
 
@@ -660,17 +755,23 @@ export default function PortfolioMixed() {
                       {portfolioData.blogs?.[selectedBlog]?.title}
                     </h1>
                     <p className="text-gray-500 mb-8 text-lg">
-                      Published on {new Date(portfolioData.blogs?.[selectedBlog]?.date || "").toLocaleDateString()}
+                      Published on{" "}
+                      {new Date(
+                        portfolioData.blogs?.[selectedBlog]?.date || ""
+                      ).toLocaleDateString()}
                     </p>
                     <div className="prose max-w-none text-lg">
-                      {portfolioData.blogs?.[selectedBlog] && renderBlogContent(portfolioData.blogs[selectedBlog])}
+                      {portfolioData.blogs?.[selectedBlog] &&
+                        renderBlogContent(portfolioData.blogs[selectedBlog])}
                     </div>
                   </CardContent>
                 </Card>
               </div>
             ) : (
               <div>
-                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-16 text-center">Blog Posts</h2>
+                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-16 text-center">
+                  Blog Posts
+                </h2>
 
                 <div className="space-y-8">
                   {portfolioData.blogs?.map((blog, index) => (
@@ -684,12 +785,16 @@ export default function PortfolioMixed() {
                           {blog.title}
                         </h3>
                         <p className="text-gray-500 text-sm mb-4">
-                          Published on {new Date(blog.date).toLocaleDateString()}
+                          Published on{" "}
+                          {new Date(blog.date).toLocaleDateString()}
                         </p>
                         <p className="text-gray-700 mb-6 text-lg leading-relaxed">
                           {blog.description.substring(0, 200)}...
                         </p>
-                        <Button variant="outline" className="transform hover:scale-105 transition-all duration-300">
+                        <Button
+                          variant="outline"
+                          className="transform hover:scale-105 transition-all duration-300"
+                        >
                           Read More →
                         </Button>
                       </CardContent>
@@ -702,5 +807,5 @@ export default function PortfolioMixed() {
         </section>
       )}
     </div>
-  )
+  );
 }

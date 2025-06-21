@@ -13,8 +13,8 @@ export async function GET(req: NextRequest) {
         { status: 401 }
       );
     }
-
-    await Resume.countDocuments();
+    await connectDB();
+    Resume.countDocuments();
     const user = await User.findById(userId)
       .select("-password")
       .populate("resumes");
@@ -25,11 +25,13 @@ export async function GET(req: NextRequest) {
       name: user.name,
       email: user.email,
       portfolio: user.portfolio || null,
+      templateId: user.templateId || null,
       private: {
         profile: user.private.profile,
         portfolio: user.private.portfolio,
         resumes: user.private.resumes,
       },
+      hasPorfolioData: user?.portfolioData ? true : false,
       imageUrl: user.imageUrl,
       resumes: user.resumes,
       createdAt: user.createdAt,

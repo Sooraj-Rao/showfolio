@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect, useRef } from "react"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 import {
   Github,
   Linkedin,
@@ -18,79 +18,26 @@ import {
   Code,
   Sparkles,
   ChevronDown,
-} from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { useToast } from "@/hooks/use-toast"
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { T_PortfolioData } from "./1";
 
-type PortfolioData = {
-  personalInfo: {
-    name: string
-    title: string
-    email: string
-    phone: string
-    location: string
-    bio: string
-  }
-  socialLinks: Array<{
-    platform: string
-    url: string
-  }>
-  workExperience: Array<{
-    company: string
-    position: string
-    startDate: string
-    endDate: string
-    description: string
-  }>
-  skills: string[]
-  projects: Array<{
-    name: string
-    description: string
-    technology: string
-    link: string
-    imageUrl: string
-  }>
-  achievements: Array<{
-    description: string
-    link: string
-  }>
-  education: Array<{
-    institution: string
-    degree: string
-    field: string
-    startDate: string
-    endDate: string
-  }>
-  certifications: Array<{
-    name: string
-    issuer: string
-    date: string
-    url: string
-  }>
-  blogs: Array<{
-    title: string
-    date: string
-    description: string
-  }>
-}
+export default function Three({
+  portfolioData,
+  loading,
+}: {
+  loading: boolean;
+  portfolioData: T_PortfolioData | null;
+}) {
+  const [activeSection, setActiveSection] = useState("hero");
 
-export default function PortfolioAnimated() {
-  const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [activeSection, setActiveSection] = useState("hero")
-  const { toast } = useToast()
-
-  const heroRef = useRef<HTMLElement>(null)
-  const aboutRef = useRef<HTMLElement>(null)
-  const projectsRef = useRef<HTMLElement>(null)
-  const skillsRef = useRef<HTMLElement>(null)
-  const achievementsRef = useRef<HTMLElement>(null)
-  const contactRef = useRef<HTMLElement>(null)
-
-  useEffect(() => {
-    fetchPortfolioData()
-  }, [])
+  const heroRef = useRef<HTMLElement>(null);
+  const aboutRef = useRef<HTMLElement>(null);
+  const projectsRef = useRef<HTMLElement>(null);
+  const skillsRef = useRef<HTMLElement>(null);
+  const achievementsRef = useRef<HTMLElement>(null);
+  const contactRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -101,71 +48,53 @@ export default function PortfolioAnimated() {
         { id: "skills", ref: skillsRef },
         { id: "achievements", ref: achievementsRef },
         { id: "contact", ref: contactRef },
-      ]
+      ];
 
-      const scrollPosition = window.scrollY + 100
+      const scrollPosition = window.scrollY + 100;
 
       for (const section of sections) {
         if (section.ref.current) {
-          const { offsetTop, offsetHeight } = section.ref.current
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section.id)
-            break
+          const { offsetTop, offsetHeight } = section.ref.current;
+          if (
+            scrollPosition >= offsetTop &&
+            scrollPosition < offsetTop + offsetHeight
+          ) {
+            setActiveSection(section.id);
+            break;
           }
         }
       }
-    }
+    };
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
-
-  const fetchPortfolioData = async () => {
-    try {
-      const response = await fetch("/api/portfolio/portfolio-data")
-      if (!response.ok) {
-        throw new Error("Failed to fetch portfolio data")
-      }
-      const data = await response.json()
-      setPortfolioData(data.portfolio || data)
-    } catch (error) {
-      console.error("Error fetching portfolio data:", error)
-      const savedData = localStorage.getItem("portfolioData")
-      if (savedData) {
-        setPortfolioData(JSON.parse(savedData))
-      } else {
-        toast({
-          title: "Error loading portfolio",
-          description: "Could not load portfolio data",
-          variant: "destructive",
-        })
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const hasData = (section: keyof PortfolioData) => {
-    if (!portfolioData) return false
-    const data = portfolioData[section]
+    if (!portfolioData) return false;
+    const data = portfolioData[section];
     if (Array.isArray(data)) {
       return (
         data.length > 0 &&
         data.some((item) => {
-          if (typeof item === "string") return item.trim() !== ""
-          return Object.values(item).some((value) => value && value.toString().trim() !== "")
+          if (typeof item === "string") return item.trim() !== "";
+          return Object.values(item).some(
+            (value) => value && value.toString().trim() !== ""
+          );
         })
-      )
+      );
     }
     if (typeof data === "object") {
-      return Object.values(data).some((value) => value && value.toString().trim() !== "")
+      return Object.values(data).some(
+        (value) => value && value.toString().trim() !== ""
+      );
     }
-    return false
-  }
+    return false;
+  };
 
   const scrollToSection = (ref: React.RefObject<HTMLElement>) => {
-    ref.current?.scrollIntoView({ behavior: "smooth" })
-  }
+    ref.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   if (loading) {
     return (
@@ -177,10 +106,12 @@ export default function PortfolioAnimated() {
               <Sparkles className="w-8 h-8 text-purple-400 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
             </div>
           </div>
-          <p className="mt-4 text-xl font-semibold">Loading amazing portfolio...</p>
+          <p className="mt-4 text-xl font-semibold">
+            Loading amazing portfolio...
+          </p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!portfolioData) {
@@ -188,10 +119,12 @@ export default function PortfolioAnimated() {
       <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center text-white">
         <div className="text-center">
           <p className="text-2xl font-bold">Portfolio data not found</p>
-          <p className="text-purple-300 mt-2">Please check your portfolio setup</p>
+          <p className="text-purple-300 mt-2">
+            Please check your portfolio setup
+          </p>
         </div>
       </div>
-    )
+    );
   }
 
   const availableSections = [
@@ -200,13 +133,31 @@ export default function PortfolioAnimated() {
       key: "about",
       label: "About",
       ref: aboutRef,
-      condition: portfolioData.personalInfo?.bio || hasData("workExperience") || hasData("education"),
+      condition:
+        portfolioData.personalInfo?.bio ||
+        hasData("workExperience") ||
+        hasData("education"),
     },
-    { key: "projects", label: "Projects", ref: projectsRef, condition: hasData("projects") },
-    { key: "skills", label: "Skills", ref: skillsRef, condition: hasData("skills") },
-    { key: "achievements", label: "Achievements", ref: achievementsRef, condition: hasData("achievements") },
+    {
+      key: "projects",
+      label: "Projects",
+      ref: projectsRef,
+      condition: hasData("projects"),
+    },
+    {
+      key: "skills",
+      label: "Skills",
+      ref: skillsRef,
+      condition: hasData("skills"),
+    },
+    {
+      key: "achievements",
+      label: "Achievements",
+      ref: achievementsRef,
+      condition: hasData("achievements"),
+    },
     { key: "contact", label: "Contact", ref: contactRef },
-  ].filter((section) => section.condition !== false)
+  ].filter((section) => section.condition !== false);
 
   return (
     <div className="bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
@@ -230,7 +181,10 @@ export default function PortfolioAnimated() {
       </nav>
 
       {/* Hero Section */}
-      <section ref={heroRef} className="min-h-screen flex items-center justify-center relative overflow-hidden">
+      <section
+        ref={heroRef}
+        className="min-h-screen flex items-center justify-center relative overflow-hidden"
+      >
         {/* Animated Background Elements */}
         <div className="absolute inset-0">
           <div className="absolute top-20 left-20 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -294,11 +248,17 @@ export default function PortfolioAnimated() {
                   onClick={() => window.open(link.url, "_blank")}
                   className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300 transform hover:scale-110 hover:rotate-12"
                 >
-                  {link.platform.toLowerCase().includes("linkedin") && <Linkedin className="w-6 h-6" />}
-                  {link.platform.toLowerCase().includes("github") && <Github className="w-6 h-6" />}
-                  {link.platform.toLowerCase().includes("twitter") && <Twitter className="w-6 h-6" />}
+                  {link.platform.toLowerCase().includes("linkedin") && (
+                    <Linkedin className="w-6 h-6" />
+                  )}
+                  {link.platform.toLowerCase().includes("github") && (
+                    <Github className="w-6 h-6" />
+                  )}
+                  {link.platform.toLowerCase().includes("twitter") && (
+                    <Twitter className="w-6 h-6" />
+                  )}
                   {!["linkedin", "github", "twitter"].some((platform) =>
-                    link.platform.toLowerCase().includes(platform),
+                    link.platform.toLowerCase().includes(platform)
                   ) && <ExternalLink className="w-6 h-6" />}
                 </button>
               ))}
@@ -312,7 +272,9 @@ export default function PortfolioAnimated() {
       </section>
 
       {/* About Section */}
-      {(portfolioData.personalInfo?.bio || hasData("workExperience") || hasData("education")) && (
+      {(portfolioData.personalInfo?.bio ||
+        hasData("workExperience") ||
+        hasData("education")) && (
         <section ref={aboutRef} className="min-h-screen py-20 px-8">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-5xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
@@ -322,7 +284,9 @@ export default function PortfolioAnimated() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
               <div className="space-y-6">
                 {portfolioData.personalInfo?.bio && (
-                  <p className="text-lg text-purple-100 leading-relaxed">{portfolioData.personalInfo.bio}</p>
+                  <p className="text-lg text-purple-100 leading-relaxed">
+                    {portfolioData.personalInfo.bio}
+                  </p>
                 )}
               </div>
               <div className="relative">
@@ -343,12 +307,16 @@ export default function PortfolioAnimated() {
                       className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
                     >
                       <CardContent className="p-6">
-                        <h4 className="text-xl font-semibold text-purple-300 mb-2">{exp.position}</h4>
+                        <h4 className="text-xl font-semibold text-purple-300 mb-2">
+                          {exp.position}
+                        </h4>
                         <p className="text-purple-200 mb-2">{exp.company}</p>
                         <p className="text-purple-400 text-sm mb-4">
                           {exp.startDate} - {exp.endDate}
                         </p>
-                        {exp.description && <p className="text-purple-100">{exp.description}</p>}
+                        {exp.description && (
+                          <p className="text-purple-100">{exp.description}</p>
+                        )}
                       </CardContent>
                     </Card>
                   ))}
@@ -372,7 +340,9 @@ export default function PortfolioAnimated() {
                         <h4 className="text-xl font-semibold text-purple-300 mb-2">
                           {edu.degree} {edu.field && `in ${edu.field}`}
                         </h4>
-                        <p className="text-purple-200 mb-2">{edu.institution}</p>
+                        <p className="text-purple-200 mb-2">
+                          {edu.institution}
+                        </p>
                         <p className="text-purple-400 text-sm">
                           {edu.startDate} - {edu.endDate}
                         </p>
@@ -396,9 +366,13 @@ export default function PortfolioAnimated() {
                       className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
                     >
                       <CardContent className="p-6">
-                        <h4 className="text-xl font-semibold text-purple-300 mb-2">{cert.name}</h4>
+                        <h4 className="text-xl font-semibold text-purple-300 mb-2">
+                          {cert.name}
+                        </h4>
                         <p className="text-purple-200 mb-2">{cert.issuer}</p>
-                        <p className="text-purple-400 text-sm mb-4">{cert.date}</p>
+                        <p className="text-purple-400 text-sm mb-4">
+                          {cert.date}
+                        </p>
                         {cert.url && (
                           <Button
                             variant="outline"
@@ -406,7 +380,8 @@ export default function PortfolioAnimated() {
                             onClick={() => window.open(cert.url, "_blank")}
                             className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white"
                           >
-                            View Certificate <ExternalLink className="ml-1 h-3 w-3" />
+                            View Certificate{" "}
+                            <ExternalLink className="ml-1 h-3 w-3" />
                           </Button>
                         )}
                       </CardContent>
@@ -448,18 +423,22 @@ export default function PortfolioAnimated() {
                     <h3 className="text-xl font-bold text-purple-300 mb-3 group-hover:text-pink-300 transition-colors">
                       {project.name}
                     </h3>
-                    <p className="text-purple-100 mb-4 text-sm leading-relaxed">{project.description}</p>
+                    <p className="text-purple-100 mb-4 text-sm leading-relaxed">
+                      {project.description}
+                    </p>
                     {project.technology && (
                       <div className="flex flex-wrap gap-2 mb-4">
-                        {project.technology.split(",").map((tech, techIndex) => (
-                          <Badge
-                            key={techIndex}
-                            variant="secondary"
-                            className="bg-purple-500/20 text-purple-300 border-purple-500/30 hover:bg-purple-500/30 transition-colors"
-                          >
-                            {tech.trim()}
-                          </Badge>
-                        ))}
+                        {project.technology
+                          .split(",")
+                          .map((tech, techIndex) => (
+                            <Badge
+                              key={techIndex}
+                              variant="secondary"
+                              className="bg-purple-500/20 text-purple-300 border-purple-500/30 hover:bg-purple-500/30 transition-colors"
+                            >
+                              {tech.trim()}
+                            </Badge>
+                          ))}
                       </div>
                     )}
                     {project.link && (
@@ -481,7 +460,10 @@ export default function PortfolioAnimated() {
 
       {/* Skills Section */}
       {hasData("skills") && (
-        <section ref={skillsRef} className="min-h-screen py-20 px-8 flex items-center">
+        <section
+          ref={skillsRef}
+          className="min-h-screen py-20 px-8 flex items-center"
+        >
           <div className="max-w-6xl mx-auto w-full">
             <h2 className="text-5xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
               Skills & Technologies
@@ -506,7 +488,10 @@ export default function PortfolioAnimated() {
 
       {/* Achievements Section */}
       {hasData("achievements") && (
-        <section ref={achievementsRef} className="min-h-screen py-20 px-8 flex items-center">
+        <section
+          ref={achievementsRef}
+          className="min-h-screen py-20 px-8 flex items-center"
+        >
           <div className="max-w-6xl mx-auto w-full">
             <h2 className="text-5xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
               Achievements
@@ -521,14 +506,19 @@ export default function PortfolioAnimated() {
                   <CardContent className="p-6 flex items-start gap-4">
                     <Trophy className="w-8 h-8 text-yellow-400 flex-shrink-0 mt-1" />
                     <div className="flex-1">
-                      <p className="text-purple-100 mb-2">{achievement.description}</p>
+                      <p className="text-purple-100 mb-2">
+                        {achievement.description}
+                      </p>
                       {achievement.link && (
                         <Button
                           variant="link"
-                          onClick={() => window.open(achievement.link, "_blank")}
+                          onClick={() =>
+                            window.open(achievement.link, "_blank")
+                          }
                           className="text-purple-400 hover:text-purple-300 p-0 h-auto"
                         >
-                          View Achievement <ExternalLink className="ml-1 h-3 w-3" />
+                          View Achievement{" "}
+                          <ExternalLink className="ml-1 h-3 w-3" />
                         </Button>
                       )}
                     </div>
@@ -541,7 +531,10 @@ export default function PortfolioAnimated() {
       )}
 
       {/* Contact Section */}
-      <section ref={contactRef} className="min-h-screen py-20 px-8 flex items-center">
+      <section
+        ref={contactRef}
+        className="min-h-screen py-20 px-8 flex items-center"
+      >
         <div className="max-w-4xl mx-auto text-center w-full">
           <h2 className="text-5xl font-bold mb-16 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             Let's Connect
@@ -552,8 +545,12 @@ export default function PortfolioAnimated() {
               <Card className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-all duration-300 transform hover:scale-105">
                 <CardContent className="p-6 text-center">
                   <Mail className="w-12 h-12 text-purple-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-purple-300 mb-2">Email</h3>
-                  <p className="text-purple-100">{portfolioData.personalInfo.email}</p>
+                  <h3 className="text-xl font-semibold text-purple-300 mb-2">
+                    Email
+                  </h3>
+                  <p className="text-purple-100">
+                    {portfolioData.personalInfo.email}
+                  </p>
                 </CardContent>
               </Card>
             )}
@@ -562,8 +559,12 @@ export default function PortfolioAnimated() {
               <Card className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-all duration-300 transform hover:scale-105">
                 <CardContent className="p-6 text-center">
                   <MapPin className="w-12 h-12 text-purple-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-purple-300 mb-2">Location</h3>
-                  <p className="text-purple-100">{portfolioData.personalInfo.location}</p>
+                  <h3 className="text-xl font-semibold text-purple-300 mb-2">
+                    Location
+                  </h3>
+                  <p className="text-purple-100">
+                    {portfolioData.personalInfo.location}
+                  </p>
                 </CardContent>
               </Card>
             )}
@@ -572,8 +573,12 @@ export default function PortfolioAnimated() {
               <Card className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-all duration-300 transform hover:scale-105">
                 <CardContent className="p-6 text-center">
                   <span className="text-4xl mb-4 block">📞</span>
-                  <h3 className="text-xl font-semibold text-purple-300 mb-2">Phone</h3>
-                  <p className="text-purple-100">{portfolioData.personalInfo.phone}</p>
+                  <h3 className="text-xl font-semibold text-purple-300 mb-2">
+                    Phone
+                  </h3>
+                  <p className="text-purple-100">
+                    {portfolioData.personalInfo.phone}
+                  </p>
                 </CardContent>
               </Card>
             )}
@@ -587,11 +592,17 @@ export default function PortfolioAnimated() {
                   onClick={() => window.open(link.url, "_blank")}
                   className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center hover:from-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-110 hover:rotate-12 shadow-lg hover:shadow-xl"
                 >
-                  {link.platform.toLowerCase().includes("linkedin") && <Linkedin className="w-8 h-8" />}
-                  {link.platform.toLowerCase().includes("github") && <Github className="w-8 h-8" />}
-                  {link.platform.toLowerCase().includes("twitter") && <Twitter className="w-8 h-8" />}
+                  {link.platform.toLowerCase().includes("linkedin") && (
+                    <Linkedin className="w-8 h-8" />
+                  )}
+                  {link.platform.toLowerCase().includes("github") && (
+                    <Github className="w-8 h-8" />
+                  )}
+                  {link.platform.toLowerCase().includes("twitter") && (
+                    <Twitter className="w-8 h-8" />
+                  )}
                   {!["linkedin", "github", "twitter"].some((platform) =>
-                    link.platform.toLowerCase().includes(platform),
+                    link.platform.toLowerCase().includes(platform)
                   ) && <ExternalLink className="w-8 h-8" />}
                 </button>
               ))}
@@ -602,12 +613,22 @@ export default function PortfolioAnimated() {
 
       <style jsx>{`
         @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
+          0%,
+          100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-20px);
+          }
         }
         @keyframes gradient {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
+          0%,
+          100% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
         }
         @keyframes fade-in-up {
           from {
@@ -629,11 +650,19 @@ export default function PortfolioAnimated() {
         .animate-fade-in-up {
           animation: fade-in-up 0.6s ease-out forwards;
         }
-        .delay-300 { animation-delay: 300ms; }
-        .delay-500 { animation-delay: 500ms; }
-        .delay-700 { animation-delay: 700ms; }
-        .delay-1000 { animation-delay: 1000ms; }
+        .delay-300 {
+          animation-delay: 300ms;
+        }
+        .delay-500 {
+          animation-delay: 500ms;
+        }
+        .delay-700 {
+          animation-delay: 700ms;
+        }
+        .delay-1000 {
+          animation-delay: 1000ms;
+        }
       `}</style>
     </div>
-  )
+  );
 }

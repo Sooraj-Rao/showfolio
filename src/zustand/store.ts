@@ -5,7 +5,7 @@ export interface IAuthUser {
   private: {
     portfolio?: boolean;
     profile?: boolean;
-    resumes?:boolean
+    resumes?: boolean;
   };
   name: string;
   email: string;
@@ -13,6 +13,8 @@ export interface IAuthUser {
   resumes?: IResume[];
   createdAt: Date;
   isActive: boolean;
+  templateId: string;
+  hasPorfolioData?: boolean;
 }
 
 type ZustandStore = {

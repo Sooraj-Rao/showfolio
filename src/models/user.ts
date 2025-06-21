@@ -10,6 +10,7 @@ export interface IUser extends Document {
   createdAt: Date;
   updatedAt: Date;
   isActive: boolean;
+  templateId: string;
   portfolio: string;
   portfolioData: string;
   aiCredits: number;
@@ -61,6 +62,9 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       type: String,
     },
     portfolioData: {
+      type: String,
+    },
+    templateId: {
       type: String,
     },
     private: {

@@ -49,7 +49,7 @@ export default function SharePage() {
     if (resumes?.length && !selectedResume) {
       const first = resumes[0];
       setSelectedResume(first);
-      setUrl(window.location.origin + "/" + first.shortUrl);
+      setUrl(window.location.origin + "/r/" + first.shortUrl);
     }
   }, [resumes]);
 
@@ -60,7 +60,7 @@ export default function SharePage() {
       );
       if (resume) {
         setSelectedResume(resume);
-        setUrl(window.location.origin + "/" + resume.shortUrl);
+        setUrl(window.location.origin + "/r/" + resume.shortUrl);
       }
     }
   }, [searchParams, resumes]);
@@ -157,7 +157,7 @@ export default function SharePage() {
                 );
                 if (found) {
                   setSelectedResume(found);
-                  setUrl(window.location.origin + "/" + found.shortUrl);
+                  setUrl(window.location.origin + "/r/" + found.shortUrl);
                   setShortUrl("");
                   setRef("");
                 }

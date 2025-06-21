@@ -45,5 +45,6 @@ export const config = {
     "/api/resume",
     "/api/analytics",
     "/api/portfolio/portfolio-data",
+    "/api/portfolio/analytics/get",
   ],
 };

@@ -79,7 +79,6 @@ interface Resume {
   updatedAt: string;
 }
 
-// Enhanced dummy data for empty state with more realistic timeline
 const generateDummyData = () => {
   const events = ["view", "download", "share"];
   const devices = ["desktop", "mobile", "tablet"];
@@ -97,7 +96,6 @@ const generateDummyData = () => {
   const data = [];
   const now = new Date();
 
-  // Generate 50 dummy events over the last 7 days
   for (let i = 0; i < 50; i++) {
     const randomDaysAgo = Math.floor(Math.random() * 7);
     const randomHours = Math.floor(Math.random() * 24);
@@ -159,17 +157,14 @@ export default function AnalyticsPage() {
     setSelectedResumeId(resumeId);
   };
 
-  // Filter analytics data by selected resume or show all
+ 
   const resumeAnalyticsData = useMemo(() => {
     if (selectedResumeId === "all") return analyticsData;
-    return analyticsData.filter((item) => item.resume === selectedResumeId);
+    return analyticsData.filter((item) => item.resumeShortUrl === selectedResumeId);
   }, [analyticsData, selectedResumeId]);
-
-  // Use dummy data if no resumes exist
   const isEmptyState = !loading && resumes.length === 0;
   const dataToUse = isEmptyState ? generateDummyData() : resumeAnalyticsData;
 
-  // Filter data based on time range
   const filteredData = useMemo(() => {
     if (!dataToUse.length) return [];
 
@@ -196,7 +191,6 @@ export default function AnalyticsPage() {
     return dataToUse.filter((item) => new Date(item.createdAt) >= filterDate);
   }, [dataToUse, timeRange]);
 
-  // Process data for visualizations
   const eventCounts = useMemo(() => {
     return filteredData.reduce((acc, item) => {
       const event = item.event.split(":")[0];
@@ -241,7 +235,6 @@ export default function AnalyticsPage() {
     }, {} as Record<string, number>);
   }, [filteredData]);
 
-  // Enhanced timeline data with growth calculations
   const timeSeriesData = useMemo(() => {
     if (!filteredData.length) return [];
 
@@ -268,7 +261,6 @@ export default function AnalyticsPage() {
     );
   }, [filteredData]);
 
-  // Chart data
   const eventChartData = Object.entries(eventCounts).map(([key, value]) => ({
     name: key.charAt(0).toUpperCase() + key.slice(1),
     value,
@@ -328,7 +320,6 @@ export default function AnalyticsPage() {
       });
     }
 
-    // Geographic diversity
     const countryCount = Object.keys(countryCounts).length;
     if (countryCount > 1) {
       insights.push({
@@ -451,8 +442,10 @@ export default function AnalyticsPage() {
   }
 
   const selectedResume = resumes?.find(
-    (r: Resume) => r._id === selectedResumeId
+    (r: Resume) => r.shortUrl === selectedResumeId
   );
+
+
 
   return (
     <div className="flex-1 w-full max-w-7xl mx-auto  space-y-6 overflow-x-hidden">
@@ -497,7 +490,7 @@ export default function AnalyticsPage() {
                 </div>
               </SelectItem>
               {resumes?.map((resume) => (
-                <SelectItem key={resume._id} value={resume._id}>
+                <SelectItem key={resume._id} value={resume.shortUrl}>
                   <div className="flex items-center gap-2">
                     <FileText className="w-4 h-4" />
                     <span className="truncate max-w-[200px]">
@@ -1359,3 +1352,4 @@ export default function AnalyticsPage() {
     </div>
   );
 }
+

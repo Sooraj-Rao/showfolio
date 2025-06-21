@@ -234,7 +234,7 @@ export default function ResumeDetailsPage({
     }
   };
   const copyShareLink = async () => {
-    const shareUrl = `${window.location.origin}/${resume?.shortUrl}?ref=owner_share`;
+    const shareUrl = `${window.location.origin}/r/${resume?.shortUrl}?ref=owner_share`;
     try {
       await navigator.clipboard.writeText(shareUrl);
       toast({
@@ -309,11 +309,11 @@ export default function ResumeDetailsPage({
               Copy Link
             </Button>
             <a
-              href={`/${resume?.shortUrl}?ref=demo`}
+              href={`/r/${resume?.shortUrl}?ref=demo`}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button className="text-xs sm:text-base">
+              <Button  className="text-xs sm:text-base">
                 <ExternalLink className="h-4 w-4 mr-2" />
                 View Live
               </Button>
@@ -351,7 +351,7 @@ export default function ResumeDetailsPage({
             </div>
           </div>
 
-          <Link href={`/resume/analytics?resume=${resume._id || ""}`}>
+          <Link href={`/resume/analytics?resume=${resume.shortUrl || ""}`}>
             <Button variant="outline" className=" mt-4 sm:mt-0">
               <BarChart3 className="h-4 w-4 mr-2" />
               View Detailed Analytics
@@ -599,7 +599,11 @@ export default function ResumeDetailsPage({
               >
                 Cancel
               </Button>
-              <Button variant="destructive" className=" mb-2" onClick={handleDelete}>
+              <Button
+                variant="destructive"
+                className=" mb-2"
+                onClick={handleDelete}
+              >
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete Resume
               </Button>

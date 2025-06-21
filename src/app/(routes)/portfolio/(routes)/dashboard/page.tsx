@@ -72,7 +72,6 @@ export default function DashboardPage() {
       setLoading(false);
     }
   };
-  console.log(portfolioData);
   useEffect(() => {
     fetchPortfolioData();
   }, []);

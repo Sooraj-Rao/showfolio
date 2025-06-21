@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -13,6 +14,10 @@ import {
   User,
   Loader2,
   Trash2,
+  Sparkles,
+  Settings,
+  ExternalLink,
+  Badge,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -215,6 +220,8 @@ export default function CreatePortfolioPage() {
   const [selectedResume, setSelectedResume] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
 
   // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -533,6 +540,14 @@ export default function CreatePortfolioPage() {
 
   // Update skill
   const updateSkill = (index: number, value: string) => {
+    if (formData.skills.length == 15) return;
+
+    toast({
+      title: "Focus on Key Skills",
+      description:
+        "Listing too many skills can be distracting. Highlight only the most relevant ones.",
+    });
+
     const updatedSkills = [...formData.skills];
     updatedSkills[index] = value;
     setFormData({
@@ -706,8 +721,236 @@ export default function CreatePortfolioPage() {
     });
   };
 
+  const handleTemplateChange = (templateId) => {
+    if (selectedTemplate == templateId) {
+      setSelectedTemplate(null);
+    } else {
+      setSelectedTemplate(templateId);
+    }
+  };
 
-  
+  const handleTemplateSave = async () => {
+    try {
+      const res = await axios.patch("/api/portfolio/portfolio-data", {
+        templateId: selectedTemplate,
+      });
+      if (res.status === 200) {
+        toast({
+          title: "Success",
+          description: "Template selection was Successfull",
+        });
+      } else {
+        toast({
+          title: "Error saving portfolio",
+          description: "There was an error saving your portfolio.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error saving portfolio:", error);
+      toast({
+        title: "Error saving portfolio",
+        description: "There was an error saving your portfolio.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const templates = [
+    {
+      id: "1",
+      name: "Classic",
+      image: "/templates/classic.png",
+      demoLink: "/templates/demo/classic",
+    },
+    {
+      id: "2",
+      name: "Modern",
+      image: "/templates/modern.png",
+      demoLink: "/templates/demo/modern",
+    },
+    {
+      id: "3",
+      name: "Minimalist",
+      image: "/templates/minimalist.png",
+      demoLink: "/templates/demo/minimalist",
+    },
+  ];
+
+  useEffect(() => {
+    if (userData?.templateId) setSelectedTemplate(userData?.templateId);
+  }, [userData?.templateId]);
+
+  if (userData?.hasPorfolioData) {
+    return (
+      <div className="min-h-screen  p-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Header Section */}
+          <div className="mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold  mb-2">
+                  Portfolio Templates
+                </h1>
+                <p className="text-muted-foreground">
+                  Choose a template that best represents your professional brand
+                </p>
+              </div>
+              <Link href="/portfolio/manage">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Settings className="w-4 h-4" />
+                  Manage Portfolio
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Template Selection */}
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-6">
+              <Sparkles className="w-5 h-5 text-blue-600" />
+              <h2 className="text-xl font-semibold ">Select Your Template</h2>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {templates.map((template) => (
+                <div key={template.id} className="relative">
+                  <input
+                    type="radio"
+                    name="template"
+                    value={template.id}
+                    checked={selectedTemplate === template.id}
+                    onChange={() => handleTemplateChange(template.id)}
+                    className="sr-only"
+                  />
+                  <Card
+                    className={`relative h-64 cursor-pointer group transition-all duration-300 hover:shadow-xl  ${
+                      selectedTemplate === template.id
+                        ? "ring-2 ring-blue-500 shadow-lg"
+                        : "hover:shadow-md"
+                    }`}
+                    onClick={() => {
+                      handleTemplateChange(template.id);
+                    }}
+                  >
+                    <CardContent className="p-0 h-full">
+                      {/* Template Preview Image */}
+                      <div className="relative h-48 overflow-hidden rounded-t-lg">
+                        <img
+                          src="https://www.soorajrao.in/images/projects/resume/home.png"
+                          alt={`${template.name} template`}
+                          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                        />
+
+                        {/* Selection Indicator */}
+                        {selectedTemplate === template.id && (
+                          <div className="absolute top-3 left-3 bg-blue-600 text-white rounded-full p-1">
+                            <Check className="w-4 h-4" />
+                          </div>
+                        )}
+
+                        {/* Demo Link */}
+                        <Link
+                          href={"https://google.com"}
+                          // href={template.demoLink}
+                          target="_blank"
+                          className="absolute top-3 right-3 z-10 bg flex items-center gap-1 "
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Button size="sm" variant="outline">
+                            <ExternalLink className="w-3 h-3" />
+                            Demo
+                          </Button>
+                        </Link>
+
+                        {/* Overlay on hover */}
+                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </div>
+
+                      {/* Template Info */}
+                      <div className="p-4 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-semibold  group-hover:text-blue-600 transition-colors">
+                            {template.name}
+                            <span className=" text-xs text-muted-foreground ml-1">
+                              {userData.templateId === template.id && "current template"}
+                            </span>
+                          </h3>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Save Button */}
+          {!userData?.templateId ||
+            (userData?.templateId !== selectedTemplate && (
+              <div className="fixed lg:hidden bottom-6 right-6 z-50">
+                <Card className="shadow-lg border-0  backdrop-blur-sm">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="text-sm text-muted-foreground">
+                        Template selected:{" "}
+                        <span className="font-medium ">
+                          {
+                            templates.find((t) => t.id === selectedTemplate)
+                              ?.name
+                          }
+                        </span>
+                      </div>
+                      <Button
+                        onClick={handleTemplateSave}
+                        disabled={isLoading}
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
+                        {isLoading ? "Saving..." : "Save Template"}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+
+          {/* Alternative Save Button for larger screens */}
+          {!userData?.templateId ||
+            (userData?.templateId !== selectedTemplate && (
+              <div className="hidden lg:block">
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-semibold  mb-1">
+                          Ready to apply your template?
+                        </h3>
+                        <p className="text-muted-foreground text-sm">
+                          You've selected "
+                          {
+                            templates.find((t) => t.id === selectedTemplate)
+                              ?.name
+                          }
+                          " template
+                        </p>
+                      </div>
+                      <Button
+                        onClick={handleTemplateSave}
+                        disabled={isLoading}
+                        size="lg"
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
+                        {isLoading ? "Saving..." : "Save & Apply Template"}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+        </div>
+      </div>
+    );
+  }
 
   // If we're showing the data source selection
   if (showDataSourceSelection) {
@@ -746,8 +989,8 @@ export default function CreatePortfolioPage() {
                     Fill in Your Information Manually
                   </h3>
                   <p className="text-muted-foreground mb-6">
-                    You'll be guided through a step-by-step form to create your
-                    portfolio.
+                    You&apos;ll be guided through a step-by-step form to create
+                    your portfolio.
                   </p>
                   <Button onClick={startFormProcess}>Start Creating</Button>
                 </div>

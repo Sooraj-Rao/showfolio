@@ -153,6 +153,7 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
       }
     }
   };
+  
 
   const handleContact = () => {
     if (resumeData?.email) {

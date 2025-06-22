@@ -71,10 +71,11 @@ export async function POST(req: NextRequest) {
 const createPrompt = (resumeText: string, userQuery: string | null): string => {
   const sectionStructure = `1. **Experience Section**: Provide feedback on the clarity, relevance, and impact of the experience described.
   2. **Skills Section**: Review the effectiveness and clarity of the skills listed, including whether they align with the job role.
-  3. **Education Section**: Comment on the educational background and how it is presented, especially in relation to the job.
+  3. **Project Section**: Provide feedback on the clarity, relevance, and impact of the projects described .
   4. **Formatting and Structure**: Evaluate the overall format, including readability, consistency, and professional layout.
   5. **Overall Strengths and Weaknesses**: Give an overall assessment of the resume, highlighting key strengths and areas for improvement.
-  6.If any of above mentioned section is not present in resume choose whichever section it has and give result for that section. 
+  Give a score for resume out of 100 based on the overall resume and justify it with bullets.In point say how much out of how much for each.
+  If any of above mentioned section is not present in resume choose whichever section it has and give result for that section. 
   `;
 
   const feedbackInstruction = userQuery

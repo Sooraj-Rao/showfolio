@@ -37,10 +37,9 @@ import { Badge } from "@/components/ui/badge";
 import { ModeToggle } from "@/components/main/theme/theme-toggle";
 import { usePortfolioAnalyticsEnhanced } from "@/app/hooks/use-portfolio-analytics";
 import { useSectionObserver } from "@/app/hooks/use-section-observer";
+import Link from "next/link";
 
-
-// Theme definitions with background options
-const themes = {
+export const themes = {
   emerald: {
     name: "Emerald",
     type: "solid",
@@ -51,7 +50,7 @@ const themes = {
     border: "border-emerald-500/20",
     gradient:
       "bg-gradient-to-br from-emerald-600/10 to-emerald-800/5 dark:from-emerald-400/10 dark:to-emerald-600/5",
-    cardBg: "bg-white/50 dark:bg-gray-900/50",
+    cardBg: "bg-white/50  dark:bg-emerald-950/10",
     cardBorder: "border-gray-200/50 dark:border-gray-800",
   },
   rose: {
@@ -64,7 +63,7 @@ const themes = {
     border: "border-rose-500/20",
     gradient:
       "bg-gradient-to-br from-rose-600/10 to-rose-800/5 dark:from-rose-400/10 dark:to-rose-600/5",
-    cardBg: "bg-white/50 dark:bg-gray-900/50",
+    cardBg: "bg-white/50 dark:bg-rose-950/10",
     cardBorder: "border-gray-200/50 dark:border-gray-800",
   },
   violet: {
@@ -77,7 +76,7 @@ const themes = {
     border: "border-violet-500/20",
     gradient:
       "bg-gradient-to-br from-violet-600/10 to-violet-800/5 dark:from-violet-400/10 dark:to-violet-600/5",
-    cardBg: "bg-white/50 dark:bg-gray-900/50",
+    cardBg: "bg-white/50 dark:bg-violet-950/10",
     cardBorder: "border-gray-200/50 dark:border-gray-800",
   },
   sunset: {
@@ -90,7 +89,7 @@ const themes = {
     border: "border-orange-500/20",
     gradient:
       "bg-gradient-to-br from-orange-500/10 via-pink-500/8 to-red-500/5 dark:from-orange-400/10 dark:via-pink-400/8 dark:to-red-400/5",
-    cardBg: "bg-white/50 dark:bg-gray-900/50",
+    cardBg: "bg-white/50 dark:bg-orange-950/10",
     cardBorder: "border-gray-200/50 dark:border-gray-800",
   },
   ocean: {
@@ -103,7 +102,7 @@ const themes = {
     border: "border-blue-500/20",
     gradient:
       "bg-gradient-to-br from-blue-500/10 via-cyan-500/8 to-teal-500/5 dark:from-blue-400/10 dark:via-cyan-400/8 dark:to-teal-400/5",
-    cardBg: "bg-white/50 dark:bg-gray-900/50",
+    cardBg: "bg-white/50 dark:bg-blue-950/10",
     cardBorder: "border-gray-200/50 dark:border-gray-800",
   },
   forest: {
@@ -116,7 +115,7 @@ const themes = {
     border: "border-green-500/20",
     gradient:
       "bg-gradient-to-br from-green-500/10 via-emerald-500/8 to-teal-500/5 dark:from-green-400/10 dark:via-emerald-400/8 dark:to-teal-400/5",
-    cardBg: "bg-white/50 dark:bg-gray-900/50",
+    cardBg: "bg-white/50 dark:bg-green-950/10",
     cardBorder: "border-gray-200/50 dark:border-gray-800",
   },
   aurora: {
@@ -130,7 +129,7 @@ const themes = {
     border: "border-purple-500/20",
     gradient:
       "bg-gradient-to-br from-purple-500/10 via-pink-500/8 to-indigo-500/5 dark:from-purple-400/10 dark:via-pink-400/8 dark:to-indigo-400/5",
-    cardBg: "bg-white/50 dark:bg-gray-900/50",
+    cardBg: "bg-white/50 dark:bg-green-950/10",
     cardBorder: "border-gray-200/50 dark:border-gray-800",
   },
   cosmic: {
@@ -144,7 +143,7 @@ const themes = {
     border: "border-indigo-500/20",
     gradient:
       "bg-gradient-to-br from-indigo-500/10 via-purple-500/8 to-pink-500/5 dark:from-indigo-400/10 dark:via-purple-400/8 dark:to-pink-400/5",
-    cardBg: "bg-white/50 dark:bg-gray-900/50",
+    cardBg: "bg-white/50 dark:bg-indigo-950/10",
     cardBorder: "border-gray-200/50 dark:border-gray-800",
   },
   neon: {
@@ -157,7 +156,7 @@ const themes = {
     border: "border-cyan-500/20",
     gradient:
       "bg-gradient-to-br from-cyan-400/10 via-green-400/8 to-blue-500/5 dark:from-cyan-300/10 dark:via-green-300/8 dark:to-blue-400/5",
-    cardBg: "bg-white/50 dark:bg-gray-900/50",
+    cardBg: "bg-white/50 dark:bg-cyan-950/10",
     cardBorder: "border-gray-200/50 dark:border-gray-800",
   },
   fire: {
@@ -170,12 +169,11 @@ const themes = {
     border: "border-red-500/20",
     gradient:
       "bg-gradient-to-br from-red-500/10 via-orange-500/8 to-yellow-500/5 dark:from-red-400/10 dark:via-orange-400/8 dark:to-yellow-400/5",
-    cardBg: "bg-white/50 dark:bg-gray-900/50",
+    cardBg: "bg-white/50 dark:bg-red-950/10",
     cardBorder: "border-gray-200/50 dark:border-gray-800",
   },
 };
 
-// Skill category icons
 const skillCategoryIcons: Record<string, any> = {
   frontend: Code,
   backend: Database,
@@ -240,7 +238,9 @@ interface PortfolioData {
     url: string;
   }>;
   theme?: string;
-  mode?: string;
+  themeMode?: string;
+  ref?: string;
+  analytics?: boolean;
 }
 
 export default function ModernPortfolioWithAnalytics({
@@ -250,9 +250,14 @@ export default function ModernPortfolioWithAnalytics({
 }) {
   const [activeSection, setActiveSection] = useState("projects");
   const [activeBlogPost, setActiveBlogPost] = useState<string | null>(null);
-  const [currentTheme, setCurrentTheme] =
-    useState<keyof typeof themes>("emerald");
+  const [currentTheme, setCurrentTheme] = useState(
+    portfolioData?.theme || "emerald"
+  );
+  const [themeMode, setthemeMode] = useState(
+    portfolioData.themeMode || "light"
+  );
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const isPreview = portfolioData.analytics === false;
 
   // Initialize analytics tracking
   const { trackClick, trackProjectView, trackExternalLink, trackSocialLink } =
@@ -777,16 +782,12 @@ export default function ModernPortfolioWithAnalytics({
           >
             <div className="text-center space-y-4">
               <h1 className="text-3xl md:text-4xl font-bold">Projects</h1>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                A collection of projects that showcase my skills and passion for
-                development
-              </p>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               {portfolioData?.projects?.map((project, index) => (
                 <Card
                   key={index}
-                  className={`group ${theme.cardBg} border ${theme.cardBorder} hover:scale-[1.02] transition-all duration-300 overflow-hidden`}
+                  className={`group ${theme.cardBg}  border ${theme.cardBorder} hover:scale-[1.02] transition-all duration-300 overflow-hidden`}
                   id={`project-${index}`}
                 >
                   {project.imageUrl && (
@@ -873,7 +874,7 @@ export default function ModernPortfolioWithAnalytics({
 
   return (
     <div
-      className={`min-h-screen bg-background text-foreground transition-all duration-500 ${theme.gradient}`}
+      className={`min-h-screen bg-background text-foreground transition-all duration-500 ${theme?.gradient}`}
       id="portfolio-container"
     >
       {/* Mobile Header */}
@@ -904,7 +905,11 @@ export default function ModernPortfolioWithAnalytics({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <ModeToggle />
+            <ModeToggle
+              setthemeMode={setthemeMode}
+              themeMode={themeMode}
+              title={true}
+            />
             <Button
               variant="ghost"
               size="icon"
@@ -1019,7 +1024,47 @@ export default function ModernPortfolioWithAnalytics({
                 </p>
               )}
             </div>
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Palette className="w-4 h-4" />
+                <Select value={currentTheme} onValueChange={handleThemeChange}>
+                  <SelectTrigger className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`w-3 h-3 rounded-full ${theme.primary}`}
+                      />
+                      <SelectValue />
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(themes).map(([key, theme]) => (
+                      <SelectItem key={key} value={key}>
+                        <div className="flex items-center gap-2">
+                          <div
+                            className={`w-3 h-3 rounded-full ${theme.primary}`}
+                          />
+                          {theme.name}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
+              <ModeToggle
+                setthemeMode={setthemeMode}
+                themeMode={themeMode}
+                title={true}
+              />
+              <br />
+              <Link
+                href={`/portfolio/settings?theme=${currentTheme}&themeMode=${themeMode}`}
+              >
+                <Button variant="destructive" className=" mt-4">
+                  Save theme
+                </Button>
+              </Link>
+            </div>
             <div className="space-y-6">
               <div className="space-y-4" id="contact-section">
                 <h2 className="text-lg font-semibold">Contact</h2>

@@ -66,7 +66,7 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    const { templateId, portfolio } = await req.json();
+    const { templateId, portfolio, appearance } = await req.json();
     if (templateId) {
       const res = await User.findByIdAndUpdate(
         userId,
@@ -102,6 +102,30 @@ export async function PATCH(req: NextRequest) {
       } else {
         return NextResponse.json(
           { error: "Failed to save portfolio link" },
+          { status: 500 }
+        );
+      }
+    } else if (appearance) {
+      const res = await User.findByIdAndUpdate(
+        userId,
+        {
+          "portfolioSettings.theme": appearance.theme,
+          "portfolioSettings.themeColor": appearance.themeColor,
+        },
+
+        { new: true, upsert: true }
+      );
+      if (
+        res.portfolioSettings.theme == appearance.theme &&
+        res.portfolioSettings.themeColor == appearance.themeColor
+      ) {
+        return NextResponse.json(
+          { message: "Successfully saved appearance" },
+          { status: 200 }
+        );
+      } else {
+        return NextResponse.json(
+          { error: "Failed to save portfolio appearance" },
           { status: 500 }
         );
       }

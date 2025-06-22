@@ -187,71 +187,145 @@ export default function AIFeedbackPage() {
 interface HighlightedTextProps {
   text: string;
 }
-
 const HighlightedText: React.FC<HighlightedTextProps> = ({ text }) => {
-  const items = text.split(/\n?\s*\d+\.\s+/).filter(Boolean);
-
   const renderHighlighted = (segment: string) => {
-    const parts = segment.split(/(\*.*?\*|".*?")/g);
-
+    // Clean the text first - remove extra asterisks and clean up formatting
+    const cleanedSegment = segment.replace(/\*\*/g, '*'); // Convert ** to single *
+    
+    const parts = cleanedSegment.split(/(\*[^*]+\*|"[^"]+"|[^:]+:(?=\s))/g);
+    
     return parts.map((part, i) => {
-      const isAsteriskWrapped = part.startsWith("*") && part.endsWith("*");
-      const isQuoteWrapped = part.startsWith('"') && part.endsWith('"');
-      const endsWithColon = part.endsWith(":");
+      if (!part.trim()) return null;
+      
+      const isAsterisk = part.startsWith("*") && part.endsWith("*") && part.length > 2;
+      const isQuote = part.startsWith('"') && part.endsWith('"');
+      const isHeading = part.endsWith(":") && !part.includes("\n");
 
-      if (isAsteriskWrapped) {
+      if (isAsterisk) {
         return (
-          <span key={i} className="font-semibold text-purple-600 -ml-[2px]">
+          <span key={i} className="font-semibold dark:text-purple-400 text-purple-700">
             {part.slice(1, -1)}
           </span>
         );
       }
 
-      if (isQuoteWrapped) {
+      if (isQuote) {
         return (
-          <span key={i} className="font-semibold text-pink-600">
+          <span key={i} className="font-semibold dark:text-pink-400 text-pink-700">
             {part.slice(1, -1)}
           </span>
         );
       }
 
-      if (part.startsWith("*") || part.startsWith('"')) {
-        return <span key={i}>{part.slice(1)}</span>;
-      }
-
-      if (part.endsWith("*") || part.endsWith('"')) {
-        return <span key={i}>{part.slice(0, -1)}</span>;
-      }
-
-      if (endsWithColon) {
+      if (isHeading && part.length < 50) { // Only short headings
         return (
-          <span key={i} className="font-semibold">
+          <span key={i} className="font-semibold dark:text-blue-400 text-blue-700">
             {part}
           </span>
         );
       }
 
       return <span key={i}>{part}</span>;
-    });
+    }).filter(Boolean);
   };
 
+  // First, clean up the text thoroughly
+  const cleanText = text
+    .replace(/\*\*([^*]+)\*\*/g, '*$1*') // Convert ** to single *
+    .replace(/\n\s*\n\s*\n/g, '\n\n') // Remove excessive line breaks
+    .replace(/\s+6\.\s*$/, '') // Remove trailing "6." 
+    .replace(/^\s*\*\s*/, '') // Remove leading bullets
+    .trim();
+
+  // Split into main sections and score section
+  const scoreMatch = cleanText.match(/(Resume Score: \d+\/\d+[\s\S]*)/);
+  const scoreSection = scoreMatch?.[1] || '';
+  const mainContent = scoreSection ? cleanText.replace(scoreSection, '').trim() : cleanText;
+
+  // Split main content into numbered sections and clean each one
+  const sections = mainContent
+    .split(/(?=\d+\.\s+[A-Z][^:]*:)/)
+    .filter(section => section.trim())
+    .map(section => {
+      // Remove any trailing numbers or extra formatting
+      return section
+        .replace(/\s+\d+\.\s*$/, '') // Remove trailing numbers like "6."
+        .replace(/^\s*\*\s*/, '') // Remove leading asterisks
+        .trim();
+    })
+    .filter(Boolean);
+
   return (
-    <div className="space-y-4">
-      {items.map((item, index) => {
-        const [heading, ...rest] = item.split(/(?<=:)|\n/);
-        const description = rest.join(" ").trim();
+    <div className="space-y-6">
+      {/* Main Feedback Sections */}
+      {sections.map((section, index) => {
+        const trimmedSection = section.trim();
+        if (!trimmedSection) return null;
+
+        // Extract the numbered title and content
+        const titleMatch = trimmedSection.match(/^(\d+\.\s+[^:]+:)/);
+        if (!titleMatch) {
+          // If no numbered title, render as-is
+          return (
+            <div key={index} className="">
+              {renderHighlighted(trimmedSection)}
+            </div>
+          );
+        }
+
+        const title = titleMatch[1];
+        const content = trimmedSection.replace(title, '').trim();
 
         return (
-          <div key={index}>
-            <div className="font-semibold ">
-              {renderHighlighted(heading.trim())}
-            </div>
-            <div className="pl-4 dark:text-gray-300 text-gray-800">
-              {renderHighlighted(description)}
+          <div key={index} className="space-y-3">
+            <h3 className="text-lg font-semibold  border-b border-gray-700 pb-1">
+              {title}
+            </h3>
+            <div className=" leading-relaxed pl-2">
+              {renderHighlighted(content)}
             </div>
           </div>
         );
       })}
+
+      {/* Resume Score Section */}
+      {scoreSection && (() => {
+        const scoreMatch = scoreSection.match(/Resume Score:\s*(\d+\/\d+)/);
+        const scoreValue = scoreMatch?.[1] || '';
+        
+        // Extract bullet points - look for lines starting with * and clean them
+        const bulletPoints = scoreSection
+          .split('\n')
+          .filter(line => line.trim().startsWith('*'))
+          .map(line => line.replace(/^\s*\*+\s*/, '').trim()) // Remove all leading asterisks
+          .filter(Boolean);
+
+        return (
+          <div className="space-y-4 mt-8  rounded-lg  ">
+            <div className="flex items-center space-x-2">
+              <h3 className="text-xl font-bold text-blue-400">
+                Resume Score: {scoreValue}
+              </h3>
+            </div>
+            
+            {bulletPoints.length > 0 && (
+              <ul className="space-y-2">
+                {bulletPoints.map((point, i) => (
+                  <li key={i} className="flex items-center space-x-2">
+                    <span className="text-blue-400 mt-1">•</span>
+                    <span className=" flex-1">
+                      {renderHighlighted(point)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        );
+      })()}
     </div>
   );
 };
+
+
+

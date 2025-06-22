@@ -7,7 +7,9 @@ export async function GET(req: NextRequest) {
     await connectDB();
     const url = new URL(req.url);
     const username = url.searchParams.get("username");
-    const user = await User.findOne({ portfolio: username }).select("portfolioData templateId");
+    const user = await User.findOne({ portfolio: username }).select(
+      "portfolioData templateId portfolioSettings"
+    );
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -15,6 +17,8 @@ export async function GET(req: NextRequest) {
       {
         portfolio: JSON.parse(user.portfolioData || "{}"),
         templateId: user.templateId,
+        theme: user.portfolioSettings.themeColor,
+        themeMode: user.portfolioSettings.theme,
       },
       { status: 200 }
     );

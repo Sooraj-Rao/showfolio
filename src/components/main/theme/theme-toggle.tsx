@@ -5,18 +5,34 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 
-export function ModeToggle({ title }: { title?: boolean }) {
+export function ModeToggle({
+  title,
+  themeMode,
+  setthemeMode,
+}: {
+  title?: boolean;
+  setthemeMode?: (theme: string) => void;
+  themeMode?: string;
+}) {
   const { theme, setTheme } = useTheme();
-  const newTheme = theme === "dark" ? "light" : "dark";
+  const isDark = theme === "dark";
+  const nextTheme = isDark ? "light" : "dark";
+  const capitalized = `${nextTheme.charAt(0).toUpperCase()}${nextTheme.slice(
+    1
+  )}`;
+
   return (
     <Button
-      title={`${newTheme.charAt(0).toUpperCase() + newTheme.slice(1)} mode`}
+      title={`${capitalized} mode`}
       variant="ghost"
-      className=" w-fit"
-      onClick={() => setTheme(newTheme)}
+      className="w-fit"
+      onClick={() => {
+        setTheme(nextTheme);
+        if (themeMode && setthemeMode) setthemeMode(nextTheme);
+      }}
     >
-      {newTheme === "light" ? <Sun /> : <Moon />}
-      {title && `${newTheme.charAt(0).toUpperCase() + newTheme.slice(1)} Theme`}
+      {isDark ? <Sun /> : <Moon />}
+      {title && `${capitalized} Theme`}
     </Button>
   );
 }

@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import One from "../live/1";
 import Two from "../live/2";
 import Three from "../live/3";
+import axios from "axios";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 type PortfolioData = {
   personalInfo: {
@@ -57,7 +61,16 @@ type PortfolioData = {
   }>;
 };
 
-const Page = ({ params: { username } }: { params: { username: string } }) => {
+const PortfolioParentPage = ({
+  analytics,
+  params,
+}: {
+  analytics?: boolean;
+  params?: { username?: string };
+}) => {
+  let username = params?.username || "";
+  const SearchParams = useSearchParams();
+  const ref = SearchParams.get("ref") || "";
   const [loading, setLoading] = useState(false);
   const [portfolioData, setportfolioData] = useState<PortfolioData | null>(
     null
@@ -68,21 +81,40 @@ const Page = ({ params: { username } }: { params: { username: string } }) => {
   const fetchPortfolioData = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
+      if (!username && SearchParams.get("username")) {
+        username = SearchParams.get("username");
+      }
+      if (!username) setisError("Username is required to fetch portfolio data");
+
+      const response = await axios.get(
         `/api/portfolio/get-portfolio?username=${username}`
       );
-      if (!response.ok) {
-        throw new Error("Failed to fetch portfolio data");
+      if (!response || response.status !== 200) {
+        setisError(response.data?.error || "Failed to fetch portfolio data");
+        return;
       }
-      const data = await response.json();
-      if (!data?.portfolio) {
-        setisError(data?.error?.message);
+
+      if (!response.data?.portfolio) {
+        setisError(response.data?.error?.message);
+        return;
       }
-      setportfolioData(data?.portfolio || null);
-      settemplate(data.templateId);
-      localStorage.setItem("portfolioData", JSON.stringify(data?.portfolio));
-      localStorage.setItem("templateId", data?.templateId);
+      response.data.portfolio.analytics = Boolean(analytics) ? true : false;
+      response.data.portfolio.ref = ref;
+      response.data.portfolio.theme = response.data.theme;
+      response.data.portfolio.themeMode = response.data.themeMode;
+      setportfolioData(response.data?.portfolio || null);
+      settemplate(response.data.templateId);
+      localStorage.setItem(
+        "portfolioData",
+        JSON.stringify(response.data?.portfolio)
+      );
+      localStorage.setItem("templateId", response.data?.templateId);
     } catch (error) {
+      console.log(error);
+      setisError(
+        error?.response?.data?.error ||
+          "An error occurred while fetching portfolio data"
+      );
       console.error("Error fetching portfolio data:", error);
     } finally {
       setLoading(false);
@@ -93,7 +125,18 @@ const Page = ({ params: { username } }: { params: { username: string } }) => {
   }, []);
 
   if (isError) {
-    <div className=" h-screen flex justify-center items-center">{isError}</div>;
+    return (
+      <div className="h-screen flex flex-col items-center justify-center gap-6 bg-gray-900 text-white px-4">
+        <h1 className="text-2xl font-bold">Oops! Something went wrong.</h1>
+        <p className="text-lg text-red-400">{isError.toString()}</p>
+        <a href="/">
+          <Button variant="outline" className="flex items-center gap-2">
+            <ArrowLeft size={18} />
+            Go Back Home
+          </Button>
+        </a>
+      </div>
+    );
   }
 
   if (loading) {
@@ -105,12 +148,12 @@ const Page = ({ params: { username } }: { params: { username: string } }) => {
   }
 
   const templates = {
-    "1": <One  portfolioData={portfolioData} />,
-    "2": <Two  portfolioData={portfolioData} />,
-    "3": <Three  portfolioData={portfolioData} />,
+    "1": <One portfolioData={portfolioData} />,
+    "2": <Two portfolioData={portfolioData} />,
+    "3": <Three portfolioData={portfolioData} />,
   };
 
   return templates[template];
 };
 
-export default Page;
+export default PortfolioParentPage;

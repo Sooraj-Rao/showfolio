@@ -22,7 +22,6 @@ export interface IUser extends Document {
   portfolioSettings: {
     theme: string;
     themeColor: string;
-    roundedCorners: string;
   };
 }
 
@@ -97,9 +96,6 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
         type: String,
       },
       themeColor: {
-        type: String,
-      },
-      roundedCorners: {
         type: String,
       },
     },

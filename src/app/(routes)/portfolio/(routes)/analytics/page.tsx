@@ -39,8 +39,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import {
   Collapsible,
   CollapsibleContent,
@@ -608,9 +606,8 @@ export default function PortfolioAnalyticsPage() {
 
       {/* Tabbed Analytics */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="engagement">Engagement</TabsTrigger>
           <TabsTrigger value="devices">Devices</TabsTrigger>
           <TabsTrigger value="geography">Geography</TabsTrigger>
           <TabsTrigger value="traffic">Traffic</TabsTrigger>
@@ -735,81 +732,6 @@ export default function PortfolioAnalyticsPage() {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
-
-        {/* Engagement Tab */}
-        <TabsContent value="engagement" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="w-5 h-5 text-green-500" />
-                Section Engagement Analysis
-              </CardTitle>
-              <CardDescription>
-                How visitors interact with different portfolio sections
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {analytics?.sectionEngagement.length ? (
-                <div className="space-y-4">
-                  {analytics.sectionEngagement.map((section: any, index) => (
-                    <div
-                      key={section.section}
-                      className="space-y-3 p-4 rounded-lg border"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className="w-4 h-4 rounded-full"
-                            style={{
-                              backgroundColor: COLORS[index % COLORS.length],
-                            }}
-                          />
-                          <h3 className="font-semibold capitalize">
-                            {section.section}
-                          </h3>
-                        </div>
-                        <Badge variant="secondary">
-                          {Math.round(section.engagementScore * 100)}%
-                          engagement
-                        </Badge>
-                      </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                        <div>
-                          <div className="text-muted-foreground">Views</div>
-                          <div className="font-semibold">{section.views}</div>
-                        </div>
-                        <div>
-                          <div className="text-muted-foreground">Clicks</div>
-                          <div className="font-semibold">{section.clicks}</div>
-                        </div>
-                        <div>
-                          <div className="text-muted-foreground">Avg Time</div>
-                          <div className="font-semibold">
-                            {formatTime(Math.round(section.avgTime))}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-muted-foreground">Sessions</div>
-                          <div className="font-semibold">
-                            {section.uniqueSessions}
-                          </div>
-                        </div>
-                      </div>
-                      <Progress
-                        value={section.engagementScore * 100}
-                        className="h-2"
-                      />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  No section engagement data available
-                </div>
-              )}
-            </CardContent>
-          </Card>
         </TabsContent>
 
         {/* Devices Tab */}

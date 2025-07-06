@@ -25,6 +25,7 @@ import {
   Smartphone,
   Wrench,
   Palette,
+  Info,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -515,7 +516,8 @@ export default function ManagePortfolio() {
     e.preventDefault();
     if (!imageUrl.startsWith("http"))
       return toast({
-        description: "Invalid URL format",
+        title: "Invalid URL format",
+        description: "Add http or https to your URL",
         variant: "destructive",
       });
     setIsSaving(true);
@@ -1907,15 +1909,21 @@ export default function ManagePortfolio() {
               />
               {userData?.imageUrl !== imageUrl && (
                 <Button
-                  disabled={
-                    isSaving || !imageUrl || !imageUrl.startsWith("http")
-                  }
+                  disabled={isSaving || !imageUrl || imageUrl.length < 6}
                   onClick={handleSubmitImageUrl}
                 >
                   {isSaving ? "Saving..." : "Save Image URL"}
                 </Button>
               )}
             </form>
+            <p className="flex items-center text-sm mt-3 gap-2 text-muted-foreground">
+              <Info size={16} />
+              <span>
+                <strong>Tip:</strong> You can use your GitHub profile image by
+                appending <code>.png</code> to your GitHub URL. For example:{" "}
+                <code>https://github.com/username.png</code>
+              </span>
+            </p>
           </CardContent>
         </Card>
       </div>

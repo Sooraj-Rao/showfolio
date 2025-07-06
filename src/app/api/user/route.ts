@@ -33,6 +33,12 @@ export async function GET(req: NextRequest) {
       },
       hasPorfolioData: user?.portfolioData ? true : false,
       imageUrl: user.imageUrl,
+      portfolioSettings:{
+        themeColor: user.portfolioSettings?.themeColor || null,
+        theme: user.portfolioSettings?.theme || null,
+        showContacts: user.portfolioSettings?.showContacts || true,
+        analyticsTrack: user.portfolioSettings?.analyticsTrack || true,
+      },
       resumes: user.resumes,
       createdAt: user.createdAt,
       isActive: user.isActive,

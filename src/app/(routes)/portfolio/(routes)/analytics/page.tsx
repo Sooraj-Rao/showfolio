@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
@@ -114,15 +115,13 @@ export default function PortfolioAnalyticsPage() {
   const [analyticsData, setAnalyticsData] = useState<AnalyticsItem[]>([]);
   const [summary, setSummary] = useState<AnalyticsSummary | null>(null);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [eventFilter, setEventFilter] = useState("all");
-  const [sectionFilter, setSectionFilter] = useState("all");
-  const [deviceFilter, setDeviceFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [searchQuery, setSearchQuery] = useState("");
+  // const [eventFilter, setEventFilter] = useState("all");
+  // const [sectionFilter, setSectionFilter] = useState("all");
+  // const [deviceFilter, setDeviceFilter] = useState("all");
   const [expandedSessions, setExpandedSessions] = useState<Set<string>>(
     new Set()
   );
-  const itemsPerPage = 15;
 
   const fetchData = async () => {
     try {
@@ -383,48 +382,48 @@ export default function PortfolioAnalyticsPage() {
     };
   }, [analyticsData]);
 
-  // Filter data for event details
-  const filteredData = useMemo(() => {
-    if (!analyticsData) return [];
+  // // Filter data for event details
+  // const filteredData = useMemo(() => {
+  //   if (!analyticsData) return [];
 
-    let filtered = analyticsData;
+  //   let filtered = analyticsData;
 
-    if (eventFilter !== "all") {
-      filtered = filtered.filter((item) => item.event === eventFilter);
-    }
+  //   if (eventFilter !== "all") {
+  //     filtered = filtered.filter((item) => item.event === eventFilter);
+  //   }
 
-    if (sectionFilter !== "all") {
-      filtered = filtered.filter((item) => item.section === sectionFilter);
-    }
+  //   if (sectionFilter !== "all") {
+  //     filtered = filtered.filter((item) => item.section === sectionFilter);
+  //   }
 
-    if (deviceFilter !== "all") {
-      filtered = filtered.filter((item) => item.device === deviceFilter);
-    }
+  //   if (deviceFilter !== "all") {
+  //     filtered = filtered.filter((item) => item.device === deviceFilter);
+  //   }
 
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
-      filtered = filtered.filter((item) => {
-        const searchableFields = [
-          item.event,
-          item.section || "",
-          item.clickTarget || "",
-          item.country,
-          item.city,
-          item.device,
-          item.browser,
-          item.os,
-        ];
-        return searchableFields.some((field) =>
-          field.toLowerCase().includes(query)
-        );
-      });
-    }
+  //   if (searchQuery.trim()) {
+  //     const query = searchQuery.toLowerCase().trim();
+  //     filtered = filtered.filter((item) => {
+  //       const searchableFields = [
+  //         item.event,
+  //         item.section || "",
+  //         item.clickTarget || "",
+  //         item.country,
+  //         item.city,
+  //         item.device,
+  //         item.browser,
+  //         item.os,
+  //       ];
+  //       return searchableFields.some((field) =>
+  //         field.toLowerCase().includes(query)
+  //       );
+  //     });
+  //   }
 
-    return filtered.sort(
-      (a, b) =>
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    );
-  }, [analyticsData, searchQuery, eventFilter, sectionFilter, deviceFilter]);
+  //   return filtered.sort(
+  //     (a, b) =>
+  //       new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  //   );
+  // }, [analyticsData, searchQuery, eventFilter, sectionFilter, deviceFilter]);
 
   // Helper functions
   const formatTime = (seconds: number) => {

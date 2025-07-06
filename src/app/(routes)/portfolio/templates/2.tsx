@@ -57,7 +57,7 @@ interface PortfolioTemplate2Props {
 }
 
 export default function PortfolioTemplate2({ data }: PortfolioTemplate2Props) {
-  const [activeSection, setActiveSection] = useState("hero");
+  // const [activeSection, setActiveSection] = useState("hero");
   const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(
     null
   );

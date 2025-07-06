@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
@@ -27,7 +28,7 @@ interface AnalyticsEvent {
   referrer?: string;
 }
 
-export function usePortfolioAnalyticsEnhanced() {
+export function usePortfolioAnalyticsEnhanced(isPreview = false) {
   const sessionId = useRef<string>("");
   const locationData = useRef<LocationData | null>(null);
   const pageStartTime = useRef<number>(Date.now());
@@ -35,9 +36,7 @@ export function usePortfolioAnalyticsEnhanced() {
   const referrer = useRef<string | null>(null);
   const heartbeatInterval = useRef<NodeJS.Timeout | null>(null);
 
-  // Initialize session and get location data
   useEffect(() => {
-    // Generate or get session ID
     const storedSessionId = sessionStorage.getItem("portfolio_session_id");
     if (storedSessionId) {
       sessionId.current = storedSessionId;
@@ -46,21 +45,16 @@ export function usePortfolioAnalyticsEnhanced() {
       sessionStorage.setItem("portfolio_session_id", sessionId.current);
     }
 
-    // Get referrer from URL params or document.referrer
     const urlParams = new URLSearchParams(window.location.search);
     const refParam = urlParams.get("ref");
     referrer.current = refParam || document.referrer || null;
 
-    // Get location data
     fetchLocationData();
 
-    // Track page view
     trackEvent("page_view");
 
-    // Start heartbeat for time tracking
     startHeartbeat();
 
-    // Set up scroll tracking
     const handleScroll = throttle(() => {
       const scrollDepth = Math.round(
         (window.scrollY /
@@ -76,19 +70,15 @@ export function usePortfolioAnalyticsEnhanced() {
 
     window.addEventListener("scroll", handleScroll);
 
-    // Track time spent on page before leaving
     const handleBeforeUnload = () => {
       const timeSpent = Math.round((Date.now() - pageStartTime.current) / 1000);
-      trackEvent("time_spent", { timeSpent }, true); // Synchronous for page unload
+      trackEvent("time_spent", { timeSpent }, true); 
     };
 
-    // Handle visibility change (tab switching)
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        // Page is hidden, pause heartbeat
         stopHeartbeat();
       } else {
-        // Page is visible again, resume heartbeat
         startHeartbeat();
       }
     };
@@ -106,9 +96,17 @@ export function usePortfolioAnalyticsEnhanced() {
 
   const fetchLocationData = async () => {
     try {
+      const locationDataFromLocalStorage = JSON.parse(
+        localStorage.getItem("location")
+      );
+      if (locationDataFromLocalStorage) {
+        locationData.current = locationDataFromLocalStorage;
+        return;
+      }
       const response = await fetch("/api/loc");
       if (response.ok) {
         locationData.current = await response.json();
+        localStorage.setItem("location", JSON.stringify(locationData.current));
       } else {
         locationData.current = {
           city: "Unknown",
@@ -129,7 +127,7 @@ export function usePortfolioAnalyticsEnhanced() {
   };
 
   const startHeartbeat = useCallback(() => {
-    if (heartbeatInterval.current) return;
+    if (heartbeatInterval.current || isPreview) return;
 
     heartbeatInterval.current = setInterval(() => {
       if (!document.hidden && locationData.current) {
@@ -142,7 +140,6 @@ export function usePortfolioAnalyticsEnhanced() {
             100
         );
 
-        // Send heartbeat to update time spent
         fetch("/api/portfolio/analytics/heartbeat", {
           method: "POST",
           headers: {
@@ -159,7 +156,7 @@ export function usePortfolioAnalyticsEnhanced() {
           console.error("Heartbeat failed:", error);
         });
       }
-    }, 30000); // Every 30 seconds
+    }, 30000); 
   }, []);
 
   const stopHeartbeat = useCallback(() => {
@@ -175,7 +172,7 @@ export function usePortfolioAnalyticsEnhanced() {
       additionalData: Partial<AnalyticsEvent> = {},
       synchronous = false
     ) => {
-      if (!locationData.current) return;
+      if (!locationData.current || isPreview) return;
 
       const eventData: AnalyticsEvent = {
         sessionId: sessionId.current,
@@ -187,7 +184,6 @@ export function usePortfolioAnalyticsEnhanced() {
         ...additionalData,
       };
 
-      // Add anchor if present in URL
       if (window.location.hash) {
         eventData.anchor = window.location.hash;
       }
@@ -214,7 +210,6 @@ export function usePortfolioAnalyticsEnhanced() {
     []
   );
 
-  // Track section views
   const trackSectionView = useCallback(
     (section: string) => {
       trackEvent("section_view", { section });
@@ -222,7 +217,6 @@ export function usePortfolioAnalyticsEnhanced() {
     [trackEvent]
   );
 
-  // Track clicks
   const trackClick = useCallback(
     (target: string, section?: string) => {
       trackEvent("click", { clickTarget: target, section });
@@ -230,7 +224,6 @@ export function usePortfolioAnalyticsEnhanced() {
     [trackEvent]
   );
 
-  // Track project views
   const trackProjectView = useCallback(
     (projectName: string) => {
       trackEvent("project_view", {
@@ -241,7 +234,6 @@ export function usePortfolioAnalyticsEnhanced() {
     [trackEvent]
   );
 
-  // Track external link clicks
   const trackExternalLink = useCallback(
     (url: string, section?: string) => {
       trackEvent("external_link_click", { clickTarget: url, section });
@@ -249,7 +241,7 @@ export function usePortfolioAnalyticsEnhanced() {
     [trackEvent]
   );
 
-  // Track social link clicks
+
   const trackSocialLink = useCallback(
     (platform: string) => {
       trackEvent("social_link_click", {
@@ -260,7 +252,6 @@ export function usePortfolioAnalyticsEnhanced() {
     [trackEvent]
   );
 
-  // Track contact form submissions
   const trackContactForm = useCallback(() => {
     trackEvent("contact_form_submit", { section: "contact" });
   }, [trackEvent]);
@@ -276,8 +267,7 @@ export function usePortfolioAnalyticsEnhanced() {
   };
 }
 
-// Throttle function to limit scroll event frequency
-function throttle(func: Function, limit: number) {
+function throttle(func: any, limit: number) {
   let inThrottle: boolean;
   return function (this: any, ...args: any[]) {
     if (!inThrottle) {

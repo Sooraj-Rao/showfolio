@@ -286,14 +286,14 @@ const parsePdf = async (buffer: Buffer): Promise<string> => {
           ).join(" ")
         ).join("\n");
         resolve(text);
-      } catch (error) {
+      } catch  {
         reject(new Error("Error extracting text from PDF data"));
       }
     });
 
     try {
       pdfParser.parseBuffer(buffer);
-    } catch (error) {
+    } catch  {
       reject(new Error("Failed to parse PDF buffer"));
     }
   });

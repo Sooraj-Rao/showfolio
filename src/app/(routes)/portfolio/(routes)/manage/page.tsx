@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { CardFooter } from "@/components/ui/card";
@@ -39,6 +40,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
+import useGetUserData from "@/app/hooks/use-getUserData";
 
 // Define types for portfolio data
 type PersonalInfo = {
@@ -95,11 +97,6 @@ type Blog = {
   title: string;
   date: string;
   description: string;
-};
-
-type SkillCategory = {
-  name: string;
-  skills: string[];
 };
 
 type PortfolioData = {
@@ -196,11 +193,13 @@ const skillCategoryIcons: Record<string, any> = {
 
 export default function ManagePortfolio() {
   const { toast } = useToast();
+  const { userData } = useGetUserData();
   const [portfolioData, setPortfolioData] =
     useState<PortfolioData>(defaultPortfolioData);
   const [activeSection, setActiveSection] = useState("personal");
   const [editMode, setEditMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [imageUrl, setimageUrl] = useState(userData?.imageUrl || "");
 
   // Load portfolio data from localStorage on component mount
   useEffect(() => {
@@ -226,7 +225,10 @@ export default function ManagePortfolio() {
     } else {
       fetchPortfolioData();
     }
-  }, [toast]);
+    if (userData?.imageUrl) {
+      setimageUrl(userData?.imageUrl);
+    }
+  }, [userData]);
 
   const fetchPortfolioData = async () => {
     try {
@@ -273,7 +275,7 @@ export default function ManagePortfolio() {
           description: "Your portfolio has been updated.",
         });
         setEditMode(false);
-        localStorage.setItem('portfolioData',JSON.stringify(portfolioData))
+        localStorage.setItem("portfolioData", JSON.stringify(portfolioData));
       } else {
         throw new Error("Failed to save portfolio");
       }
@@ -509,6 +511,37 @@ export default function ManagePortfolio() {
     insertLink(textareaId, linkText, linkUrl);
   };
 
+  const handleSubmitImageUrl = async (e) => {
+    e.preventDefault();
+    setIsSaving(true);
+    try {
+      const res = await axios.post("/api/portfolio/portfolio-data", {
+        imageUrl,
+      });
+
+      if (res.status === 200) {
+        toast({
+          title: "Portfolio saved successfully",
+          description: "Your portfolio image updated.",
+        });
+        setEditMode(false);
+        userData.imageUrl = imageUrl;
+      } else {
+        throw new Error("Failed to save portfolio");
+      }
+    } catch (error) {
+      console.error("Error saving portfolio:", error);
+      toast({
+        title: "Error saving portfolio",
+        description:
+          "There was an error saving your portfolio. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -530,7 +563,9 @@ export default function ManagePortfolio() {
             </Button>
             <Button asChild variant="outline" className="w-full sm:w-auto">
               <a
-                href={`/portfolio-preview`}
+                href={`/p/preview?username=${
+                  userData?.portfolio || userData?.name
+                }`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -1824,8 +1859,8 @@ export default function ManagePortfolio() {
                             placeholder="Write your blog content here... You can add links using the 'Add Link' button or manually with [text](url) format."
                           />
                           <p className="text-xs text-muted-foreground">
-                            Tip: Use [text](url) format for links, or click "Add
-                            Link" button above
+                            Tip: Use [text](url) format for links, or click
+                            {"Add Link"} button above
                           </p>
                         </div>
                       </div>
@@ -1851,6 +1886,27 @@ export default function ManagePortfolio() {
             </CardContent>
           </Card>
         </div>
+        <Card className=" w-full      shadow-md rounded-lg">
+          <CardContent className=" p-3 w-full ">
+            <form className="flex items-center  w-full gap-3">
+              <label className="block text-sm font-medium ">
+                Your image for Portfolio
+              </label>
+              <Input
+                type="url"
+                value={imageUrl}
+                onChange={(e) => setimageUrl(e.target.value)}
+                placeholder="Enter image URL"
+                className="w-3/5  p-2 border rounded-lg"
+              />
+              {userData?.imageUrl !== imageUrl && (
+                <Button disabled={isSaving} onClick={handleSubmitImageUrl}>
+                  {isSaving ? "Saving..." : "Save Image URL"}
+                </Button>
+              )}
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

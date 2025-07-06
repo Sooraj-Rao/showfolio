@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
     const url = new URL(req.url);
     const username = url.searchParams.get("username");
     const user = await User.findOne({ portfolio: username }).select(
-      "portfolioData templateId portfolioSettings"
+      "portfolioData templateId portfolioSettings imageUrl"
     );
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
         templateId: user.templateId,
         theme: user.portfolioSettings.themeColor,
         themeMode: user.portfolioSettings.theme,
+        imageUrl: user.imageUrl,
       },
       { status: 200 }
     );

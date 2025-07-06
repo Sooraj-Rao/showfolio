@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import type React from "react";
@@ -126,7 +127,7 @@ export default function One({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const hasData = (section: keyof PortfolioData) => {
+  const hasData = (section: keyof T_PortfolioData) => {
     if (!portfolioData) return false;
     const data = portfolioData[section];
     if (Array.isArray(data)) {

@@ -5,18 +5,23 @@ import User from "@/models/user";
 export async function POST(req: NextRequest) {
   try {
     const userId = GetUserId(req);
-    const { portfolio, portfolioData } = await req.json();
     if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized..Login again" },
         { status: 401 }
       );
     }
-    const res = await User.findByIdAndUpdate(
-      userId,
-      { portfolio, portfolioData: JSON.stringify(portfolioData) },
-      { new: true }
-    );
+    const updateData: { portfolioData?: string; imageUrl?: string } = {};
+
+    const { portfolio, imageUrl } = await req.json();
+    if (portfolio) {
+      updateData.portfolioData = JSON.stringify(portfolio);
+    }
+    if (imageUrl) {
+      updateData.imageUrl = imageUrl;
+    }
+
+    const res = await User.findByIdAndUpdate(userId, updateData, { new: true });
     if (!res) {
       return NextResponse.json(
         { error: "Failed to save portfolio" },
@@ -66,7 +71,7 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    const { templateId, portfolio, appearance } = await req.json();
+    const { templateId, portfolio, appearance, privacy } = await req.json();
     if (templateId) {
       const res = await User.findByIdAndUpdate(
         userId,
@@ -126,6 +131,32 @@ export async function PATCH(req: NextRequest) {
       } else {
         return NextResponse.json(
           { error: "Failed to save portfolio appearance" },
+          { status: 500 }
+        );
+      }
+    } else if (privacy) {
+      const res = await User.findByIdAndUpdate(
+        userId,
+        {
+          "portfolioSettings.analyticsTrack": privacy.analyticsTrack,
+          "portfolioSettings.showContacts": privacy.showContacts,
+          "private.portfolio": privacy.isPublic,
+        },
+
+        { new: true, upsert: true }
+      );
+      if (
+        res.portfolioSettings.analyticsTrack == privacy.analyticsTrack &&
+        res.portfolioSettings.showContacts == privacy.showContacts &&
+        res.private.portfolio == privacy.isPublic
+      ) {
+        return NextResponse.json(
+          { message: "Successfully saved privacy settings" },
+          { status: 200 }
+        );
+      } else {
+        return NextResponse.json(
+          { error: "Failed to save portfolio privacy settings" },
           { status: 500 }
         );
       }

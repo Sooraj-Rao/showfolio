@@ -14,7 +14,14 @@ export interface IAuthUser {
   createdAt: Date;
   isActive: boolean;
   templateId: string;
+  imageUrl?: string;
   hasPorfolioData?: boolean;
+  portfolioSettings?: {
+    themeColor?: string;
+    theme?: string;
+    showContacts: boolean;
+    analyticsTrack:boolean
+  };
 }
 
 type ZustandStore = {

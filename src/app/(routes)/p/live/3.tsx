@@ -16,7 +16,6 @@ import {
   Briefcase,
   GraduationCap,
   Code,
-  Sparkles,
   ChevronDown,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -68,7 +67,7 @@ export default function Three({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const hasData = (section: keyof PortfolioData) => {
+  const hasData = (section: keyof T_PortfolioData) => {
     if (!portfolioData) return false;
     const data = portfolioData[section];
     if (Array.isArray(data)) {
@@ -518,7 +517,7 @@ export default function Three({
       >
         <div className="max-w-4xl mx-auto text-center w-full">
           <h2 className="text-5xl font-bold mb-16 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Let's Connect
+            Let&apos;s Connect
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">

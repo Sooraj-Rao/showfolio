@@ -22,6 +22,8 @@ export interface IUser extends Document {
   portfolioSettings: {
     theme: string;
     themeColor: string;
+    showContacts: boolean;
+    analyticsTrack: boolean;
   };
 }
 
@@ -97,6 +99,10 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       },
       themeColor: {
         type: String,
+      },
+      analyticsTrack: {
+        type: Boolean,
+        default: true,
       },
     },
   },

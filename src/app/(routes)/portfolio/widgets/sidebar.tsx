@@ -4,6 +4,7 @@ import { BarChart2, Home, Settings, StarsIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import useGetUserData from "@/app/hooks/use-getUserData";
 
 export const PortfolioSidebarItems = [
   {
@@ -35,6 +36,7 @@ export const PortfolioSidebarItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { userData } = useGetUserData();
 
   return (
     <aside className="w-64 lg:block hidden  h-screen sticky top-0 overflow-auto border-r bg-background">
@@ -42,7 +44,7 @@ export function Sidebar() {
         <nav className="flex-1 space-y-2">
           {PortfolioSidebarItems.map((item) => {
             const isActive = pathname === item.href;
-
+            if (userData?.hasPorfolioData && item.name == "Create") return null;
             return (
               <Link key={item.href} href={"" + item.href}>
                 <Button

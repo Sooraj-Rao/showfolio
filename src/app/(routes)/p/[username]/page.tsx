@@ -98,9 +98,10 @@ const PortfolioParentPage = ({
         setisError(response.data?.error?.message);
         return;
       }
-      response.data.portfolio.analytics = Boolean(analytics) ? true : false;
+      response.data.portfolio.analytics = analytics === false ? false : true;
       response.data.portfolio.ref = ref;
       response.data.portfolio.theme = response.data.theme;
+      response.data.portfolio.imageUrl = response.data.imageUrl;
       response.data.portfolio.themeMode = response.data.themeMode;
       setportfolioData(response.data?.portfolio || null);
       settemplate(response.data.templateId);

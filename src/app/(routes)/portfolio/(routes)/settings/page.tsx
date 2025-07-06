@@ -2,13 +2,11 @@
 
 import { useEffect, useState } from "react";
 import {
-  Bell,
   Check,
   ExternalLink,
   Lock,
   Moon,
   Palette,
-  Save,
   Sun,
   User,
 } from "lucide-react";
@@ -117,11 +115,21 @@ export default function SettingsPage() {
     userData?.portfolio || userData?.name || ""
   );
   const [isloading, setisloading] = useState(false);
-  const [theme, setTheme] = useState("light");
-  const [selectedColor, setSelectedColor] = useState("emerald");
-  const [isPublic, setIsPublic] = useState(true);
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [browserNotifications, setBrowserNotifications] = useState(false);
+  const [theme, setTheme] = useState(
+    userData?.portfolioSettings?.theme || "light"
+  );
+  const [selectedColor, setSelectedColor] = useState(
+    userData?.portfolioSettings?.themeColor || "emerald"
+  );
+  const [isPublic, setIsPublic] = useState(
+    !userData?.private?.portfolio || false
+  );
+  const [showContacts, setShowContacts] = useState(
+    userData?.portfolioSettings?.showContacts ?? true
+  );
+  const [AnalyticsTrack, setAnalyticsTrack] = useState(
+    userData?.portfolioSettings?.analyticsTrack ?? true
+  );
   const handleThemeChange = (value: string) => {
     setTheme(value);
   };
@@ -170,7 +178,14 @@ export default function SettingsPage() {
           description:
             res.data.message || "Successfully updated portfolio appearance",
         });
-        setUserData({ ...userData, portfolio: portfolioUrl });
+        setUserData({
+          ...userData,
+          portfolioSettings: {
+            ...userData.portfolioSettings,
+            theme,
+            themeColor: selectedColor,
+          },
+        });
       } else {
         toast({
           title: "Error saving portfolio",
@@ -182,6 +197,44 @@ export default function SettingsPage() {
       toast({
         title: "Error saving portfolio",
         description: "There was an error saving your portfolio appearance.",
+        variant: "destructive",
+      });
+    } finally {
+      setisloading(false);
+    }
+  };
+
+  const SavePrivacySettings = async () => {
+    try {
+      setisloading(true);
+      const res = await axios.patch("/api/portfolio/portfolio-data", {
+        privacy: { showContacts, isPublic, analyticsTrack: AnalyticsTrack },
+      });
+      if (res.status === 200) {
+        toast({
+          title: "Success",
+          description:
+            res.data.message || "Successfully updated portfolio privacy",
+        });
+        setUserData({
+          ...userData,
+          portfolioSettings: {
+            ...userData.portfolioSettings,
+            theme,
+            themeColor: selectedColor,
+          },
+        });
+      } else {
+        toast({
+          title: "Error saving portfolio",
+          description: "There was an error saving your portfolio privacy.",
+          variant: "destructive",
+        });
+      }
+    } catch {
+      toast({
+        title: "Error saving portfolio",
+        description: "There was an error saving your portfolio privacy.",
         variant: "destructive",
       });
     } finally {
@@ -202,7 +255,14 @@ export default function SettingsPage() {
       }
       setTab("appearance");
     }
-  }, [searchParams]);
+    if (
+      userData?.portfolioSettings?.theme ||
+      userData?.portfolioSettings?.themeColor
+    ) {
+      setTheme(userData.portfolioSettings.theme || "light");
+      setSelectedColor(userData.portfolioSettings.themeColor || "emerald");
+    }
+  }, [searchParams, userData]);
 
   return (
     <div className="space-y-6">
@@ -247,7 +307,10 @@ export default function SettingsPage() {
                 </span>
                 <Input
                   onChange={(e) => setportfolioUrl(e.target.value)}
-                  className="max-w-[200px]"
+                  className={`max-w-[200px] ${
+                    (!userData?.portfolio || !userData?.name) &&
+                    "bg-muted animate-pulse"
+                  } `}
                   defaultValue={userData?.portfolio || userData?.name}
                 />
               </div>
@@ -401,16 +464,19 @@ export default function SettingsPage() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button disabled={isloading} onClick={SaveAppearance}>
-                {isloading ? (
-                  <>
-                    <Loader />
-                    Saving..
-                  </>
-                ) : (
-                  "Save Appearance"
-                )}
-              </Button>
+              {(theme !== userData?.portfolioSettings?.theme ||
+                selectedColor !== userData?.portfolioSettings?.themeColor) && (
+                <Button disabled={isloading} onClick={SaveAppearance}>
+                  {isloading ? (
+                    <>
+                      <Loader />
+                      Saving..
+                    </>
+                  ) : (
+                    "Save Appearance"
+                  )}
+                </Button>
+              )}
             </CardFooter>
             <div className="px-6 flex items-center mb-3">
               <p className="mr-2 text-sm">
@@ -463,7 +529,11 @@ export default function SettingsPage() {
                     Display your contact information on your portfolio
                   </p>
                 </div>
-                <Switch id="show-contact" defaultChecked />
+                <Switch
+                  id="show-contact"
+                  checked={showContacts}
+                  onCheckedChange={setShowContacts}
+                />
               </div>
 
               <div className="flex items-center justify-between">
@@ -473,11 +543,17 @@ export default function SettingsPage() {
                     Allow tracking of visitor analytics on your portfolio
                   </p>
                 </div>
-                <Switch id="show-analytics" defaultChecked />
+                <Switch
+                  id="show-analytics"
+                  checked={AnalyticsTrack}
+                  onCheckedChange={setAnalyticsTrack}
+                />
               </div>
             </CardContent>
             <CardFooter>
-              <Button>Save Privacy Settings</Button>
+              <Button onClick={SavePrivacySettings}>
+                Save Privacy Settings
+              </Button>
             </CardFooter>
           </Card>
         </TabsContent>

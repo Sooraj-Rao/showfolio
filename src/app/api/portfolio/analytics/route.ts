@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { type NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import connectDB from "@/lib/db";
 import PortfolioAnalytics from "@/models/p_analytics";
 
-// Helper function to detect device type
 function getDeviceType(userAgent: string): "desktop" | "mobile" | "tablet" {
   const ua = userAgent.toLowerCase();
   if (ua.includes("tablet") || ua.includes("ipad")) {
@@ -19,7 +19,6 @@ function getDeviceType(userAgent: string): "desktop" | "mobile" | "tablet" {
   return "desktop";
 }
 
-// Helper function to extract OS
 function getOS(userAgent: string): string {
   const ua = userAgent.toLowerCase();
   if (ua.includes("windows")) return "Windows";
@@ -31,7 +30,6 @@ function getOS(userAgent: string): string {
   return "Unknown";
 }
 
-// Helper function to extract browser
 function getBrowser(userAgent: string): string {
   const ua = userAgent.toLowerCase();
   if (ua.includes("chrome") && !ua.includes("edge")) return "Chrome";
@@ -42,7 +40,6 @@ function getBrowser(userAgent: string): string {
   return "Unknown";
 }
 
-// Helper function to hash IP for privacy
 function hashIP(ip: string): string {
   return crypto
     .createHash("sha256")
@@ -50,7 +47,6 @@ function hashIP(ip: string): string {
     .digest("hex");
 }
 
-// Helper function to get client IP
 function getClientIP(request: NextRequest): string {
   const forwarded = request.headers.get("x-forwarded-for");
   const realIP = request.headers.get("x-real-ip");
@@ -147,7 +143,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    await connectToDatabase();
+    await connectDB();
 
     const { searchParams } = new URL(request.url);
     const page = searchParams.get("page");
@@ -155,13 +151,11 @@ export async function GET(request: NextRequest) {
     const days = Number.parseInt(searchParams.get("days") || "30");
     const limit = Number.parseInt(searchParams.get("limit") || "100");
 
-    // Build query
     const query: any = {};
 
     if (page) query.page = page;
     if (event) query.event = event;
 
-    // Date filter
     const dateFilter = new Date();
     dateFilter.setDate(dateFilter.getDate() - days);
     query.timestamp = { $gte: dateFilter };

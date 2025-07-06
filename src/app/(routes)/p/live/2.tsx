@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState } from "react";
@@ -36,7 +38,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ModeToggle } from "@/components/main/theme/theme-toggle";
 import { usePortfolioAnalyticsEnhanced } from "@/app/hooks/use-portfolio-analytics";
-import { useSectionObserver } from "@/app/hooks/use-section-observer";
 import Link from "next/link";
 
 export const themes = {
@@ -238,6 +239,7 @@ interface PortfolioData {
     url: string;
   }>;
   theme?: string;
+  imageUrl?: string;
   themeMode?: string;
   ref?: string;
   analytics?: boolean;
@@ -259,12 +261,8 @@ export default function ModernPortfolioWithAnalytics({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isPreview = portfolioData.analytics === false;
 
-  // Initialize analytics tracking
   const { trackClick, trackProjectView, trackExternalLink, trackSocialLink } =
-    usePortfolioAnalyticsEnhanced();
-
-  // Initialize section observer for automatic section tracking
-  useSectionObserver();
+    usePortfolioAnalyticsEnhanced(isPreview);
 
   const theme = themes[currentTheme];
 
@@ -886,7 +884,7 @@ export default function ModernPortfolioWithAnalytics({
           <div className="flex items-center gap-3">
             <div className="relative w-10 h-10 rounded-full overflow-hidden bg-muted">
               <img
-                src="/placeholder.svg"
+                src={portfolioData.imageUrl || "/placeholder.svg"}
                 alt="Profile"
                 className="object-cover"
               />
@@ -1008,7 +1006,7 @@ export default function ModernPortfolioWithAnalytics({
             <div className="text-center space-y-6" id="profile-section">
               <div className="relative w-32 h-32 mx-auto rounded-full overflow-hidden bg-muted">
                 <img
-                  src="/placeholder.svg"
+                  src={portfolioData.imageUrl || "/placeholder.svg"}
                   alt="Profile"
                   className="object-cover"
                 />
@@ -1025,45 +1023,52 @@ export default function ModernPortfolioWithAnalytics({
               )}
             </div>
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Palette className="w-4 h-4" />
-                <Select value={currentTheme} onValueChange={handleThemeChange}>
-                  <SelectTrigger className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`w-3 h-3 rounded-full ${theme.primary}`}
-                      />
-                      <SelectValue />
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(themes).map(([key, theme]) => (
-                      <SelectItem key={key} value={key}>
+              {portfolioData?.analytics === false && (
+                <>
+                  <div className="flex items-center gap-2 mb-4">
+                    <Palette className="w-4 h-4" />
+                    <Select
+                      value={currentTheme}
+                      onValueChange={handleThemeChange}
+                    >
+                      <SelectTrigger className="flex-1">
                         <div className="flex items-center gap-2">
                           <div
                             className={`w-3 h-3 rounded-full ${theme.primary}`}
                           />
-                          {theme.name}
+                          <SelectValue />
                         </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.entries(themes).map(([key, theme]) => (
+                          <SelectItem key={key} value={key}>
+                            <div className="flex items-center gap-2">
+                              <div
+                                className={`w-3 h-3 rounded-full ${theme.primary}`}
+                              />
+                              {theme.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-              <ModeToggle
-                setthemeMode={setthemeMode}
-                themeMode={themeMode}
-                title={true}
-              />
-              <br />
-              <Link
-                href={`/portfolio/settings?theme=${currentTheme}&themeMode=${themeMode}`}
-              >
-                <Button variant="destructive" className=" mt-4">
-                  Save theme
-                </Button>
-              </Link>
+                  <ModeToggle
+                    setthemeMode={setthemeMode}
+                    themeMode={themeMode}
+                    title={true}
+                  />
+                  <br />
+                  <Link
+                    href={`/portfolio/settings?theme=${currentTheme}&themeMode=${themeMode}`}
+                  >
+                    <Button variant="destructive" className=" mt-4">
+                      Save theme
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
             <div className="space-y-6">
               <div className="space-y-4" id="contact-section">

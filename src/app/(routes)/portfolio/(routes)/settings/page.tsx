@@ -122,7 +122,7 @@ export default function SettingsPage() {
     userData?.portfolioSettings?.themeColor || "emerald"
   );
   const [isPublic, setIsPublic] = useState(
-    !userData?.private?.portfolio || false
+    userData?.private?.portfolio ?? true
   );
   const [showContacts, setShowContacts] = useState(
     userData?.portfolioSettings?.showContacts ?? true
@@ -133,6 +133,40 @@ export default function SettingsPage() {
   const handleThemeChange = (value: string) => {
     setTheme(value);
   };
+
+  useEffect(() => {
+    if (searchParams.get("themeMode") || searchParams.get("theme")) {
+      const themeParam = searchParams.get("themeMode");
+      if (themeParam === "dark" || themeParam === "light") {
+        setTheme(themeParam);
+      }
+
+      const colorParam = searchParams.get("theme");
+      if (themeColors[colorParam]) {
+        setSelectedColor(colorParam);
+      }
+      setTab("appearance");
+    }
+    if (
+      userData?.portfolioSettings?.theme ||
+      userData?.portfolioSettings?.themeColor
+    ) {
+      setTheme(userData.portfolioSettings.theme || "light");
+      setSelectedColor(userData.portfolioSettings.themeColor || "emerald");
+    }
+
+    if (userData?.private) {
+      if (userData.private.portfolio == true) {
+        setIsPublic(false);
+      } else {
+        setIsPublic(true);
+      }
+    }
+    if (userData?.portfolioSettings) {
+      setShowContacts(userData.portfolioSettings.showContacts);
+      setAnalyticsTrack(userData.portfolioSettings.analyticsTrack);
+    }
+  }, [searchParams, userData]);
 
   const SavePortfolioUrl = async () => {
     try {
@@ -220,8 +254,13 @@ export default function SettingsPage() {
           ...userData,
           portfolioSettings: {
             ...userData.portfolioSettings,
+            analyticsTrack: AnalyticsTrack,
+            showContacts: showContacts,
             theme,
             themeColor: selectedColor,
+          },
+          private: {
+            portfolio: !isPublic,
           },
         });
       } else {
@@ -241,28 +280,6 @@ export default function SettingsPage() {
       setisloading(false);
     }
   };
-
-  useEffect(() => {
-    if (searchParams.get("themeMode") || searchParams.get("theme")) {
-      const themeParam = searchParams.get("themeMode");
-      if (themeParam === "dark" || themeParam === "light") {
-        setTheme(themeParam);
-      }
-
-      const colorParam = searchParams.get("theme");
-      if (themeColors[colorParam]) {
-        setSelectedColor(colorParam);
-      }
-      setTab("appearance");
-    }
-    if (
-      userData?.portfolioSettings?.theme ||
-      userData?.portfolioSettings?.themeColor
-    ) {
-      setTheme(userData.portfolioSettings.theme || "light");
-      setSelectedColor(userData.portfolioSettings.themeColor || "emerald");
-    }
-  }, [searchParams, userData]);
 
   return (
     <div className="space-y-6">

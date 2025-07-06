@@ -104,6 +104,10 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
         type: Boolean,
         default: true,
       },
+      showContacts: {
+        type: Boolean,
+        default: true,
+      },
     },
   },
   {

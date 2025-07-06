@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GetUserId } from "../../helper/utils";
 import User from "@/models/user";
+import connectDB from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   try {
@@ -77,7 +78,7 @@ export async function PATCH(req: NextRequest) {
         { status: 401 }
       );
     }
-
+    await connectDB();
     const { templateId, portfolio, appearance, privacy } = await req.json();
     if (templateId) {
       const res = await User.findByIdAndUpdate(
@@ -145,20 +146,22 @@ export async function PATCH(req: NextRequest) {
       const res = await User.findByIdAndUpdate(
         userId,
         {
-          "portfolioSettings.analyticsTrack": privacy.analyticsTrack,
-          "portfolioSettings.showContacts": privacy.showContacts,
-          "private.portfolio": privacy.isPublic,
+          $set: {
+            "portfolioSettings.analyticsTrack": privacy.analyticsTrack,
+            "portfolioSettings.showContacts": privacy.showContacts,
+            "private.portfolio": !privacy.isPublic,
+          },
         },
-
         { new: true, upsert: true }
       );
+      console.log(res.portfolioSettings);
       if (
-        res.portfolioSettings.analyticsTrack == privacy.analyticsTrack &&
-        res.portfolioSettings.showContacts == privacy.showContacts &&
-        res.private.portfolio == privacy.isPublic
+        res.portfolioSettings.analyticsTrack === privacy.analyticsTrack &&
+        res.portfolioSettings.showContacts === privacy.showContacts &&
+        res.private.portfolio === !privacy.isPublic
       ) {
         return NextResponse.json(
-          { message: "Successfully saved privacy settings" },
+          { message: "Successfully saved privacy settings", data: privacy },
           { status: 200 }
         );
       } else {

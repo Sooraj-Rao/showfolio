@@ -266,7 +266,7 @@ export default function ManagePortfolio() {
     setIsSaving(true);
     try {
       const res = await axios.post("/api/portfolio/portfolio-data", {
-        portfolio: portfolioData,
+        portfolioData,
       });
 
       if (res.status === 200) {
@@ -513,6 +513,11 @@ export default function ManagePortfolio() {
 
   const handleSubmitImageUrl = async (e) => {
     e.preventDefault();
+    if (!imageUrl.startsWith("http"))
+      return toast({
+        description: "Invalid URL format",
+        variant: "destructive",
+      });
     setIsSaving(true);
     try {
       const res = await axios.post("/api/portfolio/portfolio-data", {
@@ -585,7 +590,7 @@ export default function ManagePortfolio() {
             <CardContent>
               <div className="space-y-1">
                 <Button
-                  variant={activeSection === "personal" ? "default" : "ghost"}
+                  variant={activeSection === "personal" ? "secondary" : "ghost"}
                   className="w-full justify-start"
                   onClick={() => setActiveSection("personal")}
                 >
@@ -593,7 +598,7 @@ export default function ManagePortfolio() {
                   Personal Info
                 </Button>
                 <Button
-                  variant={activeSection === "social" ? "default" : "ghost"}
+                  variant={activeSection === "social" ? "secondary" : "ghost"}
                   className="w-full justify-start"
                   onClick={() => setActiveSection("social")}
                 >
@@ -601,7 +606,7 @@ export default function ManagePortfolio() {
                   Social Links
                 </Button>
                 <Button
-                  variant={activeSection === "work" ? "default" : "ghost"}
+                  variant={activeSection === "work" ? "secondary" : "ghost"}
                   className="w-full justify-start"
                   onClick={() => setActiveSection("work")}
                 >
@@ -609,7 +614,7 @@ export default function ManagePortfolio() {
                   Work Experience
                 </Button>
                 <Button
-                  variant={activeSection === "skills" ? "default" : "ghost"}
+                  variant={activeSection === "skills" ? "secondary" : "ghost"}
                   className="w-full justify-start"
                   onClick={() => setActiveSection("skills")}
                 >
@@ -617,7 +622,7 @@ export default function ManagePortfolio() {
                   Skills
                 </Button>
                 <Button
-                  variant={activeSection === "projects" ? "default" : "ghost"}
+                  variant={activeSection === "projects" ? "secondary" : "ghost"}
                   className="w-full justify-start"
                   onClick={() => setActiveSection("projects")}
                 >
@@ -626,7 +631,7 @@ export default function ManagePortfolio() {
                 </Button>
                 <Button
                   variant={
-                    activeSection === "achievements" ? "default" : "ghost"
+                    activeSection === "achievements" ? "secondary" : "ghost"
                   }
                   className="w-full justify-start"
                   onClick={() => setActiveSection("achievements")}
@@ -635,7 +640,9 @@ export default function ManagePortfolio() {
                   Achievements
                 </Button>
                 <Button
-                  variant={activeSection === "education" ? "default" : "ghost"}
+                  variant={
+                    activeSection === "education" ? "secondary" : "ghost"
+                  }
                   className="w-full justify-start"
                   onClick={() => setActiveSection("education")}
                 >
@@ -644,7 +651,7 @@ export default function ManagePortfolio() {
                 </Button>
                 <Button
                   variant={
-                    activeSection === "certifications" ? "default" : "ghost"
+                    activeSection === "certifications" ? "secondary" : "ghost"
                   }
                   className="w-full justify-start"
                   onClick={() => setActiveSection("certifications")}
@@ -653,7 +660,7 @@ export default function ManagePortfolio() {
                   Certifications
                 </Button>
                 <Button
-                  variant={activeSection === "blogs" ? "default" : "ghost"}
+                  variant={activeSection === "blogs" ? "secondary" : "ghost"}
                   className="w-full justify-start"
                   onClick={() => setActiveSection("blogs")}
                 >
@@ -726,7 +733,7 @@ export default function ManagePortfolio() {
                       <Label htmlFor="name">Full Name</Label>
                       <Input
                         id="name"
-                        value={portfolioData.personalInfo.name}
+                        value={portfolioData?.personalInfo?.name}
                         onChange={(e) =>
                           updatePersonalInfo("name", e.target.value)
                         }
@@ -737,7 +744,7 @@ export default function ManagePortfolio() {
                       <Label htmlFor="title">Professional Title</Label>
                       <Input
                         id="title"
-                        value={portfolioData.personalInfo.title}
+                        value={portfolioData?.personalInfo?.title}
                         onChange={(e) =>
                           updatePersonalInfo("title", e.target.value)
                         }
@@ -749,7 +756,7 @@ export default function ManagePortfolio() {
                       <Input
                         id="email"
                         type="email"
-                        value={portfolioData.personalInfo.email}
+                        value={portfolioData?.personalInfo?.email}
                         onChange={(e) =>
                           updatePersonalInfo("email", e.target.value)
                         }
@@ -760,7 +767,7 @@ export default function ManagePortfolio() {
                       <Label htmlFor="phone">Phone</Label>
                       <Input
                         id="phone"
-                        value={portfolioData.personalInfo.phone}
+                        value={portfolioData?.personalInfo?.phone}
                         onChange={(e) =>
                           updatePersonalInfo("phone", e.target.value)
                         }
@@ -771,7 +778,7 @@ export default function ManagePortfolio() {
                       <Label htmlFor="location">Location</Label>
                       <Input
                         id="location"
-                        value={portfolioData.personalInfo.location}
+                        value={portfolioData?.personalInfo?.location}
                         onChange={(e) =>
                           updatePersonalInfo("location", e.target.value)
                         }
@@ -783,7 +790,7 @@ export default function ManagePortfolio() {
                       <Textarea
                         id="bio"
                         className="min-h-[120px]"
-                        value={portfolioData.personalInfo.bio}
+                        value={portfolioData?.personalInfo?.bio}
                         onChange={(e) =>
                           updatePersonalInfo("bio", e.target.value)
                         }
@@ -794,10 +801,9 @@ export default function ManagePortfolio() {
                 </div>
               )}
 
-              {/* Social Links Section */}
               {activeSection === "social" && (
                 <div className="space-y-4">
-                  {portfolioData.socialLinks.map((link, index) => (
+                  {portfolioData?.socialLinks?.map((link, index) => (
                     <div
                       key={index}
                       className="flex flex-col md:flex-row items-start gap-4 p-4 border rounded-lg"
@@ -1900,7 +1906,12 @@ export default function ManagePortfolio() {
                 className="w-3/5  p-2 border rounded-lg"
               />
               {userData?.imageUrl !== imageUrl && (
-                <Button disabled={isSaving} onClick={handleSubmitImageUrl}>
+                <Button
+                  disabled={
+                    isSaving || !imageUrl || !imageUrl.startsWith("http")
+                  }
+                  onClick={handleSubmitImageUrl}
+                >
                   {isSaving ? "Saving..." : "Save Image URL"}
                 </Button>
               )}

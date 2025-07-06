@@ -11,11 +11,18 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
     }
-    const updateData: { portfolioData?: string; imageUrl?: string } = {};
+    const updateData: {
+      portfolioData?: string;
+      imageUrl?: string;
+      portfolio?: string;
+    } = {};
 
-    const { portfolio, imageUrl } = await req.json();
+    const { portfolioData, portfolio, imageUrl } = await req.json();
+    if (portfolioData) {
+      updateData.portfolioData = JSON.stringify(portfolioData);
+    }
     if (portfolio) {
-      updateData.portfolioData = JSON.stringify(portfolio);
+      updateData.portfolio = portfolio;
     }
     if (imageUrl) {
       updateData.imageUrl = imageUrl;

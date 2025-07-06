@@ -250,6 +250,7 @@ export default function ModernPortfolioWithAnalytics({
 }: {
   portfolioData: PortfolioData | null;
 }) {
+  
   const [activeSection, setActiveSection] = useState("projects");
   const [activeBlogPost, setActiveBlogPost] = useState<string | null>(null);
   const [currentTheme, setCurrentTheme] = useState(

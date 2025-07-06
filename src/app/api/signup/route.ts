@@ -35,6 +35,7 @@ export async function POST(req: Request) {
       name,
       email,
       password: hashedPassword,
+      portfolio: name,
     });
 
     // Create JWT

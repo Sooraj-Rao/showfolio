@@ -43,7 +43,7 @@ export const FetchLocationBrowserData = async () => {
   if ("userAgentData" in nav && nav.userAgentData) {
     const uaData = nav.userAgentData as NavigatorUAData;
     const brands =
-      uaData.brands[0]?.brand ?? uaData.brands.map((b) => b.brand).join(", ");
+      uaData.brands[2]?.brand ?? uaData.brands.map((b) => b.brand).join(", ");
     device = {
       browser: brands,
       platform: uaData.platform,

@@ -103,7 +103,7 @@ export default function SharePage() {
       const res = await fetch("https://sj1.xyz/api", {
         method: "POST",
         headers: {
-          Authorization: `Bearer quklnk_OQPmKajmPrjrsRGIuVzmVDtk`,
+          Authorization: `Bearer quklnk_vSNTKReEzojrQIIGaKQcCAEw`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ long: url }),

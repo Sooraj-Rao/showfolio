@@ -15,7 +15,7 @@ export function ModeToggle({
   themeMode?: string;
 }) {
   const { theme, setTheme } = useTheme();
-  const isDark = theme === "dark";
+  const isDark = theme == "dark";
   const nextTheme = isDark ? "light" : "dark";
   const capitalized = `${nextTheme.charAt(0).toUpperCase()}${nextTheme.slice(
     1

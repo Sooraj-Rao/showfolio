@@ -104,7 +104,7 @@ const PortfolioParentPage = ({
       response.data.portfolio.imageUrl = response.data.imageUrl;
       response.data.portfolio.themeMode = response.data.themeMode;
       setportfolioData(response.data?.portfolio || null);
-      settemplate(response.data.templateId);
+      settemplate(response?.data?.templateId || "2");
       localStorage.setItem(
         "portfolioData",
         JSON.stringify(response.data?.portfolio)
@@ -152,8 +152,7 @@ const PortfolioParentPage = ({
     "1": <One portfolioData={portfolioData} />,
     "2": <Two portfolioData={portfolioData} />,
     "3": <Three portfolioData={portfolioData} />,
-  };
-
+  };;
   return templates[template];
 };
 

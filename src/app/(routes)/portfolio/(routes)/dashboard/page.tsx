@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/card";
 import useGetUserData from "@/app/hooks/use-getUserData";
 
-// Mock data for the dashboard
 const mockPortfolioData = {
   name: "John Doe",
   title: "Full Stack Developer",
@@ -53,6 +52,7 @@ const mockPortfolioData = {
 
 export default function DashboardPage() {
   const { userData } = useGetUserData();
+ 
   const [loading, setLoading] = useState(false);
   const [portfolioData, setportfolioData] = useState(mockPortfolioData);
 

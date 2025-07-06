@@ -8,9 +8,10 @@ export async function GET(req: NextRequest) {
     const url = new URL(req.url);
     const username = url.searchParams.get("username");
     const user = await User.findOne({ portfolio: username }).select(
-      "portfolioData templateId portfolioSettings imageUrl"
+      "portfolioData templateId portfolioSettings imageUrl private"
     );
-    if (!user) {
+
+    if (!user || user?.private?.profile == true) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
     return NextResponse.json(

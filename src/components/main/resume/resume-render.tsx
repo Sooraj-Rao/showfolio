@@ -191,7 +191,7 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Resume Not Found
               </h3>
-              <p className="text-gray-600 dark:text-gray-400">{error}</p>
+              {/* <p className="text-gray-600 dark:text-gray-400">{error}</p> */}
             </div>
             <Button onClick={() => router.push("/")} className="w-full">
               Explore ResumeOrg

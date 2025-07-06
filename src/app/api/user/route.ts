@@ -32,8 +32,8 @@ export async function GET(req: NextRequest) {
         resumes: user.private.resumes,
       },
       hasPorfolioData: user?.portfolioData ? true : false,
-      imageUrl: user.imageUrl,
-      portfolioSettings:{
+      imageUrl: user?.imageUrl || "",
+      portfolioSettings: {
         themeColor: user.portfolioSettings?.themeColor || null,
         theme: user.portfolioSettings?.theme || null,
         showContacts: user.portfolioSettings?.showContacts || true,

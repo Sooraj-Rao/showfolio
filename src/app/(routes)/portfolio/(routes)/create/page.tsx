@@ -46,6 +46,7 @@ import axios from "axios";
 import useGetUserData from "@/app/hooks/use-getUserData";
 import type { IResume } from "@/models/resume";
 import Link from "next/link";
+import useResumes from "@/app/hooks/get-resumes";
 
 // Define types for our form data
 type SocialLink = {
@@ -200,7 +201,7 @@ const steps = [
 export default function CreatePortfolioPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { userData } = useGetUserData();
+  const { userData,fetchUserData } = useGetUserData();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<FormData>(() => {
     // Check if we're in the browser environment
@@ -431,6 +432,7 @@ export default function CreatePortfolioPage() {
           variant: "destructive",
         });
       }
+      router.push("/portfolio/manage");
     } catch (error) {
       console.error("Error saving portfolio:", error);
       toast({
@@ -782,6 +784,10 @@ export default function CreatePortfolioPage() {
   useEffect(() => {
     if (userData?.templateId) setSelectedTemplate(userData?.templateId);
   }, [userData?.templateId]);
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   // if (userData?.hasPorfolioData) {
   //   return (

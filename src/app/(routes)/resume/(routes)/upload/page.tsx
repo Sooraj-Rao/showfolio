@@ -233,15 +233,6 @@ export default function UploadPage() {
                   ) ? (
                     <div className="flex items-center space-x-2">
                       <span>Uploading...</span>
-                      <Progress
-                        value={
-                          Object.values(uploadProgress).reduce(
-                            (a, b) => a + b,
-                            0
-                          ) / files.length
-                        }
-                        className="w-20 h-2"
-                      />
                     </div>
                   ) : (
                     <>

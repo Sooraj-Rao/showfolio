@@ -110,12 +110,9 @@ export default function ResumesPage() {
   console.log(filterFolder);
 
   return (
-    <div className="space-y-6 p-3">
+    <div className="space-y-6 ">
       <div>
         <h2 className="text-2xl  font-bold tracking-tight">Resumes</h2>
-        <p className="text-muted-foreground text-sm">
-          List of all your resumes
-        </p>
       </div>
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">

@@ -3,7 +3,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import {
   Eye,
@@ -73,14 +72,9 @@ export default function ResumeDashboard() {
         <div className="max-w-6xl mx-auto space-y-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16 border-4 border-white shadow-lg">
-                <AvatarFallback className="text-lg font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
-                  {userData?.name?.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
               <div>
                 <h1 className="lg:text-2xl text-xl font-bold  capitalize">
-                  Welcome back,
+                  Welcome,
                   <span className=" text-primary pl-1">{userData?.name}!</span>
                 </h1>
                 <p className="text-gray-600 flex items-center text-sm gap-2">

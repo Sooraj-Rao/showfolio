@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import useGetUserData from "@/app/hooks/use-getUserData";
+import { ModeToggle } from "@/components/main/theme/theme-toggle";
 
 export const PortfolioSidebarItems = [
   {
@@ -60,7 +61,8 @@ export function Sidebar() {
               </Link>
             );
           })}
-          <div>
+          <ModeToggle title={true} />
+          <div className=" pt-5">
             <Link href="/resume/dashboard/">
               <Button>
                 <StarsIcon className="mr-4 h-4 w-4" />

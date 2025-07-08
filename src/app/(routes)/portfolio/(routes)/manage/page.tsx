@@ -43,7 +43,6 @@ import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
 import useGetUserData from "@/app/hooks/use-getUserData";
 
-// Define types for portfolio data
 type PersonalInfo = {
   name: string;
   title: string;
@@ -104,7 +103,7 @@ type PortfolioData = {
   personalInfo: PersonalInfo;
   socialLinks: SocialLink[];
   workExperience: WorkExperience[];
-  skills: Record<string, string[]>; // Changed from string[] to categorized format
+  skills: Record<string, string[]>;
   projects: Project[];
   achievements: Achievement[];
   education: Education[];
@@ -112,7 +111,6 @@ type PortfolioData = {
   blogs: Blog[];
 };
 
-// Default portfolio data structure
 const defaultPortfolioData: PortfolioData = {
   personalInfo: {
     name: "",
@@ -178,7 +176,6 @@ const defaultPortfolioData: PortfolioData = {
   ],
 };
 
-// Skill category icons
 const skillCategoryIcons: Record<string, any> = {
   frontend: Code,
   backend: Database,
@@ -202,13 +199,11 @@ export default function ManagePortfolio() {
   const [isSaving, setIsSaving] = useState(false);
   const [imageUrl, setimageUrl] = useState(userData?.imageUrl || "");
 
-  // Load portfolio data from localStorage on component mount
   useEffect(() => {
     const savedData = localStorage.getItem("portfolioData");
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData);
-        // Convert old skills format to new format if needed
         if (Array.isArray(parsedData.skills)) {
           parsedData.skills = {
             General: parsedData.skills,
@@ -239,7 +234,6 @@ export default function ManagePortfolio() {
       }
       const data = await response.json();
       if (data?.portfolio) {
-        // Convert old skills format to new format if needed
         if (Array.isArray(data.portfolio.skills)) {
           data.portfolio.skills = {
             General: data.portfolio.skills,
@@ -262,7 +256,6 @@ export default function ManagePortfolio() {
     }
   };
 
-  // Function to handle saving changes
   const handleSave = async () => {
     setIsSaving(true);
     try {
@@ -293,7 +286,6 @@ export default function ManagePortfolio() {
     }
   };
 
-  // Function to update personal info
   const updatePersonalInfo = (field: keyof PersonalInfo, value: string) => {
     setPortfolioData({
       ...portfolioData,
@@ -304,7 +296,6 @@ export default function ManagePortfolio() {
     });
   };
 
-  // Function to add a new skill category
   const addSkillCategory = () => {
     const categoryName = prompt(
       "Enter category name (e.g., Frontend, Backend, Tools):"
@@ -320,7 +311,6 @@ export default function ManagePortfolio() {
     });
   };
 
-  // Function to remove a skill category
   const removeSkillCategory = (categoryName: string) => {
     const newSkills = { ...portfolioData.skills };
     delete newSkills[categoryName];
@@ -330,7 +320,6 @@ export default function ManagePortfolio() {
     });
   };
 
-  // Function to update skill category name
   const updateSkillCategoryName = (oldName: string, newName: string) => {
     if (oldName === newName) return;
 
@@ -344,7 +333,6 @@ export default function ManagePortfolio() {
     });
   };
 
-  // Function to add skill to category
   const addSkillToCategory = (categoryName: string) => {
     setPortfolioData({
       ...portfolioData,
@@ -355,7 +343,6 @@ export default function ManagePortfolio() {
     });
   };
 
-  // Function to update skill in category
   const updateSkillInCategory = (
     categoryName: string,
     skillIndex: number,
@@ -373,7 +360,6 @@ export default function ManagePortfolio() {
     });
   };
 
-  // Function to remove skill from category
   const removeSkillFromCategory = (
     categoryName: string,
     skillIndex: number
@@ -390,7 +376,6 @@ export default function ManagePortfolio() {
     });
   };
 
-  // Function to move a section up
   const moveUp = (section: keyof PortfolioData, index: number) => {
     if (index === 0) return;
 
@@ -406,7 +391,6 @@ export default function ManagePortfolio() {
     });
   };
 
-  // Function to move a section down
   const moveDown = (
     section: keyof PortfolioData,
     index: number,
@@ -426,7 +410,6 @@ export default function ManagePortfolio() {
     });
   };
 
-  // Function to add a new item to a section
   const addItem = (section: keyof PortfolioData, item: any) => {
     let sectionData;
     const newData = { ...portfolioData };
@@ -443,7 +426,6 @@ export default function ManagePortfolio() {
     });
   };
 
-  // Function to remove an item from a section
   const removeItem = (section: keyof PortfolioData, index: number) => {
     const newData = { ...portfolioData };
     const sectionData = [...(newData[section] as any[])];
@@ -455,7 +437,6 @@ export default function ManagePortfolio() {
     });
   };
 
-  // Function to update an item in a section
   const updateItem = (
     section: keyof PortfolioData,
     index: number,
@@ -472,7 +453,6 @@ export default function ManagePortfolio() {
     });
   };
 
-  // Function to insert a link at cursor position
   const insertLink = (
     textareaId: string,
     linkText: string,
@@ -491,17 +471,14 @@ export default function ManagePortfolio() {
     const newText = before + linkMarkdown + after;
     textarea.value = newText;
 
-    // Trigger change event to update state
     const event = new Event("input", { bubbles: true });
     textarea.dispatchEvent(event);
 
-    // Set cursor position after the inserted link
     const newCursorPos = start + linkMarkdown.length;
     textarea.setSelectionRange(newCursorPos, newCursorPos);
     textarea.focus();
   };
 
-  // Function to show link insertion dialog
   const handleInsertLink = (textareaId: string) => {
     const linkText = prompt("Enter link text:");
     if (!linkText) return;
@@ -550,14 +527,13 @@ export default function ManagePortfolio() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6">
+    <div className="min-h-screen bg-background ">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold">Manage Portfolio</h1>
-            <p className="text-muted-foreground">
-              Edit and organize your portfolio content
-            </p>
+            <h2 className="text-2xl font-bold tracking-tight">
+              Manage Portfolio
+            </h2>
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
             <Button
@@ -727,7 +703,6 @@ export default function ManagePortfolio() {
               </CardDescription>
             </CardHeader>
             <CardContent className="max-h-[70vh] overflow-y-auto">
-              {/* Personal Information Section */}
               {activeSection === "personal" && (
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -898,7 +873,6 @@ export default function ManagePortfolio() {
                 </div>
               )}
 
-              {/* Work Experience Section */}
               {activeSection === "work" && (
                 <div className="space-y-4">
                   {portfolioData.workExperience.map((exp, index) => (
@@ -1061,7 +1035,6 @@ export default function ManagePortfolio() {
                 </div>
               )}
 
-              {/* Skills Section - New Categorized Format */}
               {activeSection === "skills" && (
                 <div className="space-y-6">
                   {Object.entries(portfolioData.skills).map(
@@ -1172,7 +1145,6 @@ export default function ManagePortfolio() {
                 </div>
               )}
 
-              {/* Projects Section */}
               {activeSection === "projects" && (
                 <div className="space-y-4">
                   {portfolioData.projects.map((project, index) => (
@@ -1339,7 +1311,6 @@ export default function ManagePortfolio() {
                 </div>
               )}
 
-              {/* Achievements Section */}
               {activeSection === "achievements" && (
                 <div className="space-y-4">
                   {portfolioData.achievements.map((achievement, index) => (
@@ -1443,7 +1414,6 @@ export default function ManagePortfolio() {
                 </div>
               )}
 
-              {/* Education Section */}
               {activeSection === "education" && (
                 <div className="space-y-4">
                   {portfolioData.education.map((edu, index) => (
@@ -1606,7 +1576,6 @@ export default function ManagePortfolio() {
                 </div>
               )}
 
-              {/* Certifications Section */}
               {activeSection === "certifications" && (
                 <div className="space-y-4">
                   {portfolioData.certifications.map((cert, index) => (
@@ -1756,7 +1725,6 @@ export default function ManagePortfolio() {
                 </div>
               )}
 
-              {/* Blogs Section */}
               {activeSection === "blogs" && (
                 <div className="space-y-4">
                   {portfolioData?.blogs?.map((blog, index) => (
@@ -1880,7 +1848,7 @@ export default function ManagePortfolio() {
                       onClick={() =>
                         addItem("blogs", {
                           title: "",
-                          date: new Date().toISOString().split("T")[0], // Today's date
+                          date: new Date().toISOString().split("T")[0],
                           description: "",
                         })
                       }

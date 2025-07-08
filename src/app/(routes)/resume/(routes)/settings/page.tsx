@@ -417,7 +417,6 @@ export default function SettingsPage() {
               </div>
             </CardContent>
 
-            {/* Profile Privacy Dialog */}
             <AlertDialog
               open={showProfileDialog}
               onOpenChange={setShowProfileDialog}

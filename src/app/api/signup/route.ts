@@ -10,7 +10,6 @@ export async function POST(req: Request) {
     await connectDB();
     const { name, email, password } = await req.json();
 
-    // Validate input
     if (!name || !email || !password) {
       return NextResponse.json(
         { error: "All fields are required" },
@@ -18,7 +17,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json(
@@ -27,10 +25,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user
     const user = await User.create({
       name,
       email,
@@ -38,17 +34,15 @@ export async function POST(req: Request) {
       portfolio: name,
     });
 
-    // Create JWT
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
       expiresIn: "1d",
     });
 
-    // Set cookie
     const response = NextResponse.json({
       success: true,
       user: { id: user._id, name: user.name, email: user.email },
     });
-    setAuthCookie(response, token); // Use the utility function
+    setAuthCookie(response, token); 
 
     return response;
   } catch (error) {

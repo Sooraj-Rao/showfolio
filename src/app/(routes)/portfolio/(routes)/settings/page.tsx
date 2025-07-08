@@ -285,9 +285,6 @@ export default function SettingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">
-          Manage your portfolio settings and preferences
-        </p>
       </div>
 
       <Tabs
@@ -435,7 +432,6 @@ export default function SettingsPage() {
                           )}
                         </div>
 
-                        {/* Color Name */}
                         <span
                           className={`
                   text-sm font-medium transition-colors duration-200
@@ -453,7 +449,6 @@ export default function SettingsPage() {
                   ))}
                 </RadioGroup>
 
-                {/* Selected Color Preview */}
                 <div className="mt-6 p-4 rounded-lg border bg-muted/30">
                   <div className="flex items-center gap-3">
                     <div

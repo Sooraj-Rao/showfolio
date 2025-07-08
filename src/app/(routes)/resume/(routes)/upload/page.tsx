@@ -130,12 +130,9 @@ export default function UploadPage() {
   );
 
   return (
-    <div className="  mx-auto space-y-8 p-2">
+    <div className="  space-y-6">
       <div>
-        <h2 className="text-2xl  font-bold tracking-tight">Upload</h2>
-        <p className="text-muted-foreground text-sm">
-          Upload your new resumes here
-        </p>
+        <h2 className="text-2xl  font-bold tracking-tight">Upload Resumes</h2>
       </div>
       <div className=" grid sm:grid-cols-2 grid-cols-1">
         <Card className="border-2 border-dashed">

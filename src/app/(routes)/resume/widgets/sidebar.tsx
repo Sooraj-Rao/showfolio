@@ -50,7 +50,8 @@ export function Sidebar() {
               </Link>
             );
           })}
-          <div>
+            <ModeToggle title={true} />
+          <div className=" pt-5">
             <Link href="/portfolio/dashboard/">
               <Button className="w-full justify-start">
                 <StarsIcon className="mr-4 h-4 w-4" />

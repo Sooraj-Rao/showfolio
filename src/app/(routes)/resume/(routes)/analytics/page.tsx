@@ -373,7 +373,6 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        {/* Preview content with dummy data */}
         <div className="opacity-50">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end space-y-2 sm:space-y-0 mb-6">
             <div className="flex items-center space-x-2">
@@ -945,7 +944,6 @@ export default function AnalyticsPage() {
               <CardContent className="p-4 sm:p-6">
                 {countryChartData.length > 0 ? (
                   <div className="space-y-6">
-                    {/* Donut Chart */}
                     <div className="flex justify-center">
                       <ChartContainer
                         config={{
@@ -1000,7 +998,6 @@ export default function AnalyticsPage() {
                       </ChartContainer>
                     </div>
 
-                    {/* Summary Stats */}
                     <div className="pt-4 border-t">
                       <div className="grid grid-cols-2 gap-4 text-center">
                         <div>
@@ -1194,7 +1191,6 @@ export default function AnalyticsPage() {
                   )}
                 </div>
 
-                {/* Traffic Source Summary */}
                 {Object.keys(referrerCounts).length > 0 && (
                   <div className="pt-4 border-t mt-6">
                     <div className="grid grid-cols-2 gap-4 text-center">

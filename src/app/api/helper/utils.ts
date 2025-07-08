@@ -7,7 +7,7 @@ export const setAuthCookie = (response: NextResponse, token: string) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
-    maxAge: 86400, // 1d
+    maxAge: 86400,
     path: "/",
   });
 };

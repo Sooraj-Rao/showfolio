@@ -14,7 +14,6 @@ export function useSectionObserver() {
           if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
             const sectionId = entry.target.id;
 
-            // Only track each section once per session
             if (sectionId && !observedSections.current.has(sectionId)) {
               observedSections.current.add(sectionId);
               trackSectionView(sectionId);
@@ -23,12 +22,11 @@ export function useSectionObserver() {
         });
       },
       {
-        threshold: 0.5, // Trigger when 50% of section is visible
-        rootMargin: "-50px 0px", // Add some margin to avoid false triggers
+        threshold: 0.5, 
+        rootMargin: "-50px 0px", 
       }
     );
 
-    // Observe all sections with IDs
     const sections = document.querySelectorAll("[id]");
     sections.forEach((section) => {
       if (section.id) {

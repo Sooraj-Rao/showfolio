@@ -113,10 +113,6 @@ export default function PortfolioAnalyticsPage() {
   const [analyticsData, setAnalyticsData] = useState<AnalyticsItem[]>([]);
   const [summary, setSummary] = useState<AnalyticsSummary | null>(null);
   const [loading, setLoading] = useState(true);
-  // const [searchQuery, setSearchQuery] = useState("");
-  // const [eventFilter, setEventFilter] = useState("all");
-  // const [sectionFilter, setSectionFilter] = useState("all");
-  // const [deviceFilter, setDeviceFilter] = useState("all");
   const [expandedSessions, setExpandedSessions] = useState<Set<string>>(
     new Set()
   );
@@ -148,11 +144,9 @@ export default function PortfolioAnalyticsPage() {
     fetchData();
   }, [timeRange]);
 
-  // Process analytics data
   const analytics = useMemo(() => {
     if (!analyticsData.length) return null;
 
-    // Section engagement analysis
     const sectionEngagement = analyticsData.reduce((acc, item) => {
       if (item.section) {
         if (!acc[item.section]) {
@@ -183,28 +177,24 @@ export default function PortfolioAnalyticsPage() {
       return acc;
     }, {} as Record<string, any>);
 
-    // Device analytics
     const deviceAnalytics = analyticsData.reduce((acc, item) => {
       if (!acc[item.device]) acc[item.device] = 0;
       acc[item.device]++;
       return acc;
     }, {} as Record<string, number>);
 
-    // OS analytics
     const osAnalytics = analyticsData.reduce((acc, item) => {
       if (!acc[item.os]) acc[item.os] = 0;
       acc[item.os]++;
       return acc;
     }, {} as Record<string, number>);
 
-    // Browser analytics
     const browserAnalytics = analyticsData.reduce((acc, item) => {
       if (!acc[item.browser]) acc[item.browser] = 0;
       acc[item.browser]++;
       return acc;
     }, {} as Record<string, number>);
 
-    // Geographic distribution
     const countryAnalytics = analyticsData.reduce((acc, item) => {
       if (!acc[item.country]) acc[item.country] = 0;
       acc[item.country]++;
@@ -218,7 +208,6 @@ export default function PortfolioAnalyticsPage() {
       return acc;
     }, {} as Record<string, number>);
 
-    // Traffic sources with percentages
     const totalEvents = analyticsData.length;
     const referrerAnalytics = analyticsData.reduce((acc, item) => {
       let referrer = "Direct";
@@ -242,7 +231,6 @@ export default function PortfolioAnalyticsPage() {
       return acc;
     }, {} as Record<string, number>);
 
-    // User sessions with detailed analysis
     const userSessions = analyticsData.reduce((acc, item) => {
       if (!acc[item.sessionId]) {
         acc[item.sessionId] = {
@@ -288,7 +276,6 @@ export default function PortfolioAnalyticsPage() {
       return acc;
     }, {} as Record<string, any>);
 
-    // Time series data for activity chart
     const timeSeriesData = analyticsData.reduce((acc, item) => {
       const date = new Date(item.timestamp).toLocaleDateString("en-US", {
         month: "short",
@@ -380,50 +367,8 @@ export default function PortfolioAnalyticsPage() {
     };
   }, [analyticsData]);
 
-  // // Filter data for event details
-  // const filteredData = useMemo(() => {
-  //   if (!analyticsData) return [];
 
-  //   let filtered = analyticsData;
 
-  //   if (eventFilter !== "all") {
-  //     filtered = filtered.filter((item) => item.event === eventFilter);
-  //   }
-
-  //   if (sectionFilter !== "all") {
-  //     filtered = filtered.filter((item) => item.section === sectionFilter);
-  //   }
-
-  //   if (deviceFilter !== "all") {
-  //     filtered = filtered.filter((item) => item.device === deviceFilter);
-  //   }
-
-  //   if (searchQuery.trim()) {
-  //     const query = searchQuery.toLowerCase().trim();
-  //     filtered = filtered.filter((item) => {
-  //       const searchableFields = [
-  //         item.event,
-  //         item.section || "",
-  //         item.clickTarget || "",
-  //         item.country,
-  //         item.city,
-  //         item.device,
-  //         item.browser,
-  //         item.os,
-  //       ];
-  //       return searchableFields.some((field) =>
-  //         field.toLowerCase().includes(query)
-  //       );
-  //     });
-  //   }
-
-  //   return filtered.sort(
-  //     (a, b) =>
-  //       new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-  //   );
-  // }, [analyticsData, searchQuery, eventFilter, sectionFilter, deviceFilter]);
-
-  // Helper functions
   const formatTime = (seconds: number) => {
     if (seconds < 60) return `${seconds}s`;
     if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
@@ -503,16 +448,12 @@ export default function PortfolioAnalyticsPage() {
   }
 
   return (
-    <div className="flex-1 w-full max-w-7xl mx-auto space-y-6 p-6">
-      {/* Header */}
+    <div className="flex-1 w-full max-w-7xl mx-auto space-y-6 ">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+          <h2 className="text-2xl font-bold tracking-tight">
             Portfolio Analytics
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Advanced insights into visitor behavior and engagement
-          </p>
+          </h2>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
           <SelectTrigger className="w-[180px]">
@@ -527,9 +468,8 @@ export default function PortfolioAnalyticsPage() {
         </Select>
       </div>
 
-      {/* Key Metrics */}
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-l-4 border-l-blue-500">
+        <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Total Sessions
@@ -548,7 +488,7 @@ export default function PortfolioAnalyticsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-green-500">
+        <Card >
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Avg. Session Time
@@ -565,7 +505,7 @@ export default function PortfolioAnalyticsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-orange-500">
+        <Card >
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Total Interactions
@@ -584,7 +524,7 @@ export default function PortfolioAnalyticsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-purple-500">
+        <Card >
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Page Views
@@ -604,7 +544,6 @@ export default function PortfolioAnalyticsPage() {
         </Card>
       </div>
 
-      {/* Tabbed Analytics */}
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -614,7 +553,6 @@ export default function PortfolioAnalyticsPage() {
           <TabsTrigger value="sessions">Sessions</TabsTrigger>
         </TabsList>
 
-        {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-6">
           <div className="grid gap-6 lg:grid-cols-2">
             <Card>
@@ -734,7 +672,6 @@ export default function PortfolioAnalyticsPage() {
           </div>
         </TabsContent>
 
-        {/* Devices Tab */}
         <TabsContent value="devices" className="space-y-6">
           <div className="grid gap-6 lg:grid-cols-3">
             <Card>
@@ -934,7 +871,6 @@ export default function PortfolioAnalyticsPage() {
           </div>
         </TabsContent>
 
-        {/* Geography Tab */}
         <TabsContent value="geography" className="space-y-6">
           <div className="grid gap-6 lg:grid-cols-2">
             <Card>
@@ -1021,7 +957,6 @@ export default function PortfolioAnalyticsPage() {
           </div>
         </TabsContent>
 
-        {/* Traffic Tab */}
         <TabsContent value="traffic" className="space-y-6">
           <Card>
             <CardHeader>
@@ -1100,7 +1035,6 @@ export default function PortfolioAnalyticsPage() {
           </Card>
         </TabsContent>
 
-        {/* Sessions Tab */}
         <TabsContent value="sessions" className="space-y-6">
           <Card>
             <CardHeader>

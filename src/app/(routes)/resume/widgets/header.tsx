@@ -1,20 +1,12 @@
 "use client";
 
-import { ModeToggle } from "@/components/main/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Bell, Menu, User } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useState } from "react";
 import { MobileSidebar, ResumeSidebarItems } from "./sidebar";
 import { usePathname } from "next/navigation";
 import { PortfolioSidebarItems } from "../../portfolio/widgets/sidebar";
+import { toast } from "@/hooks/use-toast";
 
 export function DashboardHeader() {
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -22,30 +14,41 @@ export function DashboardHeader() {
   const toggleSidebar = () => setMobileSidebarOpen((prev) => !prev);
   const isResumePage = path.startsWith("/resume");
   const isPortfolioPage = path.startsWith("/portfolio");
+
+  const handleLogout = async () => {
+    try {
+      const agree = confirm("Are you sure want to logout");
+      if (!agree) return;
+      const res = await fetch("/api/login", {
+        method: "PUT",
+      });
+      if (!res.ok) {
+        throw new Error("Failed to logout");
+      } else {
+        toast({
+          title: "Success",
+          description: "Logout successful",
+          variant: "default",
+        });
+        window.location.href = "/";
+      }
+    } catch {
+      toast({
+        title: "Failed",
+        description: "Failed to logout",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <header className="border-b bg-background/90 z-[99] backdrop-blur w-full sticky top-0 ">
       <div className="flex h-16 items-center px-4">
         <h2 className="flex-1">Resume Org</h2>
-        <div className="items-center space-x-4 lg:flex hidden">
-          <ModeToggle />
-          <Button variant="ghost" size="icon">
-            <Bell className="h-5 w-5" />
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <User className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Sign out</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+
+        <Button onClick={handleLogout} variant="outline">
+          Logout
+        </Button>
         <Button className=" lg:hidden" onClick={toggleSidebar} variant="ghost">
           <Menu />
         </Button>

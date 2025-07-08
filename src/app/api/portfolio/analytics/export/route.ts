@@ -17,7 +17,6 @@ export async function GET(request: NextRequest) {
     const format = searchParams.get("format") || "json";
     const days = Number.parseInt(searchParams.get("days") || "30");
 
-    // Date filter
     const dateFilter = new Date();
     dateFilter.setDate(dateFilter.getDate() - days);
 
@@ -28,7 +27,6 @@ export async function GET(request: NextRequest) {
       .select("-ipHash -userAgent");
 
     if (format === "csv") {
-      // Convert to CSV
       const headers = [
         "Date",
         "Time",
@@ -77,7 +75,6 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Return JSON by default
     return NextResponse.json({
       success: true,
       data: analytics,

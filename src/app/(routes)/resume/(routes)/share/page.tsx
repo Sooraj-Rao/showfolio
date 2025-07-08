@@ -139,203 +139,214 @@ export default function SharePage() {
   };
 
   return (
-    <div className="flex flex-col xl:flex-row gap-6 sm:p-4 p-1 w-full">
-      <div className="flex-1 space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Select Resume</CardTitle>
-            <CardDescription>
-              Pick a resume to manage sharing options
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Select
-              value={selectedResume?.shortUrl ?? ""}
-              onValueChange={(value) => {
-                const found = resumes.find(
-                  (r: IResume) => r.shortUrl === value
-                );
-                if (found) {
-                  setSelectedResume(found);
-                  setUrl(window.location.origin + "/r/" + found.shortUrl);
-                  setShortUrl("");
-                  setRef("");
-                }
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Choose resume" />
-              </SelectTrigger>
-              <SelectContent>
-                {resumes.map((r: IResume) => (
-                  <SelectItem key={r.shortUrl} value={r.shortUrl}>
-                    {truncateText(r.title, window.innerWidth > 400 ? 40 : 20)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {selectedResume && (
-              <p className="text-sm text-muted-foreground">
-                Last updated:
-                {new Date(selectedResume.updatedAt).toLocaleDateString()}
-              </p>
-            )}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Share Settings</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-1">
-              <Label>Shareable Link</Label>
-              <div className="flex flex-col sm:flex-row gap-2 items-center">
-                <p className="text-sm break-all flex-1 text-muted-foreground">
-                  {truncateText(url, window.innerWidth > 400 ? 40 : 25)}
-
-                  <button
-                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                      const button = e.target as HTMLButtonElement;
-                      const span = button.previousSibling as HTMLSpanElement;
-
-                      span!.textContent = url;
-                      button.style.display = "none";
-                    }}
-                  >
-                    more
-                  </button>
-                  {ref && (
-                    <span className=" bg-secondary p-1 rounded-md">
-                      ?ref={ref}
-                    </span>
-                  )}
+    <div >
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight">Share Resumes</h2>
+      </div>
+      <div className="flex flex-col xl:flex-row gap-6 sm:py-6  w-full">
+        <div className="flex-1 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Select Resume</CardTitle>
+              <CardDescription>
+                Pick a resume to manage sharing options
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Select
+                value={selectedResume?.shortUrl ?? ""}
+                onValueChange={(value) => {
+                  const found = resumes.find(
+                    (r: IResume) => r.shortUrl === value
+                  );
+                  if (found) {
+                    setSelectedResume(found);
+                    setUrl(window.location.origin + "/r/" + found.shortUrl);
+                    setShortUrl("");
+                    setRef("");
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose resume" />
+                </SelectTrigger>
+                <SelectContent>
+                  {resumes.map((r: IResume) => (
+                    <SelectItem key={r.shortUrl} value={r.shortUrl}>
+                      {truncateText(r.title, window.innerWidth > 400 ? 40 : 20)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {selectedResume && (
+                <p className="text-sm text-muted-foreground">
+                  Last updated:
+                  {new Date(selectedResume.updatedAt).toLocaleDateString()}
                 </p>
-                <div className=" flex gap-x-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => handleCopy(`${url}${ref && "?ref=" + ref}`)}
-                  >
-                    <Copy size={16} />
-                    Copy
-                  </Button>
-                  <Button
-                    onClick={() => handleShare(`${url}${ref && "?ref=" + ref}`)}
-                  >
-                    <Share2 size={16} />
-                    Share
-                  </Button>
+              )}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Share Settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-1">
+                <Label>Shareable Link</Label>
+                <div className="flex flex-col sm:flex-row gap-2 items-center">
+                  <p className="text-sm break-all flex-1 text-muted-foreground">
+                    {truncateText(url, window.innerWidth > 400 ? 40 : 25)}
+
+                    <button
+                      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                        const button = e.target as HTMLButtonElement;
+                        const span = button.previousSibling as HTMLSpanElement;
+
+                        span!.textContent = url;
+                        button.style.display = "none";
+                      }}
+                    >
+                      more
+                    </button>
+                    {ref && (
+                      <span className=" bg-secondary p-1 rounded-md">
+                        ?ref={ref}
+                      </span>
+                    )}
+                  </p>
+                  <div className=" flex gap-x-4">
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        handleCopy(`${url}${ref && "?ref=" + ref}`)
+                      }
+                    >
+                      <Copy size={16} />
+                      Copy
+                    </Button>
+                    <Button
+                      onClick={() =>
+                        handleShare(`${url}${ref && "?ref=" + ref}`)
+                      }
+                    >
+                      <Share2 size={16} />
+                      Share
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="space-y-1">
-              <Label className="flex items-center gap-2 mb-2">
-                Add Reference
-                <div className="relative  group cursor-pointer">
-                  <Info size={14} className=" text-gray-500" />
-                  <div className="absolute sm:left-6 -top-2  sm:w-80 w-60 -left-10 text-xs bg-background p-2 border rounded shadow-md z-10 hidden group-hover:block">
-                    Add labels like ‘LinkedIn’, ‘Email’, or any label you want
-                    to track to your links, so you can see where people found
-                    your resume.
-                  </div>
-                </div>
-              </Label>
-              <Input
-                placeholder="e.g. linkedin_message, email"
-                value={ref}
-                onChange={handleRefChange}
-              />
-              {showRefError && (
-                <p className="text-xs text-red-500">
-                  Only letters, numbers and underscores allowed.
-                </p>
-              )}
-            </div>
-
-            <div className="">
-              <>
-                <Label className="">Short URL</Label>
-                <p className="text-sm text-muted-foreground mb-4">
-                  In case the shared URL looks too long, you can generate a
-                  shortened version below
-                </p>
-                {shortUrl ? (
-                  <div className="flex items-center justify-between">
-                    <p className="break-all text-sm text-muted-foreground">
-                      {shortUrl}
-                    </p>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => handleCopy(shortUrl)}
-                      >
-                        <Copy size={16} />
-                        Copy
-                      </Button>
-                      <Button  onClick={() => handleShare(shortUrl)}>
-                        <Share2 size={16} />
-                        Share
-                      </Button>
+              <div className="space-y-1">
+                <Label className="flex items-center gap-2 mb-2">
+                  Add Reference
+                  <div className="relative  group cursor-pointer">
+                    <Info size={14} className=" text-gray-500" />
+                    <div className="absolute sm:left-6 -top-2  sm:w-80 w-60 -left-10 text-xs bg-background p-2 border rounded shadow-md z-10 hidden group-hover:block">
+                      Add labels like ‘LinkedIn’, ‘Email’, or any label you want
+                      to track to your links, so you can see where people found
+                      your resume.
                     </div>
                   </div>
-                ) : (
-                  <Button
-                    disabled={loading}
-                    onClick={() => shortenUrl(`${url}${ref && "?ref=" + ref}`)}
-                  >
-                    <Link2 size={20} />
-                    {loading ? "Generating..." : "Generate Short URL"}
-                  </Button>
-                )}
-              </>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="w-full lg:max-w-sm flex flex-col space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>QR Code</CardTitle>
-            <CardDescription>
-              QR for the resume - &quot;{selectedResume?.title}&quot;
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center">
-            {!qrOpen ? (
-              <Button onClick={() => setQrOpen(!qrOpen)} className="mb-3">
-                <QrCode />
-                View QR Code
-              </Button>
-            ) : (
-              <Button
-                variant="secondary"
-                onClick={() => setQrOpen(!qrOpen)}
-                className="mb-3"
-              >
-                <X />
-                Close
-              </Button>
-            )}
-            <div
-              className={` duration-300 overflow-hidden ${
-                qrOpen ? "h-56" : "h-0 "
-              }`}
-            >
-              {selectedResume && (
-                <QRCodeSVG
-                  id="qr-code"
-                  value={`${url}?ref=owner-share-qrcode`}
-                  size={192}
+                </Label>
+                <Input
+                  placeholder="e.g. linkedin_message, email"
+                  value={ref}
+                  onChange={handleRefChange}
                 />
+                {showRefError && (
+                  <p className="text-xs text-red-500">
+                    Only letters, numbers and underscores allowed.
+                  </p>
+                )}
+              </div>
+
+              <div className="">
+                <>
+                  <Label className="">Short URL</Label>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    In case the shared URL looks too long, you can generate a
+                    shortened version below
+                  </p>
+                  {shortUrl ? (
+                    <div className="flex items-center justify-between">
+                      <p className="break-all text-sm text-muted-foreground">
+                        {shortUrl}
+                      </p>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => handleCopy(shortUrl)}
+                        >
+                          <Copy size={16} />
+                          Copy
+                        </Button>
+                        <Button onClick={() => handleShare(shortUrl)}>
+                          <Share2 size={16} />
+                          Share
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <Button
+                      disabled={loading}
+                      onClick={() =>
+                        shortenUrl(`${url}${ref && "?ref=" + ref}`)
+                      }
+                    >
+                      <Link2 size={20} />
+                      {loading ? "Generating..." : "Generate Short URL"}
+                    </Button>
+                  )}
+                </>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="w-full lg:max-w-sm flex flex-col space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>QR Code</CardTitle>
+              <CardDescription>
+                QR for the resume - &quot;{selectedResume?.title}&quot;
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center">
+              {!qrOpen ? (
+                <Button onClick={() => setQrOpen(!qrOpen)} className="mb-3">
+                  <QrCode />
+                  View QR Code
+                </Button>
+              ) : (
+                <Button
+                  variant="secondary"
+                  onClick={() => setQrOpen(!qrOpen)}
+                  className="mb-3"
+                >
+                  <X />
+                  Close
+                </Button>
               )}
-            </div>
-            <Button variant="outline" onClick={handleDownloadQR}>
-              <Download />
-              Download QR
-            </Button>
-          </CardContent>
-        </Card>
+              <div
+                className={` duration-300 overflow-hidden ${
+                  qrOpen ? "h-56" : "h-0 "
+                }`}
+              >
+                {selectedResume && (
+                  <QRCodeSVG
+                    id="qr-code"
+                    value={`${url}?ref=owner-share-qrcode`}
+                    size={192}
+                  />
+                )}
+              </div>
+              <Button variant="outline" onClick={handleDownloadQR}>
+                <Download />
+                Download QR
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

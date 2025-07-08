@@ -48,7 +48,6 @@ import type { IResume } from "@/models/resume";
 import Link from "next/link";
 import useResumes from "@/app/hooks/get-resumes";
 
-// Define types for our form data
 type SocialLink = {
   platform: string;
   url: string;
@@ -108,7 +107,6 @@ type FormData = {
   certifications: Certification[];
 };
 
-// Initial form data
 const initialFormData: FormData = {
   personalInfo: {
     name: "",
@@ -163,7 +161,6 @@ const initialFormData: FormData = {
   ],
 };
 
-// Mock data for existing resumes
 const mockResumes = [
   {
     id: "1",
@@ -185,13 +182,11 @@ const mockResumes = [
   },
 ];
 
-// Steps for the form
 const steps = [
   "Personal Information",
   "Social Links",
   "Work Experience",
   "Skills",
-  "Projects",
   "Achievements",
   "Education",
   "Certifications",
@@ -204,7 +199,6 @@ export default function CreatePortfolioPage() {
   const { userData,fetchUserData } = useGetUserData();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<FormData>(() => {
-    // Check if we're in the browser environment
     if (typeof window !== "undefined") {
       const savedData = localStorage.getItem("portfolioFormData");
       return savedData ? JSON.parse(savedData) : initialFormData;
@@ -215,7 +209,6 @@ export default function CreatePortfolioPage() {
     "right"
   );
 
-  // State for AI extraction
   const [showDataSourceSelection, setShowDataSourceSelection] = useState(true);
   const [dataSource, setDataSource] = useState<"manual" | "ai">("manual");
   const [aiOption, setAiOption] = useState<"upload" | "existing">("upload");
@@ -225,21 +218,19 @@ export default function CreatePortfolioPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
 
-  // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
     }
   };
-  // Process resume with AI
   const processResumeWithAI = async (resumeSource: string) => {
     setIsProcessing(true);
     try {
       const formData = new FormData();
       if (aiOption === "upload" && file) {
-        formData.append("pdf", file); // File upload case
+        formData.append("pdf", file); 
       } else if (aiOption === "existing" && resumeSource) {
-        formData.append("firebaseUrl", resumeSource); // Firebase URL case
+        formData.append("firebaseUrl", resumeSource); 
       } else {
         alert("Missing resume input");
         return;
@@ -260,19 +251,15 @@ export default function CreatePortfolioPage() {
       if (!data) {
         throw new Error("No data returned from AI processing");
       }
-      // Map the API response to our form data structure
       const newFormData = { ...initialFormData };
 
-      // Personal info
       newFormData.personalInfo.name = data.name || "";
       newFormData.personalInfo.email = data.email || "";
       newFormData.personalInfo.phone = data.phone || "";
       newFormData.personalInfo.location = data.location || "";
 
-      // Social links
       if (data.socialLinks && data.socialLinks.length > 0) {
         newFormData.socialLinks = data.socialLinks.map((link) => {
-          // Simple logic to determine platform from URL
           let platform = "Website";
           if (link.includes("linkedin")) platform = "LinkedIn";
           else if (link.includes("github")) platform = "GitHub";
@@ -285,7 +272,6 @@ export default function CreatePortfolioPage() {
         });
       }
 
-      // Work experience
       if (data.workExperience && data.workExperience.length > 0) {
         newFormData.workExperience = data.workExperience.map((exp) => ({
           company: exp.company || "",
@@ -296,12 +282,10 @@ export default function CreatePortfolioPage() {
         }));
       }
 
-      // Skills
       if (data.skills && data.skills.length > 0) {
         newFormData.skills = data.skills;
       }
 
-      // Projects
       if (data.projects && data.projects.length > 0) {
         newFormData.projects = data.projects.map((project) => ({
           name: project.name || "",
@@ -312,7 +296,6 @@ export default function CreatePortfolioPage() {
         }));
       }
 
-      // Achievements
       if (data.achievements && data.achievements.length > 0) {
         newFormData.achievements = data.achievements.map((achievement) => ({
           description: achievement.description || "",
@@ -320,7 +303,6 @@ export default function CreatePortfolioPage() {
         }));
       }
 
-      // Education
       if (data.education && data.education.length > 0) {
         newFormData.education = data.education.map((edu) => ({
           institution: edu.institution || "",
@@ -331,7 +313,6 @@ export default function CreatePortfolioPage() {
         }));
       }
 
-      // Certifications
       if (data.certifications && data.certifications.length > 0) {
         newFormData.certifications = data.certifications.map((cert) => ({
           name: cert.name || "",
@@ -340,13 +321,10 @@ export default function CreatePortfolioPage() {
           url: cert.url || "",
         }));
       } else {
-        // Keep the default empty certification
       }
 
-      // Update form data
       setFormData(newFormData);
 
-      // Save to localStorage
       localStorage.setItem("portfolioData", JSON.stringify(newFormData));
 
       toast({
@@ -355,7 +333,6 @@ export default function CreatePortfolioPage() {
           "Your portfolio information has been extracted from your resume.",
       });
 
-      // Move to the first step of the form
       setShowDataSourceSelection(false);
     } catch (error) {
       console.error("Error processing resume:", error);
@@ -370,7 +347,6 @@ export default function CreatePortfolioPage() {
     }
   };
 
-  // Start the form process
   const startFormProcess = () => {
     if (dataSource === "manual") {
       setShowDataSourceSelection(false);
@@ -392,17 +368,14 @@ export default function CreatePortfolioPage() {
     }
   };
 
-  // Handle next step
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setSlideDirection("right");
       setCurrentStep(currentStep + 1);
-      // Save to localStorage
       localStorage.setItem("portfolioData", JSON.stringify(formData));
     }
   };
 
-  // Handle previous step
   const handlePrevious = () => {
     if (currentStep > 0) {
       setSlideDirection("left");
@@ -410,7 +383,6 @@ export default function CreatePortfolioPage() {
     }
   };
 
-  // Handle form submission
   const handleSubmit = async () => {
     localStorage.setItem("portfolioFormData", JSON.stringify(formData));
 
@@ -444,7 +416,6 @@ export default function CreatePortfolioPage() {
     // router.push("/portfolio/dashboard");
   };
 
-  // Update personal info
   const updatePersonalInfo = (
     field: keyof FormData["personalInfo"],
     value: string
@@ -458,7 +429,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Add social link
   const addSocialLink = () => {
     setFormData({
       ...formData,
@@ -466,7 +436,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Update social link
   const updateSocialLink = (
     index: number,
     field: keyof SocialLink,
@@ -480,7 +449,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Remove social link
   const removeSocialLink = (index: number) => {
     const updatedLinks = [...formData.socialLinks];
     updatedLinks.splice(index, 1);
@@ -490,7 +458,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Add work experience
   const addWorkExperience = () => {
     setFormData({
       ...formData,
@@ -507,7 +474,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Update work experience
   const updateWorkExperience = (
     index: number,
     field: keyof WorkExperience,
@@ -524,7 +490,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Remove work experience
   const removeWorkExperience = (index: number) => {
     const updatedExperiences = [...formData.workExperience];
     updatedExperiences.splice(index, 1);
@@ -534,7 +499,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Add skill
   const addSkill = () => {
     setFormData({
       ...formData,
@@ -542,7 +506,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Update skill
   const updateSkill = (index: number, value: string) => {
     if (formData.skills.length == 15) return;
 
@@ -560,7 +523,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Remove skill
   const removeSkill = (index: number) => {
     const updatedSkills = [...formData.skills];
     updatedSkills.splice(index, 1);
@@ -570,7 +532,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Add project
   const addProject = () => {
     setFormData({
       ...formData,
@@ -587,7 +548,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Update project
   const updateProject = (
     index: number,
     field: keyof Project,
@@ -601,7 +561,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Remove project
   const removeProject = (index: number) => {
     const updatedProjects = [...formData.projects];
     updatedProjects.splice(index, 1);
@@ -611,7 +570,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Add achievement
   const addAchievement = () => {
     setFormData({
       ...formData,
@@ -625,7 +583,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Update achievement
   const updateAchievement = (
     index: number,
     field: keyof Achievement,
@@ -642,7 +599,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Remove achievement
   const removeAchievement = (index: number) => {
     const updatedAchievements = [...formData.achievements];
     updatedAchievements.splice(index, 1);
@@ -652,7 +608,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Add education
   const addEducation = () => {
     setFormData({
       ...formData,
@@ -663,7 +618,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Update education
   const updateEducation = (
     index: number,
     field: keyof Education,
@@ -677,7 +631,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Remove education
   const removeEducation = (index: number) => {
     const updatedEducation = [...formData.education];
     updatedEducation.splice(index, 1);
@@ -687,7 +640,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Add certification
   const addCertification = () => {
     setFormData({
       ...formData,
@@ -698,7 +650,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Update certification
   const updateCertification = (
     index: number,
     field: keyof Certification,
@@ -715,7 +666,6 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  // Remove certification
   const removeCertification = (index: number) => {
     const updatedCertifications = [...formData.certifications];
     updatedCertifications.splice(index, 1);
@@ -793,7 +743,6 @@ export default function CreatePortfolioPage() {
   //   return (
   //     <div className="min-h-screen  p-6">
   //       <div className="max-w-7xl mx-auto">
-  //         {/* Header Section */}
   //         <div className="mb-8">
   //           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
   //             <div>
@@ -813,7 +762,6 @@ export default function CreatePortfolioPage() {
   //           </div>
   //         </div>
 
-  //         {/* Template Selection */}
   //         <div className="mb-8">
   //           <div className="flex items-center gap-2 mb-6">
   //             <Sparkles className="w-5 h-5 text-blue-600" />
@@ -842,7 +790,6 @@ export default function CreatePortfolioPage() {
   //                   }}
   //                 >
   //                   <CardContent className="p-0 h-full">
-  //                     {/* Template Preview Image */}
   //                     <div className="relative h-48 overflow-hidden rounded-t-lg">
   //                       <img
   //                         src="https://www.soorajrao.in/images/projects/resume/home.png"
@@ -850,14 +797,12 @@ export default function CreatePortfolioPage() {
   //                         className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
   //                       />
 
-  //                       {/* Selection Indicator */}
   //                       {selectedTemplate === template.id && (
   //                         <div className="absolute top-3 left-3 bg-blue-600 text-white rounded-full p-1">
   //                           <Check className="w-4 h-4" />
   //                         </div>
   //                       )}
 
-  //                       {/* Demo Link */}
   //                       <Link
   //                         href={"https://google.com"}
   //                         // href={template.demoLink}
@@ -871,11 +816,9 @@ export default function CreatePortfolioPage() {
   //                         </Button>
   //                       </Link>
 
-  //                       {/* Overlay on hover */}
   //                       <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
   //                     </div>
 
-  //                     {/* Template Info */}
   //                     <div className="p-4 space-y-3">
   //                       <div className="flex items-center justify-between">
   //                         <h3 className="font-semibold  group-hover:text-blue-600 transition-colors">
@@ -893,7 +836,6 @@ export default function CreatePortfolioPage() {
   //           </div>
   //         </div>
 
-  //         {/* Save Button */}
   //         {!userData?.templateId ||
   //           (userData?.templateId !== selectedTemplate && (
   //             <div className="fixed lg:hidden bottom-6 right-6 z-50">
@@ -922,7 +864,6 @@ export default function CreatePortfolioPage() {
   //             </div>
   //           ))}
 
-  //         {/* Alternative Save Button for larger screens */}
   //         {!userData?.templateId ||
   //           (userData?.templateId !== selectedTemplate && (
   //             <div className="hidden lg:block">
@@ -962,7 +903,6 @@ export default function CreatePortfolioPage() {
   if (userData?.hasPorfolioData) {
     router.push("/portfolio/manage");
   }
-  // If we're showing the data source selection
   if (showDataSourceSelection) {
     return (
       <div className=" ">
@@ -1107,7 +1047,6 @@ export default function CreatePortfolioPage() {
     );
   }
 
-  // Regular form steps
   return (
     <div className=" px-4">
       <div className="mb-8">
@@ -1523,7 +1462,6 @@ export default function CreatePortfolioPage() {
           {currentStep === 4 && (
             <Card>
               <CardHeader>
-                <CardTitle>Projects</CardTitle>
                 <CardDescription>
                   Add your projects. All fields are optional.
                 </CardDescription>
@@ -2049,7 +1987,6 @@ export default function CreatePortfolioPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="font-semibold">Projects</h3>
                   {formData.projects.length > 0 && formData.projects[0].name ? (
                     <div className="space-y-4">
                       {formData.projects.map((project, index) => (

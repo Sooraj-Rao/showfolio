@@ -30,7 +30,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
 
     const { data: response } = await axios.post(endpoint, data);
     if (response.user) {
-      router.push("/"); // Redirect to the home/dashboard page after success
+      router.push("/");
     } else {
       setError(response.message || "An error occurred. Please try again.");
     }

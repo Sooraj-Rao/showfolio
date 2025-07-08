@@ -81,13 +81,11 @@ export default function AnalyticsDesc({ data }: AnalyticsDescProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Filter and search functionality
   const filteredData = useMemo(() => {
     if (!data) return [];
 
     let filtered = data;
 
-    // Apply category filter
     if (filterBy !== "all") {
       filtered = filtered.filter((item) => {
         switch (filterBy) {
@@ -111,7 +109,6 @@ export default function AnalyticsDesc({ data }: AnalyticsDescProps) {
       });
     }
 
-    // Apply search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
       filtered = filtered.filter((item) => {
@@ -135,25 +132,21 @@ export default function AnalyticsDesc({ data }: AnalyticsDescProps) {
       });
     }
 
-    // Sort by most recent first
     return filtered.sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }, [data, searchQuery, filterBy]);
 
-  // Pagination logic
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedData = filteredData.slice(startIndex, endIndex);
 
-  // Reset to first page when filters change
   useMemo(() => {
     setCurrentPage(1);
   }, [searchQuery, filterBy]);
 
-  // Helper functions
   const getEventIcon = (event: string) => {
     if (event.includes("view"))
       return <Eye className="w-4 h-4 text-blue-600" />;
@@ -424,7 +417,6 @@ export default function AnalyticsDesc({ data }: AnalyticsDescProps) {
                                 </DialogHeader>
 
                                 <div className="space-y-6">
-                                  {/* Resume Information */}
                                   <div className="space-y-3">
                                     <h3 className="font-semibold text-lg flex items-center gap-2">
                                       <Eye className="w-5 h-5" />
@@ -526,7 +518,6 @@ export default function AnalyticsDesc({ data }: AnalyticsDescProps) {
                                     </div>
                                   </div>
 
-                                  {/* Device & Browser Information */}
                                   <div className="space-y-3">
                                     <h3 className="font-semibold text-lg flex items-center gap-2">
                                       <Monitor className="w-5 h-5" />
@@ -563,7 +554,6 @@ export default function AnalyticsDesc({ data }: AnalyticsDescProps) {
                                     </div>
                                   </div>
 
-                                  {/* Referrer Information */}
                                   <div className="space-y-3">
                                     <h3 className="font-semibold text-lg flex items-center gap-2">
                                       <ExternalLink className="w-5 h-5" />
@@ -633,7 +623,6 @@ export default function AnalyticsDesc({ data }: AnalyticsDescProps) {
             </div>
           </div>
 
-          {/* Pagination */}
           {filteredData.length > itemsPerPage && (
             <div className="flex items-center justify-between">
               <div className="text-sm text-muted-foreground">
@@ -700,7 +689,6 @@ export default function AnalyticsDesc({ data }: AnalyticsDescProps) {
             </div>
           )}
 
-          {/* Summary */}
           {filteredData.length > 0 && (
             <div className="flex items-center justify-between text-sm text-muted-foreground pt-4 border-t">
               <span>Total events: {filteredData.length}</span>

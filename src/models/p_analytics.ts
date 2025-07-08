@@ -1,29 +1,26 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
 const PortfolioAnalyticsSchema = new mongoose.Schema(
   {
-    // Session tracking
     sessionId: {
       type: String,
       required: true,
       index: true,
     },
 
-    // Page/Route information
     page: {
       type: String,
-      required: true, // e.g., '/portfolio', '/about', '/blog/post-1'
+      required: true,
     },
 
     section: {
-      type: String, // e.g., 'hero', 'projects', 'about', 'contact'
+      type: String,
     },
 
     anchor: {
-      type: String, // for # anchors like '#projects', '#contact'
+      type: String,
     },
 
-    // Event tracking
     event: {
       type: String,
       required: true,
@@ -41,23 +38,20 @@ const PortfolioAnalyticsSchema = new mongoose.Schema(
       ],
     },
 
-    // Time tracking
     timeSpent: {
-      type: Number, // in seconds
+      type: Number,
       default: 0,
     },
 
     scrollDepth: {
-      type: Number, // percentage (0-100)
+      type: Number,
       default: 0,
     },
 
-    // Click tracking
     clickTarget: {
-      type: String, // element clicked, project name, link URL, etc.
+      type: String,
     },
 
-    // Device & Browser info
     device: {
       type: String,
       enum: ["desktop", "mobile", "tablet"],
@@ -75,10 +69,9 @@ const PortfolioAnalyticsSchema = new mongoose.Schema(
     },
 
     screenResolution: {
-      type: String, // e.g., '1920x1080'
+      type: String,
     },
 
-    // Location (from /api/loc)
     city: {
       type: String,
       required: true,
@@ -99,25 +92,21 @@ const PortfolioAnalyticsSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Traffic source
     referrer: {
-      type: String, // from ref parameter or document.referrer
+      type: String,
       default: null,
     },
 
-    // User agent for additional analysis
     userAgent: {
       type: String,
       required: true,
     },
 
-    // IP for session tracking (hashed for privacy)
     ipHash: {
       type: String,
       required: true,
     },
 
-    // Timestamps
     timestamp: {
       type: Date,
       default: Date.now,
@@ -126,14 +115,14 @@ const PortfolioAnalyticsSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
-)
+  }
+);
 
-// Indexes for better query performance
-PortfolioAnalyticsSchema.index({ sessionId: 1, timestamp: -1 })
-PortfolioAnalyticsSchema.index({ event: 1, timestamp: -1 })
-PortfolioAnalyticsSchema.index({ page: 1, timestamp: -1 })
-PortfolioAnalyticsSchema.index({ country: 1, timestamp: -1 })
-PortfolioAnalyticsSchema.index({ device: 1, timestamp: -1 })
+PortfolioAnalyticsSchema.index({ sessionId: 1, timestamp: -1 });
+PortfolioAnalyticsSchema.index({ event: 1, timestamp: -1 });
+PortfolioAnalyticsSchema.index({ page: 1, timestamp: -1 });
+PortfolioAnalyticsSchema.index({ country: 1, timestamp: -1 });
+PortfolioAnalyticsSchema.index({ device: 1, timestamp: -1 });
 
-export default mongoose.models.PortfolioAnalytics || mongoose.model("PortfolioAnalytics", PortfolioAnalyticsSchema)
+export default mongoose.models.PortfolioAnalytics ||
+  mongoose.model("PortfolioAnalytics", PortfolioAnalyticsSchema);

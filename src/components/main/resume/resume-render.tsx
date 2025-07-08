@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-// import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   Download,
@@ -153,7 +152,6 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
       }
     }
   };
-  
 
   const handleContact = () => {
     if (resumeData?.email) {
@@ -191,7 +189,6 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Resume Not Found
               </h3>
-              {/* <p className="text-gray-600 dark:text-gray-400">{error}</p> */}
             </div>
             <Button onClick={() => router.push("/")} className="w-full">
               Explore ResumeOrg
@@ -274,12 +271,6 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
                             : "UN"}
                         </AvatarFallback>
                       </Avatar>
-                      {/* <Badge
-                        variant="secondary"
-                        className="absolute -bottom-2 left-1/2 transform -trangray-x-1/2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800"
-                      >
-                        Available
-                      </Badge> */}
                     </div>
 
                     <div className="space-y-1">

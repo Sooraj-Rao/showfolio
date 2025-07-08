@@ -24,8 +24,8 @@ export function ModeToggle({
   return (
     <Button
       title={`${capitalized} mode`}
-      variant="ghost"
-      className="w-fit"
+      variant='link'
+      className="w-fit text-muted-foreground"
       onClick={() => {
         setTheme(nextTheme);
         if (themeMode && setthemeMode) setthemeMode(nextTheme);

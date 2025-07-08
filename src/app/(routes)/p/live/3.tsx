@@ -141,7 +141,6 @@ export default function Three({
 
   return (
     <div className="bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
-      {/* Floating Navigation */}
       <nav className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 bg-black/20 backdrop-blur-lg rounded-full px-6 py-3 border border-white/10">
         <div className="flex gap-6">
           {availableSections.map((item) => (
@@ -160,12 +159,10 @@ export default function Three({
         </div>
       </nav>
 
-      {/* Hero Section */}
       <section
         ref={heroRef}
         className="min-h-screen flex items-center justify-center relative overflow-hidden"
       >
-        {/* Animated Background Elements */}
         <div className="absolute inset-0">
           <div className="absolute top-20 left-20 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-20 right-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
@@ -251,7 +248,6 @@ export default function Three({
         </div>
       </section>
 
-      {/* About Section */}
       {(portfolioData.personalInfo?.bio ||
         hasData("workExperience") ||
         hasData("education")) && (
@@ -374,7 +370,6 @@ export default function Three({
         </section>
       )}
 
-      {/* Projects Section */}
       {hasData("projects") && (
         <section ref={projectsRef} className="min-h-screen py-20 px-8">
           <div className="max-w-7xl mx-auto">
@@ -438,7 +433,6 @@ export default function Three({
         </section>
       )}
 
-      {/* Skills Section */}
       {hasData("skills") && (
         <section
           ref={skillsRef}
@@ -466,7 +460,6 @@ export default function Three({
         </section>
       )}
 
-      {/* Achievements Section */}
       {hasData("achievements") && (
         <section
           ref={achievementsRef}
@@ -510,7 +503,6 @@ export default function Three({
         </section>
       )}
 
-      {/* Contact Section */}
       <section
         ref={contactRef}
         className="min-h-screen py-20 px-8 flex items-center"

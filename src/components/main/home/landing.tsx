@@ -97,13 +97,11 @@ export function LandingPage() {
     <div className="flex flex-col min-h-screen">
       <SiteNav />
 
-      {/* Hero Section */}
       <section className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <div className="absolute inset-0 bg-gradient-to-b from-background to-muted/30 dark:from-background dark:to-background"></div>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent"></div>
 
-          {/* Animated background elements */}
           <motion.div
             className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-primary/5 blur-3xl"
             animate={{
@@ -220,7 +218,6 @@ export function LandingPage() {
                 </motion.div>
               </ScrollReveal>
 
-              {/* Floating Elements */}
               <ScrollReveal delay={0.3} direction="down">
                 <motion.div
                   className="absolute -top-8 -right-8 w-40 h-40 rounded-lg bg-background border shadow-lg p-3 flex flex-col justify-between hidden sm:flex"
@@ -287,11 +284,9 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Features Section */}
       <section id="features" className="py-20 relative overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-muted/30 dark:bg-muted/5"></div>
 
-        {/* Animated background elements */}
         <motion.div
           className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full bg-primary/5 blur-3xl"
           animate={{
@@ -402,7 +397,6 @@ export function LandingPage() {
                     </motion.div>
                   </div>
 
-                  {/* Animated gradient border on hover */}
                   <motion.div
                     className="absolute -inset-px rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                     style={{
@@ -532,7 +526,6 @@ export function LandingPage() {
                     </motion.div>
                   </motion.div>
 
-                  {/* Decorative elements */}
                   <motion.div
                     className="absolute -z-10 -bottom-6 -right-6 w-32 h-32 rounded-full bg-primary/10"
                     animate={{
@@ -552,12 +545,10 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Portfolio Showcase */}
       <section
         id="portfolio"
         className="py-20 bg-muted/50 dark:bg-muted/5 relative overflow-hidden"
       >
-        {/* Animated background elements */}
         <motion.div
           className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/5 blur-3xl"
           animate={{
@@ -599,7 +590,6 @@ export function LandingPage() {
                 </motion.div>
               </ScrollReveal>
 
-              {/* Floating Elements */}
               <ScrollReveal delay={0.2} direction="up">
                 <motion.div
                   className="absolute -top-6 -right-6 w-48 rounded-lg bg-background border shadow-lg p-3 hidden sm:block"
@@ -718,9 +708,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Analytics Section */}
       <section id="analytics" className="py-20 relative overflow-hidden">
-        {/* Animated background elements */}
         <motion.div
           className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-primary/5 blur-3xl"
           animate={{
@@ -836,7 +824,6 @@ export function LandingPage() {
                 </motion.div>
               </ScrollReveal>
 
-              {/* Floating Elements */}
               <ScrollReveal delay={0.3} direction="up">
                 <motion.div
                   className="absolute -top-6 -left-6 w-48 rounded-lg bg-background border shadow-lg p-3 hidden sm:block"
@@ -940,11 +927,9 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-20 relative overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-primary"></div>
 
-        {/* Animated background elements */}
         <motion.div
           className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary-foreground/10 via-transparent to-transparent"
           animate={{
@@ -999,7 +984,6 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="py-12 border-t">
         <div className="container px-4">
           <div className="flex flex-col md:flex-row justify-between gap-8">

@@ -204,7 +204,7 @@ interface PortfolioData {
     imageUrl?: string;
     link?: string;
   }>;
-  skills?: Record<string, string[]> | string[]; // Support both old and new format
+  skills?: Record<string, string[]> | string[]; 
   workExperience?: Array<{
     position: string;
     company: string;
@@ -289,7 +289,6 @@ export default function ModernPortfolioWithAnalytics({
     return false;
   };
 
-  // Check if skills data exists (both old and new format)
   const hasSkillsData = () => {
     if (!portfolioData?.skills) return false;
     if (Array.isArray(portfolioData.skills)) {
@@ -307,46 +306,38 @@ export default function ModernPortfolioWithAnalytics({
   const handleSectionChange = (section: string) => {
     setActiveSection(section);
     setIsMobileMenuOpen(false);
-    // Track section navigation
     trackClick(`navigation_${section}`, "navigation");
   };
 
   const handleProjectClick = (project: any) => {
-    // Track project view
     trackProjectView(project.name);
 
     if (project.link) {
-      // Track external link click
       trackExternalLink(project.link, "projects");
       window.open(project.link, "_blank");
     }
   };
 
   const handleSocialClick = (link: any) => {
-    // Track social link click
     trackSocialLink(link.platform);
     window.open(link.url, "_blank");
   };
 
   const handleExternalLink = (url: string, section = "general") => {
-    // Track external link click
     trackExternalLink(url, section);
     window.open(url, "_blank");
   };
 
   const handleThemeChange = (newTheme: keyof typeof themes) => {
     setCurrentTheme(newTheme);
-    // Track theme change
     trackClick(`theme_${newTheme}`, "theme");
   };
 
   const handleResumeDownload = () => {
-    // Track resume download
     trackClick("resume_download", "resume");
   };
 
   const handleContactClick = () => {
-    // Track contact button click
     trackClick("contact_button", "contact");
     if (portfolioData?.personalInfo?.email) {
       window.open(`mailto:${portfolioData.personalInfo.email}`);
@@ -354,25 +345,21 @@ export default function ModernPortfolioWithAnalytics({
   };
 
   const handlePhoneClick = () => {
-    // Track phone click
     trackClick("phone_click", "contact");
   };
 
   const handleBlogPostClick = (blog: any, index: number) => {
     setActiveBlogPost(`blog-${index}`);
-    // Track blog post view
     trackClick(`blog_${blog.title}`, "blog");
   };
 
   const handleBlogBackClick = () => {
     setActiveBlogPost(null);
-    // Track blog back navigation
     trackClick("blog_back", "blog");
   };
 
   const handleMobileMenuToggle = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
-    // Track mobile menu toggle
     trackClick(
       `mobile_menu_${!isMobileMenuOpen ? "open" : "close"}`,
       "navigation"
@@ -380,12 +367,10 @@ export default function ModernPortfolioWithAnalytics({
   };
 
   const handleSkillClick = (skill: string, category?: string) => {
-    // Track skill click
     trackClick(`skill_${skill}`, category || "skills");
   };
 
   const handleAchievementClick = (achievement: any) => {
-    // Track achievement link click
     trackClick(
       `achievement_${achievement.description.substring(0, 30)}`,
       "achievements"
@@ -394,7 +379,6 @@ export default function ModernPortfolioWithAnalytics({
   };
 
   const handleCertificationClick = (cert: any) => {
-    // Track certification link click
     trackClick(`certification_${cert.name}`, "certifications");
     handleExternalLink(cert.url, "certifications");
   };
@@ -622,7 +606,6 @@ export default function ModernPortfolioWithAnalytics({
           );
         }
 
-        // Handle both old array format and new categorized format
         const skillsData = portfolioData?.skills;
         const isOldFormat = Array.isArray(skillsData);
 
@@ -641,7 +624,6 @@ export default function ModernPortfolioWithAnalytics({
             </div>
 
             {isOldFormat ? (
-              // Old format - simple grid
               <div className="max-w-4xl mx-auto">
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                   {(skillsData as string[]).map((skill, index) => (
@@ -663,7 +645,6 @@ export default function ModernPortfolioWithAnalytics({
                 </div>
               </div>
             ) : (
-              // New categorized format
               <div className="max-w-6xl mx-auto space-y-12">
                 {Object.entries(skillsData as Record<string, string[]>).map(
                   ([category, skills]) => {
@@ -876,7 +857,6 @@ export default function ModernPortfolioWithAnalytics({
       className={`min-h-screen bg-background text-foreground transition-all duration-500 ${theme?.gradient}`}
       id="portfolio-container"
     >
-      {/* Mobile Header */}
       <div
         className="lg:hidden sticky top-0 z-50 backdrop-blur-md bg-background/80 border-b border-border"
         id="mobile-header"
@@ -923,7 +903,6 @@ export default function ModernPortfolioWithAnalytics({
           </div>
         </div>
 
-        {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div
             className="border-t border-border bg-background/95 backdrop-blur-md"
@@ -998,7 +977,6 @@ export default function ModernPortfolioWithAnalytics({
       </div>
 
       <div className="flex">
-        {/* Desktop Sidebar */}
         <nav
           className="hidden lg:flex fixed w-80 xl:w-96 p-8 border-r border-border flex-col min-h-screen top-0"
           id="desktop-sidebar"
@@ -1151,7 +1129,6 @@ export default function ModernPortfolioWithAnalytics({
           </div>
         </nav>
 
-        {/* Main Content */}
         <div className="flex-1 lg:ml-[24rem] p-4 lg:p-8">
           <div
             className="hidden lg:flex justify-between items-center mb-12"

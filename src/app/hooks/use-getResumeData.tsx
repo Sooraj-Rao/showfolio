@@ -54,7 +54,6 @@ const useGetResumeData = () => {
 
   const handleError = (err: unknown) => {
     if (axios.isAxiosError(err)) {
-      // Axios specific error handling
       if (err.response) {
         const statusCode = err.response.status;
         switch (statusCode) {

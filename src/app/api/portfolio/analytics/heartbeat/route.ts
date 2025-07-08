@@ -49,7 +49,6 @@ export async function POST(request: NextRequest) {
     const clientIP = getClientIP(request);
     const ipHash = hashIP(clientIP);
 
-    // Update or create time_spent event for this session and page
     await PortfolioAnalytics.findOneAndUpdate(
       {
         sessionId,

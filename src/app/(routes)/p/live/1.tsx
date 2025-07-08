@@ -243,7 +243,6 @@ export default function One({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white shadow-sm border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
@@ -253,7 +252,6 @@ export default function One({
               </h1>
             </div>
 
-            {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-8">
               {availableSections.map((section) => {
                 const Icon = section.icon;
@@ -274,7 +272,6 @@ export default function One({
               })}
             </nav>
 
-            {/* Mobile menu button */}
             <div className="md:hidden">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -289,7 +286,6 @@ export default function One({
             </div>
           </div>
 
-          {/* Mobile Navigation */}
           {mobileMenuOpen && (
             <div className="md:hidden border-t border-gray-200 py-4">
               <div className="space-y-2">
@@ -319,7 +315,6 @@ export default function One({
         </div>
       </header>
 
-      {/* Home Section */}
       <section
         ref={homeRef}
         className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center"
@@ -371,7 +366,6 @@ export default function One({
             </Button>
           </div>
 
-          {/* Contact Info Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12">
             {portfolioData.personalInfo?.email && (
               <Card className="hover:shadow-lg transition-all duration-300 transform hover:scale-105">
@@ -410,7 +404,6 @@ export default function One({
             )}
           </div>
 
-          {/* Social Links */}
           {hasData("socialLinks") && (
             <div className="flex justify-center gap-4 mb-12">
               {portfolioData.socialLinks?.map((link, index) => (
@@ -442,7 +435,6 @@ export default function One({
         </div>
       </section>
 
-      {/* About Section */}
       {(portfolioData.personalInfo?.bio ||
         hasData("workExperience") ||
         hasData("education") ||
@@ -580,7 +572,6 @@ export default function One({
         </section>
       )}
 
-      {/* Projects Section */}
       {hasData("projects") && (
         <section ref={projectsRef} className="min-h-screen py-20 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -645,7 +636,6 @@ export default function One({
         </section>
       )}
 
-      {/* Skills Section */}
       {hasData("skills") && (
         <section
           ref={skillsRef}
@@ -677,7 +667,6 @@ export default function One({
         </section>
       )}
 
-      {/* Achievements Section */}
       {hasData("achievements") && (
         <section
           ref={achievementsRef}
@@ -721,7 +710,6 @@ export default function One({
         </section>
       )}
 
-      {/* Blog Section */}
       {hasData("blogs") && (
         <section ref={blogRef} className="min-h-screen py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

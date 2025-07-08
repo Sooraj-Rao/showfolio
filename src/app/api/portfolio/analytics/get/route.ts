@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const page = searchParams.get("page");
     const event = searchParams.get("event");
     const days = Number.parseInt(searchParams.get("days") || "30");
-    const limit = Number.parseInt(searchParams.get("limit") || "1000");
+    const limit = Number.parseInt(searchParams.get("limit") || "100");
     const sessionId = searchParams.get("sessionId");
 
     const query: any = {};
@@ -27,7 +27,6 @@ export async function GET(request: NextRequest) {
     if (event) query.event = event;
     if (sessionId) query.sessionId = sessionId;
 
-    // Date filter
     const dateFilter = new Date();
     dateFilter.setDate(dateFilter.getDate() - days);
     query.timestamp = { $gte: dateFilter };
@@ -35,10 +34,8 @@ export async function GET(request: NextRequest) {
     const analytics = await PortfolioAnalytics.find(query)
       .sort({ timestamp: -1 })
       .limit(limit)
-      .select("-ipHash"); // Exclude sensitive data
-
-    // Get summary statistics
-    const totalEvents = analytics.length;
+      .select("-ipHash"); 
+      const totalEvents = analytics.length;
     const uniqueSessions = new Set(analytics.map((item) => item.sessionId))
       .size;
 
@@ -57,7 +54,6 @@ export async function GET(request: NextRequest) {
       return acc;
     }, {} as Record<string, number>);
 
-    // Calculate total time spent
     const sessionTimes = analytics
       .filter((item) => item.event === "time_spent")
       .reduce((acc, item) => {

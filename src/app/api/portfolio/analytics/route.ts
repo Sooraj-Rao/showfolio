@@ -68,15 +68,12 @@ export async function POST(request: NextRequest) {
     const userAgent = request.headers.get("user-agent") || "Unknown";
     const clientIP = getClientIP(request);
 
-    // Extract device info
     const device = getDeviceType(userAgent);
     const os = getOS(userAgent);
     const browser = getBrowser(userAgent);
 
-    // Hash IP for privacy
     const ipHash = hashIP(clientIP);
 
-    // Validate required fields
     const {
       sessionId,
       page,
@@ -101,7 +98,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create analytics entry
     const analyticsData = new PortfolioAnalytics({
       sessionId,
       page,
@@ -163,7 +159,7 @@ export async function GET(request: NextRequest) {
     const analytics = await PortfolioAnalytics.find(query)
       .sort({ timestamp: -1 })
       .limit(limit)
-      .select("-ipHash -userAgent"); // Exclude sensitive data
+      .select("-ipHash -userAgent"); 
 
     return NextResponse.json({
       success: true,

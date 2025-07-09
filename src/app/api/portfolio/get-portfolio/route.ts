@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
     const url = new URL(req.url);
     const username = url.searchParams.get("username");
     const user = await User.findOne({ portfolio: username }).select(
-      "portfolioData templateId portfolioSettings imageUrl private"
+      "portfolioData templateId portfolioSettings imageUrl private _id"
     );
 
     if (!user || user?.private?.profile == true) {
@@ -16,11 +16,16 @@ export async function GET(req: NextRequest) {
     }
     return NextResponse.json(
       {
+        id: user._id,
         portfolio: JSON.parse(user.portfolioData || "{}"),
         templateId: user.templateId,
         theme: user.portfolioSettings.themeColor,
         themeMode: user.portfolioSettings.theme,
         imageUrl: user.imageUrl,
+        portfolioSettings: {
+          analytics: user.portfolioSettings.analyticsTrack,
+          contacts: user.portfolioSettings.showContacts,
+        },
       },
       { status: 200 }
     );

@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
       region,
       country,
       countryCode,
+      user
     } = body;
 
     if (!sessionId || !page) {
@@ -58,6 +59,7 @@ export async function POST(request: NextRequest) {
       },
       {
         $set: {
+          user,
           timeSpent: timeSpent || 0,
           scrollDepth: scrollDepth || 0,
           city: city || "Unknown",

@@ -37,13 +37,14 @@ function getBrowser(userAgent: string): string {
   if (ua.includes("safari") && !ua.includes("chrome")) return "Safari";
   if (ua.includes("edge")) return "Edge";
   if (ua.includes("opera")) return "Opera";
+  if (ua.includes("brave")) return "Brave";
   return "Unknown";
 }
 
 function hashIP(ip: string): string {
   return crypto
     .createHash("sha256")
-    .update(ip + process.env.IP_SALT || "default_salt")
+    .update(ip + process.env.IP_SALT || "faisuoeliqfhywebwhkjlwnkow98e7gydfhb")
     .digest("hex");
 }
 
@@ -89,6 +90,7 @@ export async function POST(request: NextRequest) {
       country,
       countryCode,
       referrer,
+      user
     } = body;
 
     if (!sessionId || !page || !event) {
@@ -99,6 +101,7 @@ export async function POST(request: NextRequest) {
     }
 
     const analyticsData = new PortfolioAnalytics({
+      user,
       sessionId,
       page,
       section: section || null,

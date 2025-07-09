@@ -161,32 +161,12 @@ const initialFormData: FormData = {
   ],
 };
 
-const mockResumes = [
-  {
-    id: "1",
-    name: "My Professional Resume",
-    date: "2023-05-15",
-    shortUrl: "resume-1",
-  },
-  {
-    id: "2",
-    name: "Technical Resume",
-    date: "2023-08-22",
-    shortUrl: "resume-2",
-  },
-  {
-    id: "3",
-    name: "Creative Portfolio Resume",
-    date: "2024-01-10",
-    shortUrl: "resume-3",
-  },
-];
-
 const steps = [
   "Personal Information",
   "Social Links",
   "Work Experience",
   "Skills",
+  "Projects",
   "Achievements",
   "Education",
   "Certifications",
@@ -196,7 +176,7 @@ const steps = [
 export default function CreatePortfolioPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { userData,fetchUserData } = useGetUserData();
+  const { userData, fetchUserData } = useGetUserData();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<FormData>(() => {
     if (typeof window !== "undefined") {
@@ -205,9 +185,6 @@ export default function CreatePortfolioPage() {
     }
     return initialFormData;
   });
-  const [slideDirection, setSlideDirection] = useState<"left" | "right">(
-    "right"
-  );
 
   const [showDataSourceSelection, setShowDataSourceSelection] = useState(true);
   const [dataSource, setDataSource] = useState<"manual" | "ai">("manual");
@@ -215,8 +192,6 @@ export default function CreatePortfolioPage() {
   const [selectedResume, setSelectedResume] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -228,9 +203,9 @@ export default function CreatePortfolioPage() {
     try {
       const formData = new FormData();
       if (aiOption === "upload" && file) {
-        formData.append("pdf", file); 
+        formData.append("pdf", file);
       } else if (aiOption === "existing" && resumeSource) {
-        formData.append("firebaseUrl", resumeSource); 
+        formData.append("firebaseUrl", resumeSource);
       } else {
         alert("Missing resume input");
         return;
@@ -370,7 +345,6 @@ export default function CreatePortfolioPage() {
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
-      setSlideDirection("right");
       setCurrentStep(currentStep + 1);
       localStorage.setItem("portfolioData", JSON.stringify(formData));
     }
@@ -378,7 +352,6 @@ export default function CreatePortfolioPage() {
 
   const handlePrevious = () => {
     if (currentStep > 0) {
-      setSlideDirection("left");
       setCurrentStep(currentStep - 1);
     }
   };
@@ -675,231 +648,10 @@ export default function CreatePortfolioPage() {
     });
   };
 
-  const handleTemplateChange = (templateId) => {
-    if (selectedTemplate == templateId) {
-      setSelectedTemplate(null);
-    } else {
-      setSelectedTemplate(templateId);
-    }
-  };
-
-  const handleTemplateSave = async () => {
-    try {
-      const res = await axios.patch("/api/portfolio/portfolio-data", {
-        templateId: selectedTemplate,
-      });
-      if (res.status === 200) {
-        toast({
-          title: "Success",
-          description: "Template selection was Successfull",
-        });
-      } else {
-        toast({
-          title: "Error saving portfolio",
-          description: "There was an error saving your portfolio.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Error saving portfolio:", error);
-      toast({
-        title: "Error saving portfolio",
-        description: "There was an error saving your portfolio.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const templates = [
-    {
-      id: "1",
-      name: "Classic",
-      image: "/templates/classic.png",
-      demoLink: "/templates/demo/classic",
-    },
-    {
-      id: "2",
-      name: "Modern",
-      image: "/templates/modern.png",
-      demoLink: "/templates/demo/modern",
-    },
-    {
-      id: "3",
-      name: "Minimalist",
-      image: "/templates/minimalist.png",
-      demoLink: "/templates/demo/minimalist",
-    },
-  ];
-
-  useEffect(() => {
-    if (userData?.templateId) setSelectedTemplate(userData?.templateId);
-  }, [userData?.templateId]);
-
   useEffect(() => {
     fetchUserData();
   }, []);
 
-  // if (userData?.hasPorfolioData) {
-  //   return (
-  //     <div className="min-h-screen  p-6">
-  //       <div className="max-w-7xl mx-auto">
-  //         <div className="mb-8">
-  //           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-  //             <div>
-  //               <h1 className="text-xl sm:text-2xl font-bold  mb-2">
-  //                 Portfolio Templates
-  //               </h1>
-  //               <p className="text-muted-foreground">
-  //                 Choose a template that best represents your professional brand
-  //               </p>
-  //             </div>
-  //             <Link href="/portfolio/manage">
-  //               <Button variant="outline" className="flex items-center gap-2">
-  //                 <Settings className="w-4 h-4" />
-  //                 Manage Portfolio
-  //               </Button>
-  //             </Link>
-  //           </div>
-  //         </div>
-
-  //         <div className="mb-8">
-  //           <div className="flex items-center gap-2 mb-6">
-  //             <Sparkles className="w-5 h-5 text-blue-600" />
-  //             <h2 className="text-xl font-semibold ">Select Your Template</h2>
-  //           </div>
-
-  //           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-  //             {templates.map((template) => (
-  //               <div key={template.id} className="relative">
-  //                 <input
-  //                   type="radio"
-  //                   name="template"
-  //                   value={template.id}
-  //                   checked={selectedTemplate === template.id}
-  //                   onChange={() => handleTemplateChange(template.id)}
-  //                   className="sr-only"
-  //                 />
-  //                 <Card
-  //                   className={`relative h-64 cursor-pointer group transition-all duration-300 hover:shadow-xl  ${
-  //                     selectedTemplate === template.id
-  //                       ? "ring-2 ring-blue-500 shadow-lg"
-  //                       : "hover:shadow-md"
-  //                   }`}
-  //                   onClick={() => {
-  //                     handleTemplateChange(template.id);
-  //                   }}
-  //                 >
-  //                   <CardContent className="p-0 h-full">
-  //                     <div className="relative h-48 overflow-hidden rounded-t-lg">
-  //                       <img
-  //                         src="https://www.soorajrao.in/images/projects/resume/home.png"
-  //                         alt={`${template.name} template`}
-  //                         className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-  //                       />
-
-  //                       {selectedTemplate === template.id && (
-  //                         <div className="absolute top-3 left-3 bg-blue-600 text-white rounded-full p-1">
-  //                           <Check className="w-4 h-4" />
-  //                         </div>
-  //                       )}
-
-  //                       <Link
-  //                         href={"https://google.com"}
-  //                         // href={template.demoLink}
-  //                         target="_blank"
-  //                         className="absolute top-3 right-3 z-10 bg flex items-center gap-1 "
-  //                         onClick={(e) => e.stopPropagation()}
-  //                       >
-  //                         <Button size="sm" variant="outline">
-  //                           <ExternalLink className="w-3 h-3" />
-  //                           Demo
-  //                         </Button>
-  //                       </Link>
-
-  //                       <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-  //                     </div>
-
-  //                     <div className="p-4 space-y-3">
-  //                       <div className="flex items-center justify-between">
-  //                         <h3 className="font-semibold  group-hover:text-blue-600 transition-colors">
-  //                           {template.name}
-  //                           <span className=" text-xs text-muted-foreground ml-1">
-  //                             {userData.templateId === template.id && "current template"}
-  //                           </span>
-  //                         </h3>
-  //                       </div>
-  //                     </div>
-  //                   </CardContent>
-  //                 </Card>
-  //               </div>
-  //             ))}
-  //           </div>
-  //         </div>
-
-  //         {!userData?.templateId ||
-  //           (userData?.templateId !== selectedTemplate && (
-  //             <div className="fixed lg:hidden bottom-6 right-6 z-50">
-  //               <Card className="shadow-lg border-0  backdrop-blur-sm">
-  //                 <CardContent className="p-4">
-  //                   <div className="flex items-center gap-3">
-  //                     <div className="text-sm text-muted-foreground">
-  //                       Template selected:{" "}
-  //                       <span className="font-medium ">
-  //                         {
-  //                           templates.find((t) => t.id === selectedTemplate)
-  //                             ?.name
-  //                         }
-  //                       </span>
-  //                     </div>
-  //                     <Button
-  //                       onClick={handleTemplateSave}
-  //                       disabled={isLoading}
-  //                       className="bg-blue-600 hover:bg-blue-700"
-  //                     >
-  //                       {isLoading ? "Saving..." : "Save Template"}
-  //                     </Button>
-  //                   </div>
-  //                 </CardContent>
-  //               </Card>
-  //             </div>
-  //           ))}
-
-  //         {!userData?.templateId ||
-  //           (userData?.templateId !== selectedTemplate && (
-  //             <div className="hidden lg:block">
-  //               <Card>
-  //                 <CardContent className="p-6">
-  //                   <div className="flex items-center justify-between">
-  //                     <div>
-  //                       <h3 className="font-semibold  mb-1">
-  //                         Ready to apply your template?
-  //                       </h3>
-  //                       <p className="text-muted-foreground text-sm">
-  //                         You've selected "
-  //                         {
-  //                           templates.find((t) => t.id === selectedTemplate)
-  //                             ?.name
-  //                         }
-  //                         " template
-  //                       </p>
-  //                     </div>
-  //                     <Button
-  //                       onClick={handleTemplateSave}
-  //                       disabled={isLoading}
-  //                       size="lg"
-  //                       className="bg-blue-600 hover:bg-blue-700"
-  //                     >
-  //                       {isLoading ? "Saving..." : "Save & Apply Template"}
-  //                     </Button>
-  //                   </div>
-  //                 </CardContent>
-  //               </Card>
-  //             </div>
-  //           ))}
-  //       </div>
-  //     </div>
-  //   );
-  // }
   if (userData?.hasPorfolioData) {
     router.push("/portfolio/manage");
   }
@@ -1046,7 +798,6 @@ export default function CreatePortfolioPage() {
       </div>
     );
   }
-
   return (
     <div className=" px-4">
       <div className="mb-8">
@@ -1055,21 +806,17 @@ export default function CreatePortfolioPage() {
           <div className="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0">
             {steps.map((step, index) => (
               <div key={index} className="flex items-center">
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    index === currentStep
-                      ? "bg-primary text-primary-foreground"
-                      : index < currentStep
-                      ? "bg-primary/20 text-primary"
-                      : "bg-muted text-muted-foreground"
-                  }`}
+                <Button
+                  onClick={() => setCurrentStep(index)}
+                  variant={index === currentStep ? "default" : "secondary"}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center`}
                 >
                   {index < currentStep ? (
                     <Check className="h-4 w-4" />
                   ) : (
                     <span>{index + 1}</span>
                   )}
-                </div>
+                </Button>
                 {index < steps.length - 1 && (
                   <div
                     className={`h-1 w-6 ${
@@ -1088,9 +835,7 @@ export default function CreatePortfolioPage() {
 
       <div className="relative overflow-hidden">
         <div
-          className={`transition-transform duration-500 ease-in-out transform ${
-            slideDirection === "right" ? "translate-x-0" : "-translate-x-full"
-          }`}
+          className={`transition-transform duration-500 ease-in-out transform`}
         >
           {currentStep === 0 && (
             <Card>
@@ -1462,6 +1207,7 @@ export default function CreatePortfolioPage() {
           {currentStep === 4 && (
             <Card>
               <CardHeader>
+                  <CardTitle>Projects</CardTitle>
                 <CardDescription>
                   Add your projects. All fields are optional.
                 </CardDescription>

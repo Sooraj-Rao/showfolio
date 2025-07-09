@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
     if (page) query.page = page;
     if (event) query.event = event;
     if (sessionId) query.sessionId = sessionId;
+    query.user = userId;
 
     const dateFilter = new Date();
     dateFilter.setDate(dateFilter.getDate() - days);
@@ -34,8 +35,8 @@ export async function GET(request: NextRequest) {
     const analytics = await PortfolioAnalytics.find(query)
       .sort({ timestamp: -1 })
       .limit(limit)
-      .select("-ipHash"); 
-      const totalEvents = analytics.length;
+      .select("-ipHash");
+    const totalEvents = analytics.length;
     const uniqueSessions = new Set(analytics.map((item) => item.sessionId))
       .size;
 

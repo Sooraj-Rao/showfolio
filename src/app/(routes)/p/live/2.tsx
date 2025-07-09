@@ -27,7 +27,6 @@ import {
   Menu,
   X,
   Palette,
-  Download,
   Send,
   Code,
   Database,
@@ -196,6 +195,7 @@ interface PortfolioData {
     email?: string;
     location?: string;
     phone?: string;
+    resumeUrl?: string;
   };
   projects?: Array<{
     name: string;
@@ -204,7 +204,7 @@ interface PortfolioData {
     imageUrl?: string;
     link?: string;
   }>;
-  skills?: Record<string, string[]> | string[]; 
+  skills?: Record<string, string[]> | string[];
   workExperience?: Array<{
     position: string;
     company: string;
@@ -243,6 +243,8 @@ interface PortfolioData {
   themeMode?: string;
   ref?: string;
   analytics?: boolean;
+  userId?: string;
+  contacts: boolean;
 }
 
 export default function ModernPortfolioWithAnalytics({
@@ -250,7 +252,6 @@ export default function ModernPortfolioWithAnalytics({
 }: {
   portfolioData: PortfolioData | null;
 }) {
-  
   const [activeSection, setActiveSection] = useState("projects");
   const [activeBlogPost, setActiveBlogPost] = useState<string | null>(null);
   const [currentTheme, setCurrentTheme] = useState(
@@ -263,7 +264,7 @@ export default function ModernPortfolioWithAnalytics({
   const isPreview = portfolioData.analytics === false;
 
   const { trackClick, trackProjectView, trackExternalLink, trackSocialLink } =
-    usePortfolioAnalyticsEnhanced(isPreview);
+    usePortfolioAnalyticsEnhanced(isPreview, portfolioData.userId);
 
   const theme = themes[currentTheme];
 
@@ -335,6 +336,8 @@ export default function ModernPortfolioWithAnalytics({
 
   const handleResumeDownload = () => {
     trackClick("resume_download", "resume");
+    if (portfolioData.personalInfo?.resumeUrl)
+      window.open(portfolioData.personalInfo?.resumeUrl);
   };
 
   const handleContactClick = () => {
@@ -851,7 +854,6 @@ export default function ModernPortfolioWithAnalytics({
     { key: "skills", label: "Skills", condition: hasSkillsData() },
     { key: "blog", label: "Blog", condition: hasData("blogs") },
   ].filter((section) => section.condition);
-
   return (
     <div
       className={`min-h-screen bg-background text-foreground transition-all duration-500 ${theme?.gradient}`}
@@ -951,16 +953,17 @@ export default function ModernPortfolioWithAnalytics({
                   </Button>
                 ))}
               </nav>
-
               <div className="flex gap-2 pt-4 border-t border-border">
-                <Button
-                  size="sm"
-                  className={`flex-1 gap-2 ${theme.primary}`}
-                  onClick={handleResumeDownload}
-                >
-                  <Download className="w-4 h-4" />
-                  Resume
-                </Button>
+                {portfolioData.personalInfo.resumeUrl && (
+                  <Button
+                    size="sm"
+                    className={`flex-1 gap-2 ${theme.primary}`}
+                    onClick={handleResumeDownload}
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    Resume
+                  </Button>
+                )}
                 <Button
                   size="sm"
                   variant="outline"
@@ -1050,33 +1053,35 @@ export default function ModernPortfolioWithAnalytics({
               )}
             </div>
             <div className="space-y-6">
-              <div className="space-y-4" id="contact-section">
-                <h2 className="text-lg font-semibold">Contact</h2>
-                <div className="space-y-3 text-sm">
-                  {portfolioData.personalInfo?.email && (
-                    <div className="flex items-center gap-3 text-muted-foreground">
-                      <Mail className="w-4 h-4" />
-                      <span>{portfolioData.personalInfo.email}</span>
-                    </div>
-                  )}
-                  {portfolioData.personalInfo?.location && (
-                    <div className="flex items-center gap-3 text-muted-foreground">
-                      <MapPin className="w-4 h-4" />
-                      <span>{portfolioData.personalInfo.location}</span>
-                    </div>
-                  )}
-                  {portfolioData.personalInfo?.phone && (
-                    <a
-                      href={`tel:${portfolioData.personalInfo.phone}`}
-                      className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
-                      onClick={handlePhoneClick}
-                    >
-                      <PhoneCallIcon className="w-4 h-4" />
-                      <span>{portfolioData.personalInfo.phone}</span>
-                    </a>
-                  )}
+              {portfolioData.contacts && (
+                <div className="space-y-4" id="contact-section">
+                  <h2 className="text-lg font-semibold">Contact</h2>
+                  <div className="space-y-3 text-sm">
+                    {portfolioData.personalInfo?.email && (
+                      <div className="flex items-center gap-3 text-muted-foreground">
+                        <Mail className="w-4 h-4" />
+                        <span>{portfolioData.personalInfo.email}</span>
+                      </div>
+                    )}
+                    {portfolioData.personalInfo?.location && (
+                      <div className="flex items-center gap-3 text-muted-foreground">
+                        <MapPin className="w-4 h-4" />
+                        <span>{portfolioData.personalInfo.location}</span>
+                      </div>
+                    )}
+                    {portfolioData.personalInfo?.phone && (
+                      <a
+                        href={`tel:${portfolioData.personalInfo.phone}`}
+                        className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
+                        onClick={handlePhoneClick}
+                      >
+                        <PhoneCallIcon className="w-4 h-4" />
+                        <span>{portfolioData.personalInfo.phone}</span>
+                      </a>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {hasData("socialLinks") && (
                 <div className="space-y-4" id="social-section">
@@ -1110,13 +1115,15 @@ export default function ModernPortfolioWithAnalytics({
               )}
             </div>
             <div className="flex gap-3 pt-6 border-t border-border">
-              <Button
-                className={`flex-1 gap-2 ${theme.primary} text-white`}
-                onClick={handleResumeDownload}
-              >
-                <Download className="w-4 h-4" />
-                Resume
-              </Button>
+              {portfolioData.personalInfo.resumeUrl && (
+                <Button
+                  className={`flex-1 gap-2 ${theme.primary}`}
+                  onClick={handleResumeDownload}
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  Resume
+                </Button>
+              )}
               <Button
                 variant="outline"
                 className="flex-1 gap-2"

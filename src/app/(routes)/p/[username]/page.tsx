@@ -59,6 +59,7 @@ type PortfolioData = {
     date: string;
     description: string;
   }>;
+  contacts: boolean;
 };
 
 const PortfolioParentPage = ({
@@ -98,11 +99,20 @@ const PortfolioParentPage = ({
         setisError(response.data?.error?.message);
         return;
       }
+      if (Object.keys(response.data.portfolio).length == 0) {
+        setisError("Portfolio not found");
+        return;
+      }
       response.data.portfolio.analytics = analytics === false ? false : true;
       response.data.portfolio.ref = ref;
       response.data.portfolio.theme = response.data.theme;
       response.data.portfolio.imageUrl = response.data.imageUrl;
       response.data.portfolio.themeMode = response.data.themeMode;
+      response.data.portfolio.userId = response.data._id;
+      response.data.portfolio.analytics =
+        response.data.portfolioSettings.analytics;
+      response.data.portfolio.contacts =
+        response.data.portfolioSettings.contacts;
       setportfolioData(response.data?.portfolio || null);
       settemplate(response?.data?.templateId || "2");
       localStorage.setItem(
@@ -128,7 +138,7 @@ const PortfolioParentPage = ({
   if (isError) {
     return (
       <div className="h-screen flex flex-col items-center justify-center gap-6 bg-gray-900 text-white px-4">
-        <h1 className="text-2xl font-bold">Oops! Something went wrong.</h1>
+        {/* <h1 className="text-2xl font-bold">Oops! Something went wrong.</h1> */}
         <p className="text-lg text-red-400">{isError.toString()}</p>
         <a href="/">
           <Button variant="outline" className="flex items-center gap-2">
@@ -152,7 +162,7 @@ const PortfolioParentPage = ({
     "1": <One portfolioData={portfolioData} />,
     "2": <Two portfolioData={portfolioData} />,
     "3": <Three portfolioData={portfolioData} />,
-  };;
+  };
   return templates[template];
 };
 

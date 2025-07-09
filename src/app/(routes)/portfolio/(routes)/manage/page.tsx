@@ -50,6 +50,7 @@ type PersonalInfo = {
   phone: string;
   location: string;
   bio: string;
+  resumeUrl?: string;
 };
 
 type SocialLink = {
@@ -261,6 +262,7 @@ export default function ManagePortfolio() {
     try {
       const res = await axios.post("/api/portfolio/portfolio-data", {
         portfolioData,
+        imageUrl,
       });
 
       if (res.status === 200) {
@@ -489,43 +491,6 @@ export default function ManagePortfolio() {
     insertLink(textareaId, linkText, linkUrl);
   };
 
-  const handleSubmitImageUrl = async (e) => {
-    e.preventDefault();
-    if (!imageUrl.startsWith("http"))
-      return toast({
-        title: "Invalid URL format",
-        description: "Add http or https to your URL",
-        variant: "destructive",
-      });
-    setIsSaving(true);
-    try {
-      const res = await axios.post("/api/portfolio/portfolio-data", {
-        imageUrl,
-      });
-
-      if (res.status === 200) {
-        toast({
-          title: "Portfolio saved successfully",
-          description: "Your portfolio image updated.",
-        });
-        setEditMode(false);
-        userData.imageUrl = imageUrl;
-      } else {
-        throw new Error("Failed to save portfolio");
-      }
-    } catch (error) {
-      console.error("Error saving portfolio:", error);
-      toast({
-        title: "Error saving portfolio",
-        description:
-          "There was an error saving your portfolio. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-background ">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -645,6 +610,16 @@ export default function ManagePortfolio() {
                   <FileText className="mr-2 h-4 w-4" />
                   Blogs
                 </Button>
+                <Button
+                  variant={
+                    activeSection === "resumeOrImage" ? "secondary" : "ghost"
+                  }
+                  className="w-full justify-start"
+                  onClick={() => setActiveSection("resumeOrImage")}
+                >
+                  <FileText className="mr-2 h-4 w-4" />
+                  Image/Resume
+                </Button>
               </div>
             </CardContent>
             <CardFooter>
@@ -682,6 +657,7 @@ export default function ManagePortfolio() {
                 {activeSection === "education" && "Education"}
                 {activeSection === "certifications" && "Certifications"}
                 {activeSection === "blogs" && "Blogs"}
+                {activeSection === "resumeOrImage" && "Image and Resume "}
               </CardTitle>
               <CardDescription>
                 {activeSection === "personal" &&
@@ -700,6 +676,8 @@ export default function ManagePortfolio() {
                   "Add your certifications"}
                 {activeSection === "blogs" &&
                   "Write and manage your blog posts"}
+                {activeSection === "resumeOrImage" &&
+                  "Manage your resume and image URL"}
               </CardDescription>
             </CardHeader>
             <CardContent className="max-h-[70vh] overflow-y-auto">
@@ -1859,41 +1837,59 @@ export default function ManagePortfolio() {
                   )}
                 </div>
               )}
+              {activeSection === "resumeOrImage" && (
+                <div className=" flex flex-col gap-y-4">
+                  <Card className=" w-full      shadow-md rounded-lg">
+                    <CardContent className=" p-3 w-full ">
+                      <form className="flex items-center  w-full gap-3">
+                        <label className="block text-sm font-medium ">
+                          Your Resume for portfolio
+                        </label>
+                        <Input
+                          disabled={!editMode}
+                          type="url"
+                          name="resumeUrl"
+                          value={portfolioData?.personalInfo?.resumeUrl}
+                          onChange={(e) =>
+                            updatePersonalInfo("resumeUrl", e.target.value)
+                          }
+                          placeholder="Enter Resume URL"
+                          className="w-3/5  p-2 border rounded-lg"
+                        />
+                      </form>
+                    </CardContent>
+                  </Card>
+                  <Card className=" w-full      shadow-md rounded-lg">
+                    <CardContent className=" p-3 w-full ">
+                      <div className="flex items-center  w-full gap-3">
+                        <label className="block text-sm font-medium ">
+                          Your image for Portfolio
+                        </label>
+                        <Input
+                          type="url"
+                          disabled={!editMode}
+                          value={imageUrl}
+                          onChange={(e) => setimageUrl(e.target.value)}
+                          placeholder="Enter image URL"
+                          className="w-3/5  p-2 border rounded-lg"
+                        />
+                      </div>
+                      <p className="flex items-center text-xs mt-3 gap-2 text-muted-foreground">
+                        <Info size={16} />
+                        <span>
+                          <strong>Tip:</strong> You can use your GitHub profile
+                          image by appending <code className=" bg-muted rounded-md p-1">.png</code> to your GitHub
+                          URL. For example:{" "}
+                          <code className=" bg-muted rounded-md p-1">https://github.com/username.png</code>
+                        </span>
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
-        <Card className=" w-full      shadow-md rounded-lg">
-          <CardContent className=" p-3 w-full ">
-            <form className="flex items-center  w-full gap-3">
-              <label className="block text-sm font-medium ">
-                Your image for Portfolio
-              </label>
-              <Input
-                type="url"
-                value={imageUrl}
-                onChange={(e) => setimageUrl(e.target.value)}
-                placeholder="Enter image URL"
-                className="w-3/5  p-2 border rounded-lg"
-              />
-              {userData?.imageUrl !== imageUrl && (
-                <Button
-                  disabled={isSaving || !imageUrl || imageUrl.length < 6}
-                  onClick={handleSubmitImageUrl}
-                >
-                  {isSaving ? "Saving..." : "Save Image URL"}
-                </Button>
-              )}
-            </form>
-            <p className="flex items-center text-sm mt-3 gap-2 text-muted-foreground">
-              <Info size={16} />
-              <span>
-                <strong>Tip:</strong> You can use your GitHub profile image by
-                appending <code>.png</code> to your GitHub URL. For example:{" "}
-                <code>https://github.com/username.png</code>
-              </span>
-            </p>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

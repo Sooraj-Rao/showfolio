@@ -563,9 +563,14 @@ export default function SettingsPage() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button onClick={SavePrivacySettings}>
-                Save Privacy Settings
-              </Button>
+              {(userData?.private?.portfolio != !isPublic ||
+                userData?.portfolioSettings?.showContacts != showContacts ||
+                userData?.portfolioSettings?.analyticsTrack !=
+                  AnalyticsTrack) && (
+                <Button disabled={isloading} onClick={SavePrivacySettings}>
+                  {isloading ? "Saving.." : "Save Privacy Settings"}
+                </Button>
+              )}
             </CardFooter>
           </Card>
         </TabsContent>

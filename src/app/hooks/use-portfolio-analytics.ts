@@ -26,9 +26,13 @@ interface AnalyticsEvent {
   country: string;
   countryCode: string;
   referrer?: string;
+  user?:string
 }
 
-export function usePortfolioAnalyticsEnhanced(isPreview = false) {
+export function usePortfolioAnalyticsEnhanced(
+  isPreview = false,
+  userId: string
+) {
   const sessionId = useRef<string>("");
   const locationData = useRef<LocationData | null>(null);
   const pageStartTime = useRef<number>(Date.now());
@@ -72,7 +76,7 @@ export function usePortfolioAnalyticsEnhanced(isPreview = false) {
 
     const handleBeforeUnload = () => {
       const timeSpent = Math.round((Date.now() - pageStartTime.current) / 1000);
-      trackEvent("time_spent", { timeSpent }, true); 
+      trackEvent("time_spent", { timeSpent }, true);
     };
 
     const handleVisibilityChange = () => {
@@ -146,6 +150,7 @@ export function usePortfolioAnalyticsEnhanced(isPreview = false) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            user:userId,
             sessionId: sessionId.current,
             page: window.location.pathname,
             timeSpent,
@@ -156,7 +161,7 @@ export function usePortfolioAnalyticsEnhanced(isPreview = false) {
           console.error("Heartbeat failed:", error);
         });
       }
-    }, 30000); 
+    }, 30000);
   }, []);
 
   const stopHeartbeat = useCallback(() => {
@@ -186,6 +191,7 @@ export function usePortfolioAnalyticsEnhanced(isPreview = false) {
 
       if (window.location.hash) {
         eventData.anchor = window.location.hash;
+        eventData.user=userId
       }
 
       try {
@@ -240,7 +246,6 @@ export function usePortfolioAnalyticsEnhanced(isPreview = false) {
     },
     [trackEvent]
   );
-
 
   const trackSocialLink = useCallback(
     (platform: string) => {

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const PortfolioAnalyticsSchema = new mongoose.Schema(
   {
@@ -7,7 +7,7 @@ const PortfolioAnalyticsSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-
+    user: { type: Schema.Types.ObjectId, ref: "User" },
     page: {
       type: String,
       required: true,

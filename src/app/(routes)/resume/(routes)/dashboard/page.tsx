@@ -15,7 +15,6 @@ import {
   Calendar,
   Brain,
   BarChart3,
-  Clock,
   LucideShare2,
 } from "lucide-react";
 import Link from "next/link";
@@ -55,10 +54,14 @@ export default function ResumeDashboard() {
   }
 
   const hotResume = Array.isArray(resumeData)
-    ? resumeData.reduce((max, item) => {
-        const views = item?.analytics?.views ?? 0;
-        return views >= (max?.analytics?.views ?? 0) ? item : max;
-      }, null)
+    ? (() => {
+        const maxItem = resumeData.reduce((max, item) => {
+          const views = item?.analytics?.views ?? 0;
+          return views >= (max?.analytics?.views ?? 0) ? item : max;
+        }, null);
+
+        return (maxItem?.analytics?.views ?? 0) > 0 ? maxItem : null;
+      })()
     : null;
 
   const showAlert =
@@ -68,7 +71,7 @@ export default function ResumeDashboard() {
   return (
     <div>
       {showAlert && <AlertMessage type={showAlert} />}
-      <div className="min-h-screen ">
+      <div>
         <div className="max-w-6xl mx-auto space-y-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -77,10 +80,12 @@ export default function ResumeDashboard() {
                   Welcome,
                   <span className=" text-primary pl-1">{userData?.name}!</span>
                 </h1>
-                <p className="text-gray-600 flex items-center text-sm gap-2">
-                  <Calendar className="h-4 w-4" />
-                  Member for {daysSinceJoined} days
-                </p>
+                {daysSinceJoined != 0 && (
+                  <p className="text-gray-600 flex items-center text-sm gap-2">
+                    <Calendar className="h-4 w-4" />
+                    Member for {daysSinceJoined} days
+                  </p>
+                )}
               </div>
             </div>
 
@@ -354,7 +359,7 @@ export default function ResumeDashboard() {
                   <Link href="/resume/analytics">
                     <Button variant="outline" className="w-full justify-start">
                       <BarChart3 className="mr-2 h-4 w-4" />
-                      View All Analytics
+                      View Detailed Analytics
                     </Button>
                   </Link>
                   <Link href="/resume/settings">
@@ -363,43 +368,6 @@ export default function ResumeDashboard() {
                       Account Settings
                     </Button>
                   </Link>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Clock className="h-5 w-5" />
-                    Recent Activity
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 text-sm">
-                      <Upload className="h-4 w-4 text-green-500" />
-                      <div>
-                        <p className="font-medium">Resume uploaded</p>
-                        <p className="text-gray-500">
-                          {resumeData?.length !== 0 &&
-                            new Date(
-                              resumeData?.find(
-                                (item) => item?.shortUrl == hotResume?.shortUrl
-                              )?.createdAt
-                            ).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                    {totalViews === 0 && totalDownloads === 0 ? (
-                      <div className="text-center py-4">
-                        <p className="text-sm text-gray-500">
-                          No recent activity
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          Share your resume to see activity here
-                        </p>
-                      </div>
-                    ) : null}
-                  </div>
                 </CardContent>
               </Card>
             </div>

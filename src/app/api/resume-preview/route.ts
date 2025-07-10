@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   await connectDB();
-  User.countDocuments()
+  User.countDocuments();
   const { searchParams } = new URL(req.url);
   const shortUrl = searchParams.get("shortUrl");
 
@@ -59,6 +59,7 @@ async function getResumePreview(shortUrl: string) {
       email: user.email,
       fileUrl: `/api/resume-file?resume=${shortUrl}`,
       portfolioUrl: portfolioUrl,
+      imageUrl: user.imageUrl || "",
     };
 
     return NextResponse.json(result);
@@ -80,5 +81,3 @@ async function getResumePreview(shortUrl: string) {
     );
   }
 }
-
-

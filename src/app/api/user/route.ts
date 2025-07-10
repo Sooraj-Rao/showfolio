@@ -21,9 +21,11 @@ export async function GET(req: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-    const personalInfo = JSON.parse(user?.portfolioData).personalInfo;
+    const personalInfo = user?.portfolioData
+      ? JSON.parse(user?.portfolioData)?.personalInfo
+      : "";
     const isPortfolio =
-      personalInfo.name && personalInfo.email && personalInfo.phone;
+      personalInfo?.name && personalInfo?.email && personalInfo?.phone;
 
     return NextResponse.json({
       name: user.name,
@@ -40,7 +42,7 @@ export async function GET(req: NextRequest) {
       portfolioSettings: {
         themeColor: user.portfolioSettings?.themeColor || null,
         theme: user.portfolioSettings?.theme || null,
-        showContacts: user.portfolioSettings?.showContacts || true  ,
+        showContacts: user.portfolioSettings?.showContacts || true,
         analyticsTrack: user.portfolioSettings?.analyticsTrack || true,
       },
       resumes: user.resumes,

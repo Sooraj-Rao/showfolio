@@ -1,3 +1,4 @@
+import connectDB from "@/lib/db";
 import Resume from "@/models/resume";
 import { IUser } from "@/models/user";
 import { NextRequest, NextResponse } from "next/server";
@@ -11,6 +12,7 @@ export async function GET(req: NextRequest) {
   if (!shortUrl) {
     return new NextResponse("Resume not found", { status: 404 });
   }
+  await connectDB();
 
   let fileUrl: string, title: string, user;
   try {

@@ -31,7 +31,7 @@ interface AnalyticsEvent {
 
 export function usePortfolioAnalyticsEnhanced(
   isPreview = false,
-  userId: string
+  userId?: string
 ) {
   const sessionId = useRef<string>("");
   const locationData = useRef<LocationData | null>(null);

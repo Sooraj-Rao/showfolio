@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse("Resume not found", { status: 404 });
   }
   await connectDB();
+  await import("@/models/user");
 
   let fileUrl: string, title: string, isPrivate: boolean, user;
   try {

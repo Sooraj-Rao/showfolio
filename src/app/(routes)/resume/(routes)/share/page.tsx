@@ -18,16 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import {
-  Copy,
-  Share2,
-  Info,
-  Link as Link2,
-  X,
-  Download,
-  QrCode,
-} from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
+import { Copy, Share2, Info, Link as Link2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import useResumes from "@/app/hooks/get-resumes";
 import { useSearchParams } from "next/navigation";
@@ -43,7 +34,6 @@ export default function SharePage() {
   const [loading, setLoading] = useState(false);
   const [shortUrl, setShortUrl] = useState("");
   const [url, setUrl] = useState("");
-  const [qrOpen, setQrOpen] = useState(false);
 
   useEffect(() => {
     if (resumes?.length && !selectedResume) {
@@ -117,29 +107,8 @@ export default function SharePage() {
     }
   };
 
-  const handleDownloadQR = () => {
-    const svg = document.getElementById("qr-code");
-    if (svg) {
-      const svgData = new XMLSerializer().serializeToString(svg);
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      const img = new Image();
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx?.drawImage(img, 0, 0);
-        const png = canvas.toDataURL("image/png");
-        const link = document.createElement("a");
-        link.download = `${selectedResume.title}_QR.png`;
-        link.href = png;
-        link.click();
-      };
-      img.src = "data:image/svg+xml;base64," + btoa(svgData);
-    }
-  };
-
   return (
-    <div >
+    <div>
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Share Resumes</h2>
       </div>
@@ -299,51 +268,6 @@ export default function SharePage() {
                   )}
                 </>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="w-full lg:max-w-sm flex flex-col space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>QR Code</CardTitle>
-              <CardDescription>
-                QR for the resume - &quot;{selectedResume?.title}&quot;
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col items-center">
-              {!qrOpen ? (
-                <Button onClick={() => setQrOpen(!qrOpen)} className="mb-3">
-                  <QrCode />
-                  View QR Code
-                </Button>
-              ) : (
-                <Button
-                  variant="secondary"
-                  onClick={() => setQrOpen(!qrOpen)}
-                  className="mb-3"
-                >
-                  <X />
-                  Close
-                </Button>
-              )}
-              <div
-                className={` duration-300 overflow-hidden ${
-                  qrOpen ? "h-56" : "h-0 "
-                }`}
-              >
-                {selectedResume && (
-                  <QRCodeSVG
-                    id="qr-code"
-                    value={`${url}?ref=owner-share-qrcode`}
-                    size={192}
-                  />
-                )}
-              </div>
-              <Button variant="outline" onClick={handleDownloadQR}>
-                <Download />
-                Download QR
-              </Button>
             </CardContent>
           </Card>
         </div>

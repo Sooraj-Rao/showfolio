@@ -25,7 +25,7 @@ export function ModeToggle({
     <Button
       title={`${capitalized} mode`}
       variant="link"
-      className="w-fit text-muted-foreground"
+      className="w-fit text-muted-foreground/70"
       onClick={() => {
         setTheme(theme === "dark" ? "light" : "dark");
         if (themeMode && setthemeMode) setthemeMode(nextTheme);

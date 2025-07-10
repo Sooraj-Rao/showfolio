@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import connectDB from "@/lib/db";
 import Resume from "@/models/resume";
 import { IUser } from "@/models/user";
+import User from "@/models/user";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -14,7 +16,7 @@ export async function GET(req: NextRequest) {
   }
   await connectDB();
 
-  let fileUrl: string, title: string, user;
+  let fileUrl: string, title: string, isPrivate: boolean, user;
   try {
     if (firstView) {
       const updatedResume = await Resume.findOneAndUpdate(
@@ -24,8 +26,9 @@ export async function GET(req: NextRequest) {
       )
         .select("fileUrl title user")
         .populate("user");
-
+      const userData = updatedResume.user as IUser;
       if (updatedResume) {
+        isPrivate = userData.private.profile || userData.private.resumes;
         fileUrl = updatedResume.fileUrl;
         title = updatedResume.title;
         user = updatedResume.user;
@@ -34,8 +37,9 @@ export async function GET(req: NextRequest) {
       const resume = await Resume.findOne({ shortUrl })
         .select("fileUrl title user analytics")
         .populate("user");
-
+      const userData = resume.user as IUser;
       if (resume) {
+        isPrivate = userData.private.profile || userData.private.resumes;
         fileUrl = resume.fileUrl;
         title = resume.title;
         user = resume.user;
@@ -45,6 +49,11 @@ export async function GET(req: NextRequest) {
     if (!fileUrl) {
       return new NextResponse("Resume not found or file URL is missing", {
         status: 404,
+      });
+    }
+    if (isPrivate) {
+      return new NextResponse("Resume is private. Access denied", {
+        status: 401,
       });
     }
 

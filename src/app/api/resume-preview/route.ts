@@ -38,7 +38,7 @@ async function getResumePreview(shortUrl: string) {
 
     const user = resume.user as IUser;
 
-    if (user.private.resumes) {
+    if (user.private.resumes || user.private.profile) {
       return NextResponse.json(
         { error: "Resume is private. Access denied." },
         { status: 401 }

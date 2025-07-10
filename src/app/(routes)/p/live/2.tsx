@@ -1124,14 +1124,16 @@ export default function ModernPortfolioWithAnalytics({
                   Resume
                 </Button>
               )}
-              <Button
-                variant="outline"
-                className="flex-1 gap-2"
-                onClick={handleContactClick}
-              >
-                <Send className="w-4 h-4" />
-                Contact
-              </Button>
+              {portfolioData.contacts && (
+                <Button
+                  variant="outline"
+                  className="flex-1 gap-2"
+                  onClick={handleContactClick}
+                >
+                  <Send className="w-4 h-4" />
+                  Contact
+                </Button>
+              )}
             </div>
           </div>
         </nav>

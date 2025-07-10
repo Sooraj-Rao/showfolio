@@ -81,7 +81,7 @@ export default function SettingsPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isPrivateProfile, setIsPrivateProfile] = useState(false);
-  const [isPrivatePortfolio, setIsPrivatePortfolio] = useState(false);
+  const [isPrivateResumes, setisPrivateResumes] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDisabling, setIsDisabling] = useState(false);
@@ -96,7 +96,7 @@ export default function SettingsPage() {
       setName(userData?.name || "");
       setEmail(userData?.email || "");
       setIsPrivateProfile(userData?.private?.profile || false);
-      setIsPrivatePortfolio(userData?.private?.portfolio || false);
+      setisPrivateResumes(userData?.private?.resumes || false);
     }
   }, [userData]);
 
@@ -104,7 +104,7 @@ export default function SettingsPage() {
     userData?.name !== name ||
     userData?.email !== email ||
     userData?.private?.profile !== isPrivateProfile ||
-    userData?.private?.portfolio !== isPrivatePortfolio;
+    userData?.private?.resumes !== isPrivateResumes;
 
   const handleSaveChanges = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,7 +114,7 @@ export default function SettingsPage() {
         name,
         email,
         profile: isPrivateProfile,
-        portfolio: isPrivatePortfolio,
+        resumes: isPrivateResumes,
       });
 
       if (!response.data) {
@@ -125,7 +125,7 @@ export default function SettingsPage() {
         ...userData,
         email,
         name,
-        private: { portfolio: isPrivatePortfolio, profile: isPrivateProfile },
+        private: { resumes: isPrivateResumes, profile: isPrivateProfile },
       });
       toast({
         title: "Settings Updated",
@@ -237,7 +237,7 @@ export default function SettingsPage() {
         name,
         email,
         profile: checked,
-        portfolio: isPrivatePortfolio,
+        portfolio: isPrivateResumes,
       });
 
       if (!response.data) {
@@ -266,8 +266,8 @@ export default function SettingsPage() {
     }
   };
 
-  const handlePrivatePortfolioToggle = async (checked: boolean) => {
-    if (checked === isPrivatePortfolio) {
+  const handlePrivateResumeToggle = async (checked: boolean) => {
+    if (checked === isPrivateResumes) {
       setShowPortfolioDialog(false);
       return;
     }
@@ -285,10 +285,10 @@ export default function SettingsPage() {
         throw new Error("Failed to update privacy settings");
       }
 
-      setIsPrivatePortfolio(checked);
+      setisPrivateResumes(checked);
       setUserData({
         ...userData,
-        private: { ...userData.private, portfolio: checked },
+        private: { ...userData.private, resumes: checked },
       });
 
       toast({
@@ -404,7 +404,7 @@ export default function SettingsPage() {
                   )}
                   <Switch
                     id="privatePortfolio"
-                    checked={isPrivatePortfolio}
+                    checked={isPrivateResumes}
                     disabled={isUpdatingPrivacy !== ""}
                     onCheckedChange={(checked) => {
                       if (!isUpdatingPrivacy) {
@@ -473,7 +473,7 @@ export default function SettingsPage() {
                   </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={() =>
-                      handlePrivatePortfolioToggle(tempPrivatePortfolio)
+                      handlePrivateResumeToggle(tempPrivatePortfolio)
                     }
                     disabled={isUpdatingPrivacy !== ""}
                   >

@@ -1029,6 +1029,7 @@ export default function ManagePortfolio() {
                               <IconComponent className="w-5 h-5 text-muted-foreground" />
                               {editMode ? (
                                 <Input
+                                  autoFocus
                                   value={categoryName}
                                   onChange={(e) =>
                                     updateSkillCategoryName(
@@ -1878,9 +1879,12 @@ export default function ManagePortfolio() {
                         <Info size={16} />
                         <span>
                           <strong>Tip:</strong> You can use your GitHub profile
-                          image by appending <code className=" bg-muted rounded-md p-1">.png</code> to your GitHub
-                          URL. For example:{" "}
-                          <code className=" bg-muted rounded-md p-1">https://github.com/username.png</code>
+                          image by appending{" "}
+                          <code className=" bg-muted rounded-md p-1">.png</code>{" "}
+                          to your GitHub URL. For example:{" "}
+                          <code className=" bg-muted rounded-md p-1">
+                            https://github.com/username.png
+                          </code>
                         </span>
                       </p>
                     </CardContent>

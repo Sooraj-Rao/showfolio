@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
       "portfolioData templateId portfolioSettings imageUrl private _id"
     );
 
-    if (!user || user?.private?.profile == true) {
+    if (!user || user?.private?.profile == true || user?.private?.portfolio==true) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
     return NextResponse.json(

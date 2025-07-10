@@ -24,8 +24,7 @@ export async function GET(req: NextRequest) {
     const personalInfo = user?.portfolioData
       ? JSON.parse(user?.portfolioData)?.personalInfo
       : "";
-    const isPortfolio =
-      personalInfo?.name && personalInfo?.email && personalInfo?.phone;
+    const isPortfolio = personalInfo?.name && personalInfo?.email;
 
     return NextResponse.json({
       name: user.name,

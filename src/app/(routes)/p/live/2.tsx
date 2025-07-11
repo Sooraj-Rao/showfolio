@@ -622,9 +622,6 @@ export default function ModernPortfolioWithAnalytics({
               <h1 className="text-3xl md:text-4xl font-bold">
                 Skills & Expertise
               </h1>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                Technologies and tools I work with to bring ideas to life
-              </p>
             </div>
 
             {isOldFormat ? (
@@ -866,13 +863,6 @@ export default function ModernPortfolioWithAnalytics({
       >
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden bg-muted">
-              <img
-                src={portfolioData.imageUrl || "/placeholder.svg"}
-                alt="Profile"
-                className="object-cover"
-              />
-            </div>
             <div>
               {portfolioData.personalInfo?.name && (
                 <h1 className="text-lg font-bold">
@@ -887,11 +877,13 @@ export default function ModernPortfolioWithAnalytics({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <ModeToggle
-              setthemeMode={setthemeMode}
-              themeMode={themeMode}
-              title={true}
-            />
+            {portfolioData.previewAnalytics === false && (
+              <ModeToggle
+                setthemeMode={setthemeMode}
+                themeMode={themeMode}
+                title={true}
+              />
+            )}
             <Button
               variant="ghost"
               size="icon"
@@ -912,40 +904,45 @@ export default function ModernPortfolioWithAnalytics({
             id="mobile-menu"
           >
             <div className="p-4 space-y-4">
-              <div className="flex items-center gap-2 mb-4">
-                <Palette className="w-4 h-4" />
-                <Select value={currentTheme} onValueChange={handleThemeChange}>
-                  <SelectTrigger className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`w-3 h-3 rounded-full ${theme.primary}`}
-                      />
-                      <SelectValue />
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(themes).map(([key, theme]) => (
-                      <SelectItem key={key} value={key}>
-                        <div className="flex items-center gap-2">
-                          <div
-                            className={`w-3 h-3 rounded-full ${theme.primary}`}
-                          />
-                          {theme.name}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              {portfolioData.previewAnalytics === false && (
+                <div className="flex items-center gap-2 mb-4">
+                  <Palette className="w-4 h-4" />
+                  <Select
+                    value={currentTheme}
+                    onValueChange={handleThemeChange}
+                  >
+                    <SelectTrigger className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-3 h-3 rounded-full ${theme.primary}`}
+                        />
+                        <SelectValue />
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(themes).map(([key, theme]) => (
+                        <SelectItem key={key} value={key}>
+                          <div className="flex items-center gap-2">
+                            <div
+                              className={`w-3 h-3 rounded-full ${theme.primary}`}
+                            />
+                            {theme.name}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-              <nav className="grid grid-cols-2 gap-2" id="mobile-navigation">
+              <nav className="grid grid-cols-1 gap-2" id="mobile-navigation">
                 {availableSections.map((section) => (
                   <Button
                     key={section.key}
                     variant={
-                      activeSection === section.key ? "default" : "ghost"
+                      activeSection === section.key ? "secondary" : "ghost"
                     }
-                    className={`justify-start ${
+                    className={`justify-start 
                       activeSection === section.key ? theme.primary : ""
                     }`}
                     onClick={() => handleSectionChange(section.key)}
@@ -980,9 +977,9 @@ export default function ModernPortfolioWithAnalytics({
         )}
       </div>
 
-      <div className="flex">
+      <div className="flex lg:flex-row flex-col">
         <nav
-          className="hidden lg:flex fixed w-80 xl:w-96 p-8 border-r border-border flex-col min-h-screen top-0"
+          className="flex lg:fixed  xl:w-96 p-8 border-r border-border flex-col min-h-screen top-0"
           id="desktop-sidebar"
         >
           <div className="flex-1 space-y-8">
@@ -1054,35 +1051,38 @@ export default function ModernPortfolioWithAnalytics({
               )}
             </div>
             <div className="space-y-6">
-              {portfolioData.contacts && (
-                <div className="space-y-4" id="contact-section">
-                  <h2 className="text-lg font-semibold">Contact</h2>
-                  <div className="space-y-3 text-sm">
-                    {portfolioData.personalInfo?.email && (
-                      <div className="flex items-center gap-3 text-muted-foreground">
-                        <Mail className="w-4 h-4" />
-                        <span>{portfolioData.personalInfo.email}</span>
-                      </div>
-                    )}
-                    {portfolioData.personalInfo?.location && (
-                      <div className="flex items-center gap-3 text-muted-foreground">
-                        <MapPin className="w-4 h-4" />
-                        <span>{portfolioData.personalInfo.location}</span>
-                      </div>
-                    )}
-                    {portfolioData.personalInfo?.phone && (
-                      <a
-                        href={`tel:${portfolioData.personalInfo.phone}`}
-                        className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
-                        onClick={handlePhoneClick}
-                      >
-                        <PhoneCallIcon className="w-4 h-4" />
-                        <span>{portfolioData.personalInfo.phone}</span>
-                      </a>
-                    )}
+              {portfolioData?.contacts &&
+                (portfolioData.personalInfo?.phone ||
+                  portfolioData.personalInfo?.email ||
+                  portfolioData.personalInfo?.location) && (
+                  <div className="space-y-4" id="contact-section">
+                    <h2 className="text-lg font-semibold">Contact</h2>
+                    <div className="space-y-3 text-sm">
+                      {portfolioData.personalInfo?.email && (
+                        <div className="flex items-center gap-3 text-muted-foreground">
+                          <Mail className="w-4 h-4" />
+                          <span>{portfolioData.personalInfo.email}</span>
+                        </div>
+                      )}
+                      {portfolioData.personalInfo?.location && (
+                        <div className="flex items-center gap-3 text-muted-foreground">
+                          <MapPin className="w-4 h-4" />
+                          <span>{portfolioData.personalInfo.location}</span>
+                        </div>
+                      )}
+                      {portfolioData.personalInfo?.phone && (
+                        <a
+                          href={`tel:${portfolioData.personalInfo.phone}`}
+                          className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
+                          onClick={handlePhoneClick}
+                        >
+                          <PhoneCallIcon className="w-4 h-4" />
+                          <span>{portfolioData.personalInfo.phone}</span>
+                        </a>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {hasData("socialLinks") && (
                 <div className="space-y-4" id="social-section">

@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     if (imageUrl) {
       updateData.imageUrl = imageUrl;
     }
-
+    await connectDB();
     const res = await User.findByIdAndUpdate(userId, updateData, { new: true });
     if (!res) {
       return NextResponse.json(
@@ -55,6 +55,7 @@ export async function GET(req: NextRequest) {
         { status: 401 }
       );
     }
+    await connectDB();
     const user = await User.findById(userId).select("portfolioData");
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });

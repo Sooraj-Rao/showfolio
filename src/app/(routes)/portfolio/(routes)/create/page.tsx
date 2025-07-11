@@ -674,14 +674,14 @@ export default function CreatePortfolioPage() {
               className="w-full"
               onValueChange={(value) => setDataSource(value as "manual" | "ai")}
             >
-              <TabsList className="grid w-full grid-cols-2 mb-8">
+              <TabsList className="grid w-full grid-cols-2 gap-2 mb-8">
                 <TabsTrigger value="manual">
-                  <User className="mr-2 h-4 w-4" />
+                  <User className="mr-2 md:block hidden h-4 w-4" />
                   Manual Entry
                 </TabsTrigger>
                 <TabsTrigger value="ai">
-                  <FileUp className="mr-2 h-4 w-4" />
-                  Extract from Resume
+                  <FileUp className="mr-2 md:block hidden h-4 w-4" />
+                  Extract Resume
                 </TabsTrigger>
               </TabsList>
 
@@ -700,7 +700,7 @@ export default function CreatePortfolioPage() {
 
               <TabsContent value="ai" className="space-y-6">
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
                     <div
                       className={`border rounded-lg p-4 cursor-pointer ${
                         aiOption === "upload"
@@ -742,11 +742,11 @@ export default function CreatePortfolioPage() {
                       <Input
                         id="resume-upload"
                         type="file"
-                        accept=".pdf,.doc,.docx"
+                        accept=".pdf"
                         onChange={handleFileChange}
                       />
                       <p className="text-xs text-muted-foreground">
-                        Supported formats: PDF, DOC, DOCX. Maximum size: 5MB
+                        Supported formats: PDF. Maximum size: 5MB
                       </p>
                     </div>
                   )}
@@ -760,7 +760,13 @@ export default function CreatePortfolioPage() {
                         value={selectedResume}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a resume" />
+                          <SelectValue
+                            placeholder={`${
+                              userData.resumes.length == 0
+                                ? "No resumes uploaded"
+                                : "Select a resume"
+                            }`}
+                          />
                         </SelectTrigger>
                         <SelectContent>
                           {userData?.resumes?.map((r: IResume) => (
@@ -790,7 +796,7 @@ export default function CreatePortfolioPage() {
             </Tabs>
           </CardContent>
           <CardFooter className="justify-between">
-            <Button variant="outline" onClick={() => router.push("/portfolio")}>
+            <Button variant="outline" onClick={() => router.push("/portfolio/dashboard")}>
               Cancel
             </Button>
           </CardFooter>
@@ -799,11 +805,11 @@ export default function CreatePortfolioPage() {
     );
   }
   return (
-    <div className=" px-4">
+    <div className=" md:px-4">
       <div className="mb-8">
         <h1 className="text-2xl font-bold mb-4">Create Your Portfolio</h1>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0">
+        <div className="flex sm:flex-row flex-col  items-center justify-between">
+          <div className=" items-center  hidden md:flex space-x-2 overflow-x-auto pb-2 md:pb-0">
             {steps.map((step, index) => (
               <div key={index} className="flex items-center">
                 <Button
@@ -839,13 +845,13 @@ export default function CreatePortfolioPage() {
         >
           {currentStep === 0 && (
             <Card>
-              <CardHeader>
+              <CardHeader className=" p-4">
                 <CardTitle>Personal Information</CardTitle>
                 <CardDescription>
                   Tell us about yourself. All fields are optional.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 p-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label htmlFor="name" className="text-sm font-medium">
@@ -932,7 +938,7 @@ export default function CreatePortfolioPage() {
               <CardFooter className="justify-between">
                 <Button
                   variant="outline"
-                  onClick={() => router.push("/portfolio")}
+                  onClick={() => router.push("/portfolio/dashboard")}
                 >
                   Cancel
                 </Button>
@@ -945,15 +951,15 @@ export default function CreatePortfolioPage() {
 
           {currentStep === 1 && (
             <Card>
-              <CardHeader>
+              <CardHeader className=" p-4">
                 <CardTitle>Social Links</CardTitle>
                 <CardDescription>
                   Add your social media profiles. All fields are optional.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 p-4">
                 {formData.socialLinks.map((link, index) => (
-                  <div key={index} className="flex items-end gap-4">
+                  <div key={index} className="flex flex-col md:flex-row md:items-end  gap-4 ">
                     <div className="flex-1 space-y-2">
                       <label
                         htmlFor={`platform-${index}`}
@@ -1013,13 +1019,13 @@ export default function CreatePortfolioPage() {
 
           {currentStep === 2 && (
             <Card>
-              <CardHeader>
+              <CardHeader className=" p-4">
                 <CardTitle>Work Experience</CardTitle>
                 <CardDescription>
                   Add your work experience. All fields are optional.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-6 p-4">
                 {formData.workExperience.map((experience, index) => (
                   <div key={index} className="space-y-4 p-4 border rounded-lg">
                     <div className="flex justify-between items-center">
@@ -1155,13 +1161,13 @@ export default function CreatePortfolioPage() {
 
           {currentStep === 3 && (
             <Card>
-              <CardHeader>
+              <CardHeader className=" p-4">
                 <CardTitle>Skills</CardTitle>
                 <CardDescription>
                   Add your skills. All fields are optional.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 p-4">
                 {formData.skills.map((skill, index) => (
                   <div key={index} className="flex items-center gap-4">
                     <div className="flex-1 space-y-2">
@@ -1206,13 +1212,13 @@ export default function CreatePortfolioPage() {
 
           {currentStep === 4 && (
             <Card>
-              <CardHeader>
-                  <CardTitle>Projects</CardTitle>
+              <CardHeader className=" p-4">
+                <CardTitle>Projects</CardTitle>
                 <CardDescription>
                   Add your projects. All fields are optional.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-6 p-4">
                 {formData.projects.map((project, index) => (
                   <div key={index} className="space-y-4 p-4 border rounded-lg">
                     <div className="flex justify-between items-center">
@@ -1331,13 +1337,13 @@ export default function CreatePortfolioPage() {
 
           {currentStep === 5 && (
             <Card>
-              <CardHeader>
+              <CardHeader className=" p-4">
                 <CardTitle>Achievements</CardTitle>
                 <CardDescription>
                   Add your achievements and awards. All fields are optional.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-6 p-4">
                 {formData.achievements.map((achievement, index) => (
                   <div key={index} className="space-y-4 p-4 border rounded-lg">
                     <div className="flex justify-between items-center">
@@ -1409,13 +1415,13 @@ export default function CreatePortfolioPage() {
 
           {currentStep === 6 && (
             <Card>
-              <CardHeader>
+              <CardHeader className=" p-4">
                 <CardTitle>Education</CardTitle>
                 <CardDescription>
                   Add your education. All fields are optional.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-6 p-4">
                 {formData.education.map((edu, index) => (
                   <div key={index} className="space-y-4 p-4 border rounded-lg">
                     <div className="flex justify-between items-center">
@@ -1540,13 +1546,13 @@ export default function CreatePortfolioPage() {
 
           {currentStep === 7 && (
             <Card>
-              <CardHeader>
+              <CardHeader className=" p-4">
                 <CardTitle>Certifications</CardTitle>
                 <CardDescription>
                   Add your certifications. All fields are optional.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-6 p-4">
                 {formData.certifications.map((cert, index) => (
                   <div key={index} className="space-y-4 p-4 border rounded-lg">
                     <div className="flex justify-between items-center">

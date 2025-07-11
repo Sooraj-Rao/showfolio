@@ -367,8 +367,6 @@ export default function PortfolioAnalyticsPage() {
     };
   }, [analyticsData]);
 
-
-
   const formatTime = (seconds: number) => {
     if (seconds < 60) return `${seconds}s`;
     if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
@@ -468,7 +466,7 @@ export default function PortfolioAnalyticsPage() {
         </Select>
       </div>
 
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -488,7 +486,7 @@ export default function PortfolioAnalyticsPage() {
           </CardContent>
         </Card>
 
-        <Card >
+        <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Avg. Session Time
@@ -505,7 +503,7 @@ export default function PortfolioAnalyticsPage() {
           </CardContent>
         </Card>
 
-        <Card >
+        <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Total Interactions
@@ -524,7 +522,7 @@ export default function PortfolioAnalyticsPage() {
           </CardContent>
         </Card>
 
-        <Card >
+        <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Page Views
@@ -545,14 +543,13 @@ export default function PortfolioAnalyticsPage() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 h-24 sm:h-9  min-w-[320px]">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="devices">Devices</TabsTrigger>
           <TabsTrigger value="geography">Geography</TabsTrigger>
           <TabsTrigger value="traffic">Traffic</TabsTrigger>
           <TabsTrigger value="sessions">Sessions</TabsTrigger>
         </TabsList>
-
         <TabsContent value="overview" className="space-y-6">
           <div className="grid gap-6 lg:grid-cols-2">
             <Card>

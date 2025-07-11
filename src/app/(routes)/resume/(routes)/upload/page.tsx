@@ -181,7 +181,8 @@ export default function UploadPage() {
                 {files.map((file, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between bg-muted/30 p-3 rounded-lg text-sm"
+                    className={`flex items-center flex-col sm:flex-row  justify-between bg-muted/30 p-3 rounded-lg text-sm
+                      `}
                   >
                     <div className="flex items-center space-x-3 flex-grow">
                       <File className="h-5 w-5 text-muted-foreground" />
@@ -209,7 +210,7 @@ export default function UploadPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 rounded-full"
+                          className="h-8 w-8 bg-muted-foreground/10 rounded-full"
                           onClick={() => removeFile(index)}
                         >
                           <X className="h-4 w-4" />

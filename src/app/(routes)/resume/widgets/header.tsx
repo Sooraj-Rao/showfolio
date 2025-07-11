@@ -46,7 +46,7 @@ export function DashboardHeader() {
       <div className="flex h-16 items-center px-4">
         <h2 className="flex-1">Resume Org</h2>
 
-        <Button onClick={handleLogout} variant="outline">
+        <Button className=" md:block hidden" onClick={handleLogout} variant="outline">
           Logout
         </Button>
         <Button className=" lg:hidden" onClick={toggleSidebar} variant="ghost">

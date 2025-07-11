@@ -337,50 +337,52 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between w-full   bg-background  rounded-md ">
-        <span className="text-lg flex items-center font-semibold text-foreground">
-          Your portfolio is Live
-          <a
-            target="_blank"
-            href={`${process.env.NEXT_PUBLIC_APP_URL!}/p/${
-              userData?.portfolio
-            }?ref=demo`}
-          >
-            <code className=" text-sm px-5 hover:underline underline-offset-4 text-blue-500 font-semibold">
-              {process.env.NEXT_PUBLIC_APP_URL!}
-              /p/{userData?.portfolio}
-            </code>
-          </a>
-        </span>
-        <div className=" flex gap-x-6">
-          <Button
-            onClick={handleCopyLink}
-            variant={!copied ? "secondary" : "outline"}
-          >
-            {copied ? (
-              <>
-                Copied
-                <CheckCircle className="h-6 w-6 text-green-500" />
-              </>
-            ) : (
-              <>
-                Copy
-                <Copy className="w-4 h-4 text-foreground " />
-              </>
-            )}
-          </Button>
-          <a
-            href={`/p/${userData.portfolio}?ref=demo`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Button>
-              <span>View Live</span>
-              <ExternalLink className="w-4 h-4 text-primary-foreground" />
+      {userData.hasPorfolioData && (
+        <div className="flex items-center flex-col sm:flex-row justify-between w-full   bg-background  rounded-md ">
+          <span className="sm:text-lg text-sm flex flex-col sm:flex-row items-center font-semibold text-foreground">
+            Your portfolio is Live
+            <a
+              target="_blank"
+              href={`${process.env.NEXT_PUBLIC_APP_URL!}/p/${
+                userData?.portfolio
+              }?ref=demo`}
+            >
+              <code className=" text-sm px-5 hover:underline underline-offset-4 text-blue-500 font-semibold">
+                {process.env.NEXT_PUBLIC_APP_URL!}
+                /p/{userData?.portfolio}
+              </code>
+            </a>
+          </span>
+          <div className=" flex gap-x-6 mt-4 sm:mt-0">
+            <Button
+              onClick={handleCopyLink}
+              variant={!copied ? "secondary" : "outline"}
+            >
+              {copied ? (
+                <>
+                  Copied
+                  <CheckCircle className="h-6 w-6 text-green-500" />
+                </>
+              ) : (
+                <>
+                  Copy
+                  <Copy className="w-4 h-4 text-foreground " />
+                </>
+              )}
             </Button>
-          </a>
+            <a
+              href={`/p/${userData.portfolio}?ref=demo`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button>
+                <span>View Live</span>
+                <ExternalLink className="w-4 h-4 text-primary-foreground" />
+              </Button>
+            </a>
+          </div>
         </div>
-      </div>
+      )}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="space-y-1">
           <h1 className="text-2xl font-bold tracking-tight">
@@ -398,7 +400,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="relative overflow-hidden">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">

@@ -29,7 +29,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useGetUserData from "@/app/hooks/use-getUserData";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { themes } from "@/app/(routes)/p/live/2";
 import Loader from "@/app/helper/loader";
 

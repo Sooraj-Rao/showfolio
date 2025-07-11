@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { ModeToggle } from "@/components/main/theme/theme-toggle";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "@/hooks/use-toast";
 
 export const ResumeSidebarItems = [
   { name: "Dashboard", href: "/resume/dashboard", icon: Home },
@@ -50,7 +51,7 @@ export function Sidebar() {
               </Link>
             );
           })}
-            <ModeToggle title={true} />
+          <ModeToggle title={true} />
           <div className=" pt-5">
             <Link href="/portfolio/dashboard/">
               <Button className="w-full justify-start">
@@ -68,6 +69,33 @@ export function Sidebar() {
 export function MobileSidebar({ isOpen, toggleSidebar, SidebarItems }) {
   const pathname = usePathname();
   const isResume = pathname.startsWith("/resume");
+
+    const handleLogout = async () => {
+      try {
+        const agree = confirm("Are you sure want to logout");
+        if (!agree) return;
+        const res = await fetch("/api/login", {
+          method: "PUT",
+        });
+        if (!res.ok) {
+          throw new Error("Failed to logout");
+        } else {
+          toast({
+            title: "Success",
+            description: "Logout successful",
+            variant: "default",
+          });
+          window.location.href = "/";
+        }
+      } catch {
+        toast({
+          title: "Failed",
+          description: "Failed to logout",
+          variant: "destructive",
+        });
+      }
+    };
+
   return (
     <aside
       className={cn(
@@ -121,6 +149,11 @@ export function MobileSidebar({ isOpen, toggleSidebar, SidebarItems }) {
             <Separator />
           </div>
           <ModeToggle title={true} />
+          <div className=" self-center mt-8">
+            <Button onClick={handleLogout} variant="outline">
+              Logout
+            </Button>
+          </div>
         </nav>
       </div>
     </aside>

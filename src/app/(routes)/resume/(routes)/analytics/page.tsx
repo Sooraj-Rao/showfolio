@@ -948,7 +948,7 @@ export default function AnalyticsPage() {
                       <ChartContainer
                         config={{
                           count: {
-                            label: "Views",
+                            label: "Events",
                           },
                         }}
                         className="h-[150px] w-[150px] sm:h-[180px] sm:w-[180px]"

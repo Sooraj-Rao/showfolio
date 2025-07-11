@@ -370,7 +370,7 @@ export default function DashboardPage() {
             )}
           </Button>
           <a
-            href={`/${userData.portfolio}?ref=demo`}
+            href={`/p/${userData.portfolio}?ref=demo`}
             target="_blank"
             rel="noopener noreferrer"
           >

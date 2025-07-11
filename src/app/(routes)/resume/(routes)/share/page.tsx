@@ -167,7 +167,7 @@ export default function SharePage() {
                     {truncateText(url, window.innerWidth > 400 ? 40 : 25)}
 
                     <button
-                    className=" px-1 underline"
+                    className=" pl-1 underline  font-semibold"
                       onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                         const button = e.target as HTMLButtonElement;
                         const span = button.previousSibling as HTMLSpanElement;

@@ -60,6 +60,7 @@ type PortfolioData = {
     description: string;
   }>;
   contacts: boolean;
+  previewAnalytics: boolean;
 };
 
 const PortfolioParentPage = ({
@@ -103,7 +104,8 @@ const PortfolioParentPage = ({
         setisError("Portfolio not found");
         return;
       }
-      response.data.portfolio.analytics = analytics === false ? false : true;
+      response.data.portfolio.previewAnalytics =
+        analytics === false ? false : true;
       response.data.portfolio.ref = ref;
       response.data.portfolio.theme = response.data.theme;
       response.data.portfolio.imageUrl = response.data.imageUrl;
@@ -138,7 +140,6 @@ const PortfolioParentPage = ({
   if (isError) {
     return (
       <div className="h-screen flex flex-col items-center justify-center gap-6 bg-gray-900 text-white px-4">
-        {/* <h1 className="text-2xl font-bold">Oops! Something went wrong.</h1> */}
         <p className="text-lg text-red-400">{isError.toString()}</p>
         <a href="/">
           <Button variant="outline" className="flex items-center gap-2">

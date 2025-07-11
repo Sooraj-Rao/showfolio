@@ -245,6 +245,7 @@ interface PortfolioData {
   analytics?: boolean;
   userId?: string;
   contacts: boolean;
+  previewAnalytics: boolean;
 }
 
 export default function ModernPortfolioWithAnalytics({
@@ -957,7 +958,7 @@ export default function ModernPortfolioWithAnalytics({
                 {portfolioData.personalInfo.resumeUrl && (
                   <Button
                     size="sm"
-                    className={`flex-1 gap-2 ${theme.primary}`}
+                    className={`flex-1 bg-transparent gap-2 ${theme.primary}`}
                     onClick={handleResumeDownload}
                   >
                     <ExternalLink className="w-4 h-4" />
@@ -1005,7 +1006,7 @@ export default function ModernPortfolioWithAnalytics({
               )}
             </div>
             <div>
-              {portfolioData?.analytics === false && (
+              {portfolioData?.previewAnalytics === false && (
                 <>
                   <div className="flex items-center gap-2 mb-4">
                     <Palette className="w-4 h-4" />
@@ -1117,6 +1118,7 @@ export default function ModernPortfolioWithAnalytics({
             <div className="flex gap-3 pt-6 border-t border-border">
               {portfolioData.personalInfo.resumeUrl && (
                 <Button
+                  variant="ghost"
                   className={`flex-1 gap-2 ${theme.primary}`}
                   onClick={handleResumeDownload}
                 >

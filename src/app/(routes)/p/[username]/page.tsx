@@ -139,7 +139,7 @@ const PortfolioParentPage = ({
 
   if (isError) {
     return (
-      <div className="h-screen flex flex-col items-center justify-center gap-6 bg-gray-900 text-white px-4">
+      <div className="h-screen flex flex-col items-center justify-center gap-6  px-4">
         <p className="text-lg text-red-400">{isError.toString()}</p>
         <a href="/">
           <Button variant="outline" className="flex items-center gap-2">

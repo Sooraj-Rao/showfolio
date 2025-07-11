@@ -110,6 +110,7 @@ export default function SettingsPage() {
   const { toast } = useToast();
   const [tab, setTab] = useState("profile");
   const searchParams = useSearchParams();
+   const router = useRouter();
   const { userData, setUserData } = useGetUserData();
   const [portfolioUrl, setportfolioUrl] = useState(
     userData?.portfolio || userData?.name || ""
@@ -220,6 +221,7 @@ export default function SettingsPage() {
             themeColor: selectedColor,
           },
         });
+        router.push('/portfolio/settings')
       } else {
         toast({
           title: "Error saving portfolio",
@@ -317,7 +319,7 @@ export default function SettingsPage() {
             <CardContent className="space-y-4">
               <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">
-                  https://portfolio.app/
+                {process.env.NEXT_PUBLIC_APP_URL}/
                 </span>
                 <Input
                   onChange={(e) => setportfolioUrl(e.target.value)}

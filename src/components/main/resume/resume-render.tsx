@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import useGetResumeData from "@/app/hooks/use-getResumeData";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
@@ -80,13 +80,7 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
     };
 
     if (navigator.share && navigator.canShare(shareData)) {
-      try {
-        await navigator.share(shareData);
-        toast({
-          title: "📤 Shared Successfully",
-          description: "Resume shared successfully!",
-        });
-      } catch {}
+      await navigator.share(shareData);
     } else if (navigator.clipboard) {
       try {
         await navigator.clipboard.writeText(window.location.href);
@@ -293,10 +287,6 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
 
               {resumeData && (
                 <Card className="border-0 shadow-xl backdrop-blur-sm">
-                  <CardHeader>
-                    <h3 className="font-semibold">Quick Actions</h3>
-                  </CardHeader>
-
                   <CardContent className="space-y-3 ">
                     <Button className="w-full" onClick={handleDownload}>
                       <Download className="w-4 h-4 mr-2" />

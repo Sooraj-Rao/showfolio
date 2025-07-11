@@ -606,7 +606,7 @@ export default function AnalyticsPage() {
               Geography
             </TabsTrigger>
             <TabsTrigger value="desc" className="text-xs sm:text-sm">
-              Event Insights
+              Detailed Insights
             </TabsTrigger>
           </TabsList>
         </div>
@@ -1013,7 +1013,7 @@ export default function AnalyticsPage() {
                             {totalEvents}
                           </div>
                           <div className="text-xs sm:text-sm text-muted-foreground">
-                            Total Views
+                            Total Events
                           </div>
                         </div>
                       </div>

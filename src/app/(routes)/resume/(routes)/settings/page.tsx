@@ -172,7 +172,7 @@ export default function SettingsPage() {
     try {
       const response = await axios.put("/api/user?operation=disableAcc");
 
-      if (response.statusText !== "OK") {
+      if (response.status !== 200) {
         throw new Error("Failed to disable account");
       }
 
@@ -201,7 +201,7 @@ export default function SettingsPage() {
     try {
       const response = await axios.put("/api/user?operation=enableAcc");
 
-      if (response.statusText !== "OK") {
+      if (response.status !== 200) {
         throw new Error("Failed to enable account");
       }
 

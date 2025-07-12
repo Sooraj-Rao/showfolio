@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { GetUserId } from "@/app/api/helper/utils"
-import connectDB from "@/lib/db"
-import PortfolioAnalytics from "@/models/p_analytics"
+import { GetUserId } from "@/app/api/helper/utils";
+import connectDB from "@/lib/db";
+import PortfolioAnalytics from "@/models/p_analytics";
 
 export async function GET(request: NextRequest) {
   try {

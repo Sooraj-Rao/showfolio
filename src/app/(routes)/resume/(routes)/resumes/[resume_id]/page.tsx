@@ -50,7 +50,7 @@ import { truncateText } from "@/app/utils/truncate-text";
 
 interface TagInputProps {
   tags: string[];
-  setTags: ([]) => void;
+  setTags: (tags: string[]) => void;
 }
 
 function TagInput({ tags, setTags }: TagInputProps) {

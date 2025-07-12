@@ -1,5 +1,5 @@
 import connectDB from "@/lib/db";
-import { Analytics } from "@/models/analytics";
+import { Analytics, IAnalytics } from "@/models/analytics";
 import Resume from "@/models/resume";
 import { NextRequest, NextResponse } from "next/server";
 import { UAParser } from "ua-parser-js";
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await Analytics.create({
+    const analyticsData: IAnalytics = {
       user: resumeData.user,
       resume: resumeData._id,
       event,
@@ -73,7 +73,9 @@ export async function POST(req: NextRequest) {
       country: location?.country || "Unknown",
       countryCode: location?.countryCode || "Unknown",
       region: location?.region || "Unknown",
-    });
+    };
+
+    await Analytics.create(analyticsData);
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -1,6 +1,7 @@
 import { Analytics } from "@/models/analytics";
 import { NextRequest, NextResponse } from "next/server";
 import { GetUserId } from "../helper/utils";
+import { IResume } from "@/models/resume";
 
 export async function GET(req: NextRequest) {
   try {
@@ -9,7 +10,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorzised" }, { status: 403 });
     }
     const analyticsData = await Analytics.find({ user: userId })
-      .populate("resume")
+      .populate<{ resume: IResume }>("resume")
       .select("-user");
     const newData = analyticsData.map((item) => {
       return {

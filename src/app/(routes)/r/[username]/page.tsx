@@ -1,9 +1,8 @@
-import React from "react";
-
 import ResumeViewer from "@/components/main/resume/resume-render";
 
-const page = ({ params: { username } }: { params: { username: string } }) => {
-  return <ResumeViewer shortUrl={username} />;
-};
+type Params = Promise<{ username: string }>;
 
-export default page;
+export default async function Page({ params }: { params: Params }) {
+  const { username } = await params;
+  return <ResumeViewer shortUrl={username} />;
+}

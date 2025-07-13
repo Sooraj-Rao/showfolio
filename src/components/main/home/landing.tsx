@@ -10,15 +10,14 @@ import {
   BarChart3,
   FileText,
   Share2,
-  Sparkles,
   Globe,
-  QrCode,
   PenTool,
   ChevronRight,
-  MousePointerClick,
   CheckCircle2,
-  Palette,
-  Link2,
+  Upload,
+  Eye,
+  Download,
+  Brain,
 } from "lucide-react";
 import React, { useState } from "react";
 
@@ -27,67 +26,80 @@ export function LandingPage() {
 
   const features = [
     {
-      title: "Smart Document Management",
+      title: "Resume Management",
       description:
-        "Store and organize all your resumes, cover letters, and career documents in one secure location with easy access.",
+        "Upload and store your resumes securely. Keep track of different versions and organize them by job applications.",
       icon: FileText,
       benefits: [
-        "Unlimited storage for all your career documents",
-        "Organize by job type, company, or custom categories",
-        "Version control to track changes and updates",
-        "Secure cloud storage with privacy controls",
+        "Upload and store multiple resume files",
+        "Organize resumes by job applications",
+        "Secure cloud storage",
+        "Easy access from anywhere",
       ],
       image: "/placeholder.svg?height=450&width=800",
     },
     {
-      title: "AI-Powered Optimization",
+      title: "AI Resume Feedback",
       description:
-        "Get intelligent suggestions to improve your resume and increase your chances of landing interviews.",
-      icon: Sparkles,
+        "Get AI-powered suggestions to improve your resume content and increase your chances with job applications.",
+      icon: Brain,
       benefits: [
-        "Keyword optimization for ATS compatibility",
-        "Content suggestions based on job descriptions",
-        "Grammar and style improvements",
-        "Industry-specific recommendations",
+        "AI analysis of resume content",
+        "Suggestions for improvement",
+        "Content optimization tips",
+        "Job-specific recommendations",
       ],
       image: "/placeholder.svg?height=450&width=800",
     },
     {
-      title: "Advanced Analytics",
+      title: "Resume Analytics",
       description:
-        "Track views, downloads, and engagement with detailed analytics to optimize your applications.",
+        "Track who views and downloads your shared resumes. See which resumes perform better.",
       icon: BarChart3,
       benefits: [
-        "Real-time tracking of resume views and downloads",
-        "Engagement metrics for each section of your resume",
-        "Comparison tools for different resume versions",
-        "Insights on which skills and experiences attract attention",
+        "Track resume views and downloads",
+        "See engagement on shared links",
+        "Compare resume performance",
+        "View analytics dashboard",
       ],
       image: "/placeholder.svg?height=450&width=800",
     },
     {
-      title: "Custom Portfolio Builder",
+      title: "Portfolio Builder",
       description:
-        "Create a beautiful portfolio website to showcase your projects, skills, and experience.",
-      icon: Palette,
+        "Create a professional portfolio website to showcase your work and skills alongside your resume.",
+      icon: PenTool,
       benefits: [
-        "Beautiful, customizable templates",
-        "Showcase projects with rich media galleries",
-        "Integrated blog for sharing your insights",
-        "Mobile-responsive design for all devices",
+        "Build portfolio websites",
+        "Showcase projects and skills",
+        "Professional templates",
+        "Mobile-responsive design",
       ],
       image: "/placeholder.svg?height=450&width=800",
     },
     {
-      title: "Easy Sharing & Custom Domain",
+      title: "Easy Sharing",
       description:
-        "Share your resume with custom links and QR codes, plus get your own personalized subdomain.",
-      icon: Link2,
+        "Share your resume with custom links. Track when someone views or downloads your resume.",
+      icon: Share2,
       benefits: [
-        "Custom shareable links for each document",
-        "QR codes for easy sharing on business cards",
-        "Your own custom subdomain (you.resumehub.com)",
-        "Privacy controls to manage who can view your content",
+        "Generate shareable links",
+        "Track link clicks",
+        "Monitor downloads",
+        "Share with employers easily",
+      ],
+      image: "/placeholder.svg?height=450&width=800",
+    },
+    {
+      title: "Portfolio Analytics",
+      description:
+        "Get insights into your portfolio website traffic and see how visitors interact with your content.",
+      icon: Globe,
+      benefits: [
+        "Website traffic analytics",
+        "Visitor behavior insights",
+        "Page performance metrics",
+        "Traffic source tracking",
       ],
       image: "/placeholder.svg?height=450&width=800",
     },
@@ -97,6 +109,7 @@ export function LandingPage() {
     <div className="flex flex-col min-h-screen">
       <SiteNav />
 
+      {/* Hero Section */}
       <section className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <div className="absolute inset-0 bg-gradient-to-b from-background to-muted/30 dark:from-background dark:to-background"></div>
@@ -136,7 +149,7 @@ export function LandingPage() {
                   className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary"
                   whileHover={{ scale: 1.05 }}
                 >
-                  <span>Introducing ResumeHub</span>
+                  <span>Resume & Portfolio Platform</span>
                   <motion.div
                     animate={{ x: [0, 5, 0] }}
                     transition={{
@@ -151,18 +164,21 @@ export function LandingPage() {
 
               <ScrollReveal delay={0.1}>
                 <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-                  Elevate Your{" "}
+                  Manage Your{" "}
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
-                    Career Presence
+                    Resumes
+                  </span>{" "}
+                  & Build Your{" "}
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
+                    Portfolio
                   </span>
                 </h1>
               </ScrollReveal>
 
               <ScrollReveal delay={0.2}>
                 <p className="text-xl text-muted-foreground">
-                  The all-in-one platform for managing resumes, creating
-                  portfolios, and optimizing your job search with AI-powered
-                  insights.
+                  Store your resumes, get AI feedback, track performance with
+                  analytics, and build a professional portfolio website.
                 </p>
               </ScrollReveal>
 
@@ -172,30 +188,19 @@ export function LandingPage() {
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                   >
-                    <Button
-                      size="lg"
-                      className="group relative overflow-hidden"
-                    >
-                      <span className="relative z-10">Get Started Free</span>
-                      <motion.span
-                        className="absolute inset-0 bg-primary/80 z-0"
-                        initial={{ x: "-100%" }}
-                        whileHover={{ x: 0 }}
-                        transition={{
-                          type: "tween",
-                          ease: "easeInOut",
-                          duration: 0.3,
-                        }}
-                      />
-                      <ChevronRight className="ml-1 h-4 w-4 relative z-10 transition-transform group-hover:translate-x-1" />
+                    <Button size="lg" className="group" asChild>
+                      <Link href="/auth/signup">
+                        Get Started
+                        <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </Link>
                     </Button>
                   </motion.div>
                   <motion.div
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                   >
-                    <Button size="lg" variant="outline">
-                      See Demo
+                    <Button size="lg" variant="outline" asChild>
+                      <Link href="/p/preview">View Demo</Link>
                     </Button>
                   </motion.div>
                 </div>
@@ -203,7 +208,7 @@ export function LandingPage() {
             </div>
 
             <div className="relative">
-              <ScrollReveal direction="left">
+              <ScrollReveal>
                 <motion.div
                   className="relative aspect-[4/3] rounded-xl overflow-hidden border shadow-2xl"
                   whileHover={{ y: -5 }}
@@ -211,42 +216,37 @@ export function LandingPage() {
                 >
                   <img
                     src="/placeholder.svg?height=600&width=800"
-                    alt="ResumeHub Dashboard"
+                    alt="Resume Management Dashboard"
                     className="object-cover w-full h-full"
                   />
                   <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-transparent mix-blend-overlay"></div>
                 </motion.div>
               </ScrollReveal>
 
+              {/* Analytics Card */}
               <ScrollReveal delay={0.3} direction="down">
                 <motion.div
-                  className="absolute -top-8 -right-8 w-40 h-40 rounded-lg bg-background border shadow-lg p-3 flex flex-col justify-between hidden sm:flex"
+                  className="absolute -top-8 -right-8 w-40 h-32 rounded-lg bg-background border shadow-lg p-3 flex flex-col justify-between hidden sm:flex"
                   whileHover={{ y: -5, scale: 1.03 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
                   <div className="text-xs text-muted-foreground">
-                    Resume Analytics
+                    Resume Stats
                   </div>
-                  <div className="flex-1 flex items-center justify-center">
-                    <motion.div
-                      className="relative h-20 w-20 rounded-full bg-muted flex items-center justify-center"
-                      animate={{ rotate: 360 }}
-                      transition={{
-                        duration: 8,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: "linear",
-                      }}
-                    >
-                      <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent"></div>
-                      <div className="text-sm font-bold">85%</div>
-                    </motion.div>
-                  </div>
-                  <div className="text-xs text-center text-muted-foreground">
-                    Engagement Rate
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Eye className="h-3 w-3 text-blue-500" />
+                      <span className="text-xs">Views: 47</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Download className="h-3 w-3 text-green-500" />
+                      <span className="text-xs">Downloads: 12</span>
+                    </div>
                   </div>
                 </motion.div>
               </ScrollReveal>
 
+              {/* AI Feedback Card */}
               <ScrollReveal delay={0.4} direction="right">
                 <motion.div
                   className="absolute -bottom-8 -left-8 w-48 rounded-lg bg-background border shadow-lg p-3 hidden sm:block"
@@ -256,26 +256,14 @@ export function LandingPage() {
                   <div className="text-xs text-muted-foreground mb-2">
                     AI Feedback
                   </div>
-                  <div className="flex items-center gap-2">
-                    <motion.div
-                      animate={{
-                        scale: [1, 1.2, 1],
-                        rotate: [0, 5, 0, -5, 0],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Number.POSITIVE_INFINITY,
-                        repeatDelay: 3,
-                      }}
-                    >
-                      <Sparkles className="h-4 w-4 text-primary" />
-                    </motion.div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Brain className="h-4 w-4 text-primary" />
                     <div className="text-sm font-medium">
-                      Skills section is strong!
+                      Good skills section
                     </div>
                   </div>
-                  <div className="mt-2 text-xs text-muted-foreground">
-                    Consider adding more quantifiable achievements.
+                  <div className="text-xs text-muted-foreground">
+                    Add more specific achievements
                   </div>
                 </motion.div>
               </ScrollReveal>
@@ -284,6 +272,7 @@ export function LandingPage() {
         </div>
       </section>
 
+      {/* Features Overview */}
       <section id="features" className="py-20 relative overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-muted/30 dark:bg-muted/5"></div>
 
@@ -307,128 +296,226 @@ export function LandingPage() {
               className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary"
               whileHover={{ scale: 1.05 }}
             >
-              <span>Key Features</span>
+              <span>Core Features</span>
             </motion.div>
             <h2 className="text-3xl font-bold">
-              Everything You Need to Succeed
+              Everything You Need for Job Success
             </h2>
             <p className="text-lg text-muted-foreground">
-              Our platform provides all the tools you need to manage your career
-              documents and stand out from the crowd.
+              Streamline your job search with our comprehensive suite of tools
+              designed for modern professionals.
             </p>
           </ScrollReveal>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                title: "Smart Document Storage",
+                title: "Resume Storage",
                 description:
-                  "Store and organize all your resumes, cover letters, and career documents in one secure location.",
-                icon: FileText,
+                  "Upload and organize your resume files with secure cloud storage.",
+                icon: Upload,
                 color: "from-blue-500 to-cyan-500",
+                stats: "Store multiple versions",
+                highlight: "Secure & Organized",
               },
               {
-                title: "Advanced Analytics",
+                title: "Performance Analytics",
                 description:
-                  "Track views, downloads, and engagement with detailed analytics to optimize your applications.",
+                  "Track views, downloads, and engagement metrics for your resumes.",
                 icon: BarChart3,
                 color: "from-purple-500 to-pink-500",
+                stats: "Real-time tracking",
+                highlight: "Data-Driven Insights",
               },
               {
                 title: "AI-Powered Feedback",
                 description:
-                  "Get intelligent suggestions to improve your resume and increase your chances of landing interviews.",
-                icon: Sparkles,
+                  "Get intelligent suggestions to improve your resume content.",
+                icon: Brain,
                 color: "from-amber-500 to-orange-500",
+                stats: "Smart recommendations",
+                highlight: "AI Enhancement",
               },
               {
-                title: "Easy Sharing Options",
+                title: "Easy Sharing",
                 description:
-                  "Share your resume with custom links and QR codes that you can include on business cards or profiles.",
+                  "Generate shareable links and track when employers view your resume.",
                 icon: Share2,
                 color: "from-green-500 to-emerald-500",
+                stats: "One-click sharing",
+                highlight: "Professional Links",
               },
               {
-                title: "Custom Portfolio Builder",
+                title: "Portfolio Builder",
                 description:
-                  "Create a beautiful portfolio website to showcase your projects, skills, and experience.",
+                  "Create stunning portfolio websites to showcase your projects.",
                 icon: PenTool,
                 color: "from-rose-500 to-red-500",
+                stats: "Professional templates",
+                highlight: "Stand Out Online",
               },
               {
-                title: "Personal Domain",
+                title: "Traffic Insights",
                 description:
-                  "Get your own custom subdomain (you.resumehub.com) to make your profile easily discoverable.",
+                  "Monitor your portfolio visitors and understand your audience.",
                 icon: Globe,
                 color: "from-indigo-500 to-violet-500",
+                stats: "Visitor analytics",
+                highlight: "Know Your Impact",
               },
             ].map((feature, index) => (
-              <ScrollReveal key={index} delay={0.05 * index}>
+              <ScrollReveal key={index} delay={0.1 * index}>
                 <motion.div
-                  className="group relative overflow-hidden rounded-xl border bg-background p-6 shadow-md transition-all hover:shadow-xl h-full"
-                  whileHover={{ y: -5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+                  className="group relative overflow-hidden rounded-2xl border bg-background/50 backdrop-blur-sm p-8 shadow-lg transition-all hover:shadow-2xl h-full"
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 >
-                  <div className="mb-4">
+                  {/* Background gradient on hover */}
+                  <motion.div
+                    className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
+                  />
+
+                  {/* Icon with animated background */}
+                  <div className="relative mb-6">
                     <motion.div
-                      className={`h-12 w-12 rounded-full bg-gradient-to-br ${feature.color} flex items-center justify-center`}
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      transition={{ type: "spring", stiffness: 300 }}
+                      className={`h-16 w-16 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center shadow-lg`}
+                      whileHover={{
+                        scale: 1.1,
+                        rotate: [0, -5, 5, 0],
+                        boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                      }}
+                      transition={{ type: "spring", stiffness: 400 }}
                     >
-                      <feature.icon className="h-6 w-6 text-white" />
+                      <feature.icon className="h-8 w-8 text-white" />
                     </motion.div>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-muted-foreground">{feature.description}</p>
-                  <div className="mt-6">
+
+                    {/* Floating badge */}
                     <motion.div
-                      whileHover={{ x: 5 }}
-                      transition={{ type: "spring", stiffness: 300 }}
+                      className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full font-medium"
+                      initial={{ scale: 0, opacity: 0 }}
+                      whileInView={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.2 + index * 0.1 }}
                     >
-                      <Button
-                        variant="ghost"
-                        className="group p-0 h-auto font-medium text-primary"
-                      >
-                        Learn more
-                        <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </Button>
+                      {feature.highlight}
                     </motion.div>
                   </div>
 
+                  {/* Content */}
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
+                        {feature.title}
+                      </h3>
+                      <p className="text-muted-foreground leading-relaxed">
+                        {feature.description}
+                      </p>
+                    </div>
+
+                    {/* Stats */}
+                    <div className="flex items-center gap-2 text-sm">
+                      <motion.div
+                        className="h-2 w-2 rounded-full bg-primary"
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{
+                          duration: 2,
+                          repeat: Number.POSITIVE_INFINITY,
+                          delay: index * 0.2,
+                        }}
+                      />
+                      <span className="text-primary font-medium">
+                        {feature.stats}
+                      </span>
+                    </div>
+
+                    {/* Action button */}
+                    <motion.div
+                      className="pt-4"
+                      whileHover={{ x: 5 }}
+                      transition={{ type: "spring", stiffness: 400 }}
+                    >
+                      <div className="flex items-center text-primary font-medium text-sm group-hover:text-primary/80 transition-colors cursor-pointer">
+                        <span>Explore feature</span>
+                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </div>
+                    </motion.div>
+                  </div>
+
+                  {/* Decorative elements */}
                   <motion.div
-                    className="absolute -inset-px rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    className="absolute top-4 right-4 w-20 h-20 rounded-full bg-gradient-to-br from-primary/5 to-transparent"
+                    animate={{
+                      scale: [1, 1.1, 1],
+                      rotate: [0, 90, 0],
+                    }}
+                    transition={{
+                      duration: 8,
+                      repeat: Number.POSITIVE_INFINITY,
+                      delay: index * 0.5,
+                    }}
+                  />
+
+                  {/* Border glow effect */}
+                  <motion.div
+                    className="absolute inset-0 rounded-2xl border-2 border-transparent bg-gradient-to-r from-primary/20 via-transparent to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                     style={{
-                      background: `linear-gradient(90deg, ${feature.color
-                        .replace("from-", "")
-                        .replace("to-", "")})`,
-                      zIndex: -1,
-                      filter: "blur(8px)",
+                      background: `linear-gradient(135deg, transparent, ${
+                        feature.color.split(" ")[1]?.replace("to-", "") ||
+                        "primary"
+                      }20, transparent)`,
+                      padding: "2px",
+                      borderRadius: "1rem",
                     }}
                   />
                 </motion.div>
               </ScrollReveal>
             ))}
           </div>
+
+          {/* Bottom CTA */}
+          <ScrollReveal delay={0.8} >
+            <motion.div
+              className="text-center mt-16 "
+              whileInView={{ y: 0, opacity: 1 }}
+              initial={{ y: 20, opacity: 0 }}
+            >
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  size="lg"
+                  className="group relative overflow-hidden"
+                  asChild
+                >
+                  <Link href="/auth/signup">
+                    <span className="relative z-10">Try All Features Free</span>
+                    <motion.span
+                      className="absolute inset-0 bg-primary/80 z-0"
+                      initial={{ x: "-100%" }}
+                      whileHover={{ x: 0 }}
+                      transition={{
+                        type: "tween",
+                        ease: "easeInOut",
+                        duration: 0.3,
+                      }}
+                    />
+                    <ChevronRight className="ml-2 h-4 w-4 relative z-10 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                </Button>
+              </motion.div>
+            </motion.div>
+          </ScrollReveal>
         </div>
       </section>
 
-      <section id="features" className="py-20">
+      {/* Detailed Features Tabs */}
+      <section id="detailed-features" className="py-20">
         <div className="container px-4">
           <ScrollReveal className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-            <motion.div
-              className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary"
-              whileHover={{ scale: 1.05 }}
-            >
-              <span>Key Features</span>
-            </motion.div>
-            <h2 className="text-3xl font-bold">
-              Everything You Need to Succeed
-            </h2>
+            <h2 className="text-3xl font-bold">Features in Detail</h2>
             <p className="text-lg text-muted-foreground">
-              Our platform provides all the tools you need to manage your career
-              documents and stand out from the crowd.
+              Learn more about each feature and how it can help with your job
+              search.
             </p>
           </ScrollReveal>
 
@@ -448,7 +535,7 @@ export function LandingPage() {
                 >
                   <div className="flex items-center gap-2">
                     <feature.icon className="h-4 w-4" />
-                    <span>{feature.title}</span>
+                    <span className="hidden sm:inline">{feature.title}</span>
                   </div>
                 </motion.button>
               ))}
@@ -465,14 +552,11 @@ export function LandingPage() {
               >
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
-                    <motion.div
-                      className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center"
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                    >
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                       {React.createElement(features[activeTab].icon, {
                         className: "h-5 w-5 text-primary",
                       })}
-                    </motion.div>
+                    </div>
                     <h3 className="text-2xl font-semibold">
                       {features[activeTab].title}
                     </h3>
@@ -483,25 +567,17 @@ export function LandingPage() {
                   <div className="space-y-4">
                     {features[activeTab].benefits.map((item, i) => (
                       <motion.div key={i} className="flex items-start gap-3">
-                        <motion.div
-                          whileHover={{ scale: 1.2, rotate: 5 }}
-                          className="mt-0.5"
-                        >
-                          <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
-                        </motion.div>
+                        <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                         <span>{item}</span>
                       </motion.div>
                     ))}
                   </div>
-                  <motion.div
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                  >
-                    <Button className="group">
-                      Learn More
+                  <Button className="group" asChild>
+                    <Link href="/auth/signup">
+                      Try It Now
                       <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </Button>
-                  </motion.div>
+                    </Link>
+                  </Button>
                 </div>
                 <div className="relative">
                   <motion.div
@@ -514,30 +590,7 @@ export function LandingPage() {
                       alt={features[activeTab].title}
                       className="object-cover w-full h-full"
                     />
-                    <motion.div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end">
-                      <div className="p-6 text-white">
-                        <h3 className="text-xl font-bold">
-                          {features[activeTab].title}
-                        </h3>
-                        <p className="text-sm opacity-80">
-                          Click to explore this feature
-                        </p>
-                      </div>
-                    </motion.div>
                   </motion.div>
-
-                  <motion.div
-                    className="absolute -z-10 -bottom-6 -right-6 w-32 h-32 rounded-full bg-primary/10"
-                    animate={{
-                      scale: [1, 1.1, 1],
-                      rotate: [0, 5, 0],
-                    }}
-                    transition={{
-                      duration: 5,
-                      repeat: Number.POSITIVE_INFINITY,
-                      repeatType: "reverse",
-                    }}
-                  />
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -545,498 +598,52 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section
-        id="portfolio"
-        className="py-20 bg-muted/50 dark:bg-muted/5 relative overflow-hidden"
-      >
-        <motion.div
-          className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/5 blur-3xl"
-          animate={{
-            scale: [1, 1.1, 1],
-            y: [0, -30, 0],
-            opacity: [0.2, 0.3, 0.2],
-          }}
-          transition={{
-            duration: 12,
-            repeat: Number.POSITIVE_INFINITY,
-            repeatType: "reverse",
-          }}
-        />
-
-        <div className="container px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="order-2 md:order-1 relative">
-              <ScrollReveal>
-                <motion.div
-                  className="aspect-[3/4] rounded-xl overflow-hidden border shadow-xl"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <img
-                    src="/placeholder.svg?height=800&width=600"
-                    alt="Portfolio Example"
-                    className="object-cover w-full h-full"
-                  />
-                  <motion.div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end">
-                    <div className="p-6 text-white">
-                      <h3 className="text-xl font-bold">
-                        John Doe&apos;s Portfolio
-                      </h3>
-                      <p className="text-sm opacity-80">
-                        Full-stack developer & UI/UX designer
-                      </p>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.2} direction="up">
-                <motion.div
-                  className="absolute -top-6 -right-6 w-48 rounded-lg bg-background border shadow-lg p-3 hidden sm:block"
-                  whileHover={{ y: -5, scale: 1.03 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <div className="text-xs text-muted-foreground mb-2">
-                    Your Custom Domain
-                  </div>
-                  <div className="flex items-center gap-2 bg-muted/50 rounded-md px-3 py-2">
-                    <Globe className="h-4 w-4 text-primary" />
-                    <div className="text-sm font-medium">
-                      yourname.resumehub.com
-                    </div>
-                  </div>
-                </motion.div>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.3} direction="left">
-                <motion.div
-                  className="absolute -bottom-6 -left-6 w-40 h-40 rounded-lg bg-background border shadow-lg p-3 flex items-center justify-center hidden sm:flex"
-                  whileHover={{ y: -5, scale: 1.03 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <motion.div
-                    animate={{
-                      scale: [1, 1.05, 1],
-                      rotate: [0, 1, 0, -1, 0],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Number.POSITIVE_INFINITY,
-                    }}
-                  >
-                    <QrCode className="h-20 w-20 text-primary" />
-                  </motion.div>
-                </motion.div>
-              </ScrollReveal>
-            </div>
-
-            <div className="order-1 md:order-2 space-y-6">
-              <ScrollReveal>
-                <motion.div
-                  className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <span>Portfolio Builder</span>
-                </motion.div>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.1}>
-                <h2 className="text-3xl font-bold">
-                  Create a Stunning Portfolio Website
-                </h2>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.2}>
-                <p className="text-lg text-muted-foreground">
-                  Showcase your skills, projects, and experience with a
-                  beautiful portfolio website that stands out from the crowd.
-                </p>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.3}>
-                <div className="space-y-4">
-                  {[
-                    "Choose from beautiful, customizable templates",
-                    "Showcase your projects with rich media galleries",
-                    "Highlight your skills and experience",
-                    "Share your thoughts with an integrated blog",
-                    "Get a custom domain for a professional online presence",
-                  ].map((item, i) => (
-                    <motion.div
-                      key={i}
-                      className="flex items-start gap-3"
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.1 * i }}
-                    >
-                      <motion.div
-                        whileHover={{ scale: 1.2, rotate: 5 }}
-                        className="mt-0.5"
-                      >
-                        <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
-                      </motion.div>
-                      <span>{item}</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.4}>
-                <motion.div
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <Button className="group relative overflow-hidden">
-                    <span className="relative z-10">Create Your Portfolio</span>
-                    <motion.span
-                      className="absolute inset-0 bg-primary/80 z-0"
-                      initial={{ x: "-100%" }}
-                      whileHover={{ x: 0 }}
-                      transition={{
-                        type: "tween",
-                        ease: "easeInOut",
-                        duration: 0.3,
-                      }}
-                    />
-                    <ArrowRight className="ml-1 h-4 w-4 relative z-10 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </motion.div>
-              </ScrollReveal>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="analytics" className="py-20 relative overflow-hidden">
-        <motion.div
-          className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-primary/5 blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, -30, 0],
-            opacity: [0.2, 0.3, 0.2],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Number.POSITIVE_INFINITY,
-            repeatType: "reverse",
-          }}
-        />
-
-        <div className="container px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <ScrollReveal>
-                <motion.div
-                  className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <span>Smart Analytics</span>
-                </motion.div>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.1}>
-                <h2 className="text-3xl font-bold">
-                  Track Your Resume Performance
-                </h2>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.2}>
-                <p className="text-lg text-muted-foreground">
-                  Get detailed insights into how your resumes are performing.
-                  See who&apos;s viewing your documents and optimize for better
-                  results.
-                </p>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.3}>
-                <div className="space-y-4">
-                  {[
-                    "Track views, downloads, and engagement metrics",
-                    "See which sections of your resume get the most attention",
-                    "Compare performance across different resume versions",
-                    "Get AI-powered suggestions for improvements",
-                    "Share your resume with QR codes and track scans",
-                  ].map((item, i) => (
-                    <motion.div
-                      key={i}
-                      className="flex items-start gap-3"
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.1 * i }}
-                    >
-                      <motion.div
-                        whileHover={{ scale: 1.2, rotate: 5 }}
-                        className="mt-0.5"
-                      >
-                        <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
-                      </motion.div>
-                      <span>{item}</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.4}>
-                <motion.div
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <Button className="group relative overflow-hidden">
-                    <span className="relative z-10">Explore Analytics</span>
-                    <motion.span
-                      className="absolute inset-0 bg-primary/80 z-0"
-                      initial={{ x: "-100%" }}
-                      whileHover={{ x: 0 }}
-                      transition={{
-                        type: "tween",
-                        ease: "easeInOut",
-                        duration: 0.3,
-                      }}
-                    />
-                    <ArrowRight className="ml-1 h-4 w-4 relative z-10 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </motion.div>
-              </ScrollReveal>
-            </div>
-
-            <div className="relative">
-              <ScrollReveal direction="left">
-                <motion.div
-                  className="aspect-square rounded-xl overflow-hidden border shadow-xl"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <img
-                    src="/placeholder.svg?height=700&width=700"
-                    alt="Analytics Dashboard"
-                    className="object-cover w-full h-full"
-                  />
-                  <motion.div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end">
-                    <div className="p-6 text-white">
-                      <h3 className="text-xl font-bold">Resume Analytics</h3>
-                      <p className="text-sm opacity-80">
-                        Track performance and optimize your resume
-                      </p>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.3} direction="up">
-                <motion.div
-                  className="absolute -top-6 -left-6 w-48 rounded-lg bg-background border shadow-lg p-3 hidden sm:block"
-                  whileHover={{ y: -5, scale: 1.03 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <div className="text-xs text-muted-foreground mb-2">
-                    Resume Performance
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm">Views</div>
-                      <motion.div
-                        className="text-sm font-medium"
-                        animate={{
-                          scale: [1, 1.1, 1],
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Number.POSITIVE_INFINITY,
-                          repeatDelay: 5,
-                        }}
-                      >
-                        128
-                      </motion.div>
-                    </div>
-                    <motion.div
-                      className="h-2 bg-muted rounded-full overflow-hidden"
-                      initial={{ width: 0 }}
-                      whileInView={{ width: "100%" }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1 }}
-                    >
-                      <motion.div
-                        className="h-full bg-primary"
-                        initial={{ width: 0 }}
-                        whileInView={{ width: "75%" }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1.5, delay: 0.5 }}
-                      />
-                    </motion.div>
-                  </div>
-                  <div className="space-y-2 mt-3">
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm">Downloads</div>
-                      <motion.div
-                        className="text-sm font-medium"
-                        animate={{
-                          scale: [1, 1.1, 1],
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Number.POSITIVE_INFINITY,
-                          repeatDelay: 7,
-                        }}
-                      >
-                        43
-                      </motion.div>
-                    </div>
-                    <motion.div
-                      className="h-2 bg-muted rounded-full overflow-hidden"
-                      initial={{ width: 0 }}
-                      whileInView={{ width: "100%" }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1 }}
-                    >
-                      <motion.div
-                        className="h-full bg-primary"
-                        initial={{ width: 0 }}
-                        whileInView={{ width: "50%" }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1.5, delay: 0.7 }}
-                      />
-                    </motion.div>
-                  </div>
-                </motion.div>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.4} direction="right">
-                <motion.div
-                  className="absolute -bottom-6 -right-6 w-32 h-32 rounded-lg bg-background border shadow-lg p-3 hidden sm:flex items-center justify-center"
-                  whileHover={{ y: -5, scale: 1.03 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <motion.div
-                    animate={{
-                      scale: [1, 1.05, 1],
-                      rotate: [0, 2, 0, -2, 0],
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Number.POSITIVE_INFINITY,
-                    }}
-                  >
-                    <MousePointerClick className="h-16 w-16 text-primary" />
-                  </motion.div>
-                </motion.div>
-              </ScrollReveal>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      {/* CTA Section */}
       <section className="py-20 relative overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-primary"></div>
 
-        <motion.div
-          className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary-foreground/10 via-transparent to-transparent"
-          animate={{
-            opacity: [0.5, 0.7, 0.5],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Number.POSITIVE_INFINITY,
-            repeatType: "reverse",
-          }}
-        />
-
         <div className="container px-4">
           <ScrollReveal className="max-w-3xl mx-auto text-center space-y-8">
-            <motion.h2
-              className="text-3xl font-bold text-primary-foreground"
-              animate={{
-                scale: [1, 1.01, 1],
-              }}
-              transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
-            >
-              Ready to Take Your Career to the Next Level?
-            </motion.h2>
+            <h2 className="text-3xl font-bold text-primary-foreground">
+              Ready to Get Started?
+            </h2>
             <p className="text-xl text-primary-foreground/90">
-              Join thousands of professionals who are using ResumeHub to land
-              their dream jobs.
+              Upload your first resume and start building your portfolio today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button size="lg" variant="secondary" className="group">
-                  Get Started Free
+              <Button size="lg" variant="secondary" className="group" asChild>
+                <Link href="/auth/signup">
+                  Sign Up Free
                   <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                </Link>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-transparent border-primary-foreground/20 hover:bg-primary-foreground/10 text-primary-foreground"
+                asChild
               >
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="bg-transparent border-primary-foreground/20 hover:bg-primary-foreground/10 text-primary-foreground"
-                >
-                  Watch Demo
-                </Button>
-              </motion.div>
+                <Link href="/p/preview">View Demo</Link>
+              </Button>
             </div>
           </ScrollReveal>
         </div>
       </section>
 
+      {/* Footer */}
       <footer className="py-12 border-t">
         <div className="container px-4">
-          <div className="flex flex-col md:flex-row justify-between gap-8">
-            <div className="md:w-1/3">
-              <Link href="/" className="flex items-center gap-2 mb-4">
-                <motion.div
-                  className="relative size-8 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                >
-                  <span className="font-bold text-primary-foreground">R</span>
-                </motion.div>
-                <span className="font-bold text-xl">ResumeHub</span>
-              </Link>
-            </div>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <Link href="/" className="flex items-center gap-2">
+              <motion.div
+                className="relative size-8 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center"
+                whileHover={{ scale: 1.1, rotate: 5 }}
+              >
+                <span className="font-bold text-primary-foreground">R</span>
+              </motion.div>
+              <span className="font-bold text-xl">ResumeHub</span>
+            </Link>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:w-2/3">
-              {[
-                {
-                  title: "Product",
-                  links: ["Features", "Templates", "Analytics", "Portfolio"],
-                },
-                {
-                  title: "Company",
-                  links: ["About", "Blog", "Careers", "Contact"],
-                },
-                {
-                  title: "Legal",
-                  links: ["Privacy", "Terms", "Cookies"],
-                },
-              ].map((column, i) => (
-                <div key={i}>
-                  <h3 className="font-semibold mb-4">{column.title}</h3>
-                  <ul className="space-y-2">
-                    {column.links.map((link, j) => (
-                      <motion.li key={j} whileHover={{ x: 2 }}>
-                        <Link
-                          href="#"
-                          className="text-muted-foreground hover:text-primary transition-colors"
-                        >
-                          {link}
-                        </Link>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-12 pt-8 flex justify-between border-t text-center text-sm text-muted-foreground">
-            <p>
-              &copy; {new Date().getFullYear()} ResumeHub. All rights reserved.
-            </p>
             <p className="text-muted-foreground text-sm">
               Developed by{" "}
               <a

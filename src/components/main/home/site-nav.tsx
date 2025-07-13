@@ -17,23 +17,23 @@ export function SiteNav() {
     >
       <nav className="container flex items-center justify-between h-16 px-4">
         <Link href="/" className="flex items-center space-x-2">
-          <span className="text-xl font-bold">ResumeAI</span>
+          <span className="text-xl font-bold">Showfolio</span>
         </Link>
         <div className="hidden md:flex items-center space-x-6">
           <Link
-            href="/features"
+            href="/#features"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             Features
           </Link>
           <Link
-            href="/pricing"
+            href="/#pricing"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             Pricing
           </Link>
           <Link
-            href="/updates"
+            href="/#updates"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             Updates

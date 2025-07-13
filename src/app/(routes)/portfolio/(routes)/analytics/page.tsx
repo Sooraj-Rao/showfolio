@@ -178,38 +178,50 @@ export default function PortfolioAnalyticsPage() {
     }, {} as Record<string, any>);
 
     const deviceAnalytics = analyticsData.reduce((acc, item) => {
+      if (!item.device) return acc;
       if (!acc[item.device]) acc[item.device] = 0;
       acc[item.device]++;
       return acc;
     }, {} as Record<string, number>);
 
     const osAnalytics = analyticsData.reduce((acc, item) => {
+      if (!item.os) return acc;
       if (!acc[item.os]) acc[item.os] = 0;
       acc[item.os]++;
       return acc;
     }, {} as Record<string, number>);
 
     const browserAnalytics = analyticsData.reduce((acc, item) => {
+      if (!item.browser) return acc;
       if (!acc[item.browser]) acc[item.browser] = 0;
       acc[item.browser]++;
       return acc;
     }, {} as Record<string, number>);
 
     const countryAnalytics = analyticsData.reduce((acc, item) => {
+      if (item.event === "time_spent") return acc;
+
       if (!acc[item.country]) acc[item.country] = 0;
       acc[item.country]++;
       return acc;
     }, {} as Record<string, number>);
 
     const cityAnalytics = analyticsData.reduce((acc, item) => {
+      if (item.event === "time_spent") return acc;
+
       const location = `${item.city}, ${item.country}`;
       if (!acc[location]) acc[location] = 0;
       acc[location]++;
       return acc;
     }, {} as Record<string, number>);
 
-    const totalEvents = analyticsData.length;
+    const totalEvents = analyticsData?.filter(
+      (item) => item.event !== "time_spent"
+    ).length;
+
     const referrerAnalytics = analyticsData.reduce((acc, item) => {
+      if (item.event === "time_spent") return acc;
+
       let referrer = "Direct";
       if (item.referrer) {
         if (item.referrer.includes("linkedin")) referrer = "LinkedIn";
@@ -223,7 +235,7 @@ export default function PortfolioAnalyticsPage() {
         else if (item.referrer.includes("facebook")) referrer = "Facebook";
         else if (item.referrer.startsWith("http"))
           referrer = "External Website";
-        else referrer = item.referrer.split("_")[0] || "Other";
+        else referrer = item.referrer|| "Other";
       }
 
       if (!acc[referrer]) acc[referrer] = 0;
@@ -286,15 +298,17 @@ export default function PortfolioAnalyticsPage() {
         acc[date] = { date, events: 0, sessions: new Set(), timeSpent: 0 };
       }
 
-      acc[date].events++;
-      acc[date].sessions.add(item.sessionId);
+      if (item.event !== "time_spent") {
+        acc[date].events++;
+        acc[date].sessions.add(item.sessionId);
+      }
+
       if (item.event === "time_spent") {
         acc[date].timeSpent += item.timeSpent;
       }
 
       return acc;
     }, {} as Record<string, any>);
-
     return {
       sectionEngagement: Object.entries(sectionEngagement).map(
         ([section, data]) => ({
@@ -444,9 +458,8 @@ export default function PortfolioAnalyticsPage() {
       </div>
     );
   }
-
   return (
-    <div className="flex-1 w-full max-w-7xl mx-auto space-y-6 ">
+    <div className="flex-1 w-full  mx-auto space-y-6 ">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">

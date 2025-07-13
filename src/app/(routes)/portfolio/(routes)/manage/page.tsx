@@ -493,7 +493,7 @@ export default function ManagePortfolio() {
 
   return (
     <div className="min-h-screen bg-background ">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="mx-auto space-y-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">

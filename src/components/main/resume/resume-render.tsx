@@ -300,7 +300,7 @@ export default function ResumeViewer({ shortUrl }: { shortUrl: string }) {
                         variant="outline"
                       >
                         <Mail className="w-4 h-4 mr-2" />
-                        Contact Me
+                        Contact
                       </Button>
                     )}
 

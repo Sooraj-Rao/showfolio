@@ -175,6 +175,7 @@ const steps = [
 
 export default function CreatePortfolioPage() {
   const router = useRouter();
+  const [loader, setLoader] = useState(false);
   const { toast } = useToast();
   const { userData, fetchUserData } = useGetUserData();
   const [currentStep, setCurrentStep] = useState(0);
@@ -358,7 +359,7 @@ export default function CreatePortfolioPage() {
 
   const handleSubmit = async () => {
     localStorage.setItem("portfolioFormData", JSON.stringify(formData));
-
+    setLoader(true);
     try {
       const res = await axios.post("/api/portfolio/portfolio-data", {
         portfolioData: formData,
@@ -385,6 +386,8 @@ export default function CreatePortfolioPage() {
         description: "There was an error saving your portfolio.",
         variant: "destructive",
       });
+    } finally {
+      setLoader(false);
     }
     // router.push("/portfolio/dashboard");
   };
@@ -796,7 +799,10 @@ export default function CreatePortfolioPage() {
             </Tabs>
           </CardContent>
           <CardFooter className="justify-between">
-            <Button variant="outline" onClick={() => router.push("/portfolio/dashboard")}>
+            <Button
+              variant="outline"
+              onClick={() => router.push("/portfolio/dashboard")}
+            >
               Cancel
             </Button>
           </CardFooter>
@@ -959,7 +965,10 @@ export default function CreatePortfolioPage() {
               </CardHeader>
               <CardContent className="space-y-4 p-4">
                 {formData.socialLinks.map((link, index) => (
-                  <div key={index} className="flex flex-col md:flex-row md:items-end  gap-4 ">
+                  <div
+                    key={index}
+                    className="flex flex-col md:flex-row md:items-end  gap-4 "
+                  >
                     <div className="flex-1 space-y-2">
                       <label
                         htmlFor={`platform-${index}`}
@@ -1850,8 +1859,14 @@ export default function CreatePortfolioPage() {
                 <Button variant="outline" onClick={handlePrevious}>
                   <ArrowLeft className="mr-2 h-4 w-4" /> Previous
                 </Button>
-                <Button onClick={handleSubmit}>
-                  Create Portfolio <Check className="ml-2 h-4 w-4" />
+                <Button disabled={loader} onClick={handleSubmit}>
+                  {loader ? (
+                    "Creating..."
+                  ) : (
+                    <>
+                      Create Portfolio <Check className="ml-2 h-4 w-4" />
+                    </>
+                  )}
                 </Button>
               </CardFooter>
             </Card>

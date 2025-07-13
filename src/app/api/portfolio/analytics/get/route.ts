@@ -36,21 +36,28 @@ export async function GET(request: NextRequest) {
       .sort({ timestamp: -1 })
       .limit(limit)
       .select("-ipHash");
-    const totalEvents = analytics.length;
+    const totalEvents = analytics.filter(
+      (item) => item.event !== "time_spent"
+    ).length;
+
     const uniqueSessions = new Set(analytics.map((item) => item.sessionId))
       .size;
 
     const eventCounts = analytics.reduce((acc, item) => {
+      if (item.event === "time_spent") return acc;
+
       acc[item.event] = (acc[item.event] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
     const deviceCounts = analytics.reduce((acc, item) => {
+      if (item.event === "time_spent") return acc;
       acc[item.device] = (acc[item.device] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
     const countryCounts = analytics.reduce((acc, item) => {
+      if (item.event === "time_spent") return acc;
       acc[item.country] = (acc[item.country] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);

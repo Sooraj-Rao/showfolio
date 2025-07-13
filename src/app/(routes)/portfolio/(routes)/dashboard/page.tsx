@@ -236,7 +236,7 @@ export default function DashboardPage() {
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(
-        `${window.location.origin}/p/${userData.portfolio}?ref=demo`
+        `${window.location.origin}/p/${userData.portfolio}?ref=owner_share`
       );
       setCopied(true);
       toast({

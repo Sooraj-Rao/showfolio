@@ -110,7 +110,7 @@ const PortfolioParentPage = ({
       response.data.portfolio.theme = response.data.theme;
       response.data.portfolio.imageUrl = response.data.imageUrl;
       response.data.portfolio.themeMode = response.data.themeMode;
-      response.data.portfolio.userId = response.data._id;
+      response.data.portfolio.userId = response.data.id;
       response.data.portfolio.analytics =
         response.data.portfolioSettings.analytics;
       response.data.portfolio.contacts =

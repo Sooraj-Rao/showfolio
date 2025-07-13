@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -36,7 +36,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ModeToggle } from "@/components/main/theme/theme-toggle";
-import { usePortfolioAnalyticsEnhanced } from "@/app/hooks/use-portfolio-analytics";
+import { usePortfolioAnalytics } from "@/app/hooks/use-portfolio-analytics";
 import Link from "next/link";
 
 export const themes = {
@@ -264,8 +264,13 @@ export default function ModernPortfolioWithAnalytics({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isPreview = portfolioData.analytics === false;
 
-  const { trackClick, trackProjectView, trackExternalLink, trackSocialLink } =
-    usePortfolioAnalyticsEnhanced(isPreview, portfolioData.userId);
+  const {
+    trackEvent,
+    trackClick,
+    trackProjectView,
+    trackExternalLink,
+    trackSocialLink,
+  } = usePortfolioAnalytics(isPreview, portfolioData.userId);
 
   const theme = themes[currentTheme];
 
@@ -823,6 +828,10 @@ export default function ModernPortfolioWithAnalytics({
         );
     }
   };
+
+  useEffect(() => {
+    trackEvent("page_view");
+  }, [portfolioData]);
 
   if (!portfolioData) {
     return (

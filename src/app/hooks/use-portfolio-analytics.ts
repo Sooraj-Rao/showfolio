@@ -26,13 +26,10 @@ interface AnalyticsEvent {
   country: string;
   countryCode: string;
   referrer?: string;
-  user?:string
+  user?: string;
 }
 
-export function usePortfolioAnalyticsEnhanced(
-  isPreview = false,
-  userId?: string
-) {
+export function usePortfolioAnalytics(isPreview = false, userId?: string) {
   const sessionId = useRef<string>("");
   const locationData = useRef<LocationData | null>(null);
   const pageStartTime = useRef<number>(Date.now());
@@ -52,10 +49,7 @@ export function usePortfolioAnalyticsEnhanced(
     const urlParams = new URLSearchParams(window.location.search);
     const refParam = urlParams.get("ref");
     referrer.current = refParam || document.referrer || null;
-
     fetchLocationData();
-
-    trackEvent("page_view");
 
     startHeartbeat();
 
@@ -150,7 +144,7 @@ export function usePortfolioAnalyticsEnhanced(
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            user:userId,
+            user: userId,
             sessionId: sessionId.current,
             page: window.location.pathname,
             timeSpent,
@@ -191,9 +185,8 @@ export function usePortfolioAnalyticsEnhanced(
 
       if (window.location.hash) {
         eventData.anchor = window.location.hash;
-        eventData.user=userId
       }
-
+      eventData.user = userId;
       try {
         if (synchronous) {
           navigator.sendBeacon(

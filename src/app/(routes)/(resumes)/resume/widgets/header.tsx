@@ -5,8 +5,8 @@ import { Menu } from "lucide-react";
 import { useState } from "react";
 import { MobileSidebar, ResumeSidebarItems } from "./sidebar";
 import { usePathname } from "next/navigation";
-import { PortfolioSidebarItems } from "../../../portfolio/widgets/sidebar";
 import { toast } from "@/hooks/use-toast";
+import { PortfolioSidebarItems } from "@/app/(routes)/(portfolio)/portfolio/widgets/sidebar";
 
 export function DashboardHeader() {
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);

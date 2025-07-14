@@ -30,7 +30,7 @@ import useGetUserData from "@/app/hooks/use-getUserData";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter, useSearchParams } from "next/navigation";
-import { themes } from "@/app/(routes)/p/live/2";
+import { themes } from "@/app/(routes)/(portfolio)/p/live/2";
 import Loader from "@/app/helper/loader";
 
 const themeColors = {

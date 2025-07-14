@@ -1,5 +1,5 @@
 "use client";
-import { DashboardHeader } from "../resume/widgets/header";
+import { DashboardHeader } from "../(resumes)/resume/widgets/header";
 import { Sidebar } from "./widgets/sidebar";
 
 export default function DashboardLayout({

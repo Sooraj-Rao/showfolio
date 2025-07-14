@@ -15,6 +15,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import axios from "axios";
+import { SiteNav } from "@/components/main/home/site-nav";
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -58,6 +59,7 @@ export default function Signup() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background relative">
+      <SiteNav />
       <Card className="w-[350px] shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl">Create Account</CardTitle>

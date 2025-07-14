@@ -5,7 +5,7 @@ import { Menu } from "lucide-react";
 import { useState } from "react";
 import { MobileSidebar, ResumeSidebarItems } from "./sidebar";
 import { usePathname } from "next/navigation";
-import { PortfolioSidebarItems } from "../../portfolio/widgets/sidebar";
+import { PortfolioSidebarItems } from "../../../portfolio/widgets/sidebar";
 import { toast } from "@/hooks/use-toast";
 
 export function DashboardHeader() {
@@ -43,10 +43,14 @@ export function DashboardHeader() {
 
   return (
     <header className="border-b bg-background/90 z-[99] backdrop-blur w-full sticky top-0 ">
-      <div className="flex h-16 items-center px-4">
-        <h2 className="flex-1">Resume Org</h2>
+      <div className="flex h-16 items-center px-4 lg:px-10">
+        <h2 className="flex-1 font-semibold text-xl text-primary">Showfolio</h2>
 
-        <Button className=" md:block hidden" onClick={handleLogout} variant="outline">
+        <Button
+          className=" md:block hidden"
+          onClick={handleLogout}
+          variant="outline"
+        >
           Logout
         </Button>
         <Button className=" lg:hidden" onClick={toggleSidebar} variant="ghost">

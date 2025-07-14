@@ -21,7 +21,7 @@ import {
   Check,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import PdfViewer from "@/app/(routes)/resume/(routes)/resumes/[resume_id]/pdf";
+import PdfViewer from "@/app/(routes)/(resumes)/resume/(routes)/resumes/[resume_id]/pdf";
 import TooltipWrapper from "./tooltip-wrapper";
 import Analytics from "../analytics/main";
 import { AnalyticsData } from "../analytics/fetch-data";

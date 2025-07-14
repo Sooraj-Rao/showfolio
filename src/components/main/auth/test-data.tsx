@@ -21,7 +21,7 @@ const TestCredentials: React.FC<TestCredentialsProps> = ({
   };
 
   return (
-    <Card className="absolute  top-4 right-4 w-64 shadow-lg">
+    <Card className="absolute  top-2 z-50 bg-background right-4 w-64 shadow-lg">
       <CardContent className="p-4">
         <div className="flex justify-between items-start mb-2">
           <h3 className="font-semibold">Try it out!</h3>

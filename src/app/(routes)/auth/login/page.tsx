@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/card";
 import axios from "axios";
 import TestCredentials from "@/components/main/auth/test-data";
+import { SiteNav } from "@/components/main/home/site-nav";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -84,6 +85,7 @@ export default function Login() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background relative">
+       <SiteNav />
       {showTestCredentials && (
         <TestCredentials
           onUse={handleUseDemoCredentials}

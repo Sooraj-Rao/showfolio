@@ -3,6 +3,11 @@ import "./globals.css";
 import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "@/components/main/theme/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { Suspense } from "react";
+
+function LoadingFallback() {
+  return <div className="text-center mt-32">Loading...</div>;
+}
 
 export const metadata: Metadata = {
   title: {
@@ -72,7 +77,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Toaster />
-          {children}
+          <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
         </ThemeProvider>
       </body>
     </html>

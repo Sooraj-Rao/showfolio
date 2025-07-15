@@ -513,7 +513,7 @@ export default function ManagePortfolio() {
               <a
                 href={`/p/preview?username=${
                   userData?.portfolio || userData?.name
-                }`}
+                }&ref=demo`}
                 target="_blank"
                 rel="noopener noreferrer"
               >

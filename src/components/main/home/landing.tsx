@@ -216,7 +216,7 @@ export function LandingPage() {
 
               <ScrollReveal delay={0.3} direction="down">
                 <motion.div
-                  className="absolute -top-8 -right-8 w-40 h-32 rounded-lg bg-background border shadow-lg p-3 flex flex-col justify-between hidden sm:flex"
+                  className="absolute -top-8 -right-8 w-40  rounded-lg bg-background border shadow-lg p-3 gap-2  flex-col justify-between hidden sm:flex"
                   whileHover={{ y: -5, scale: 1.03 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >

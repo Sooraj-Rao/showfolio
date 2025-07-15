@@ -105,7 +105,7 @@ const PortfolioParentPage = ({
         return;
       }
       response.data.portfolio.previewAnalytics =
-        analytics === false ? false : true;
+        ref == "demo" ? false : analytics || true;
       response.data.portfolio.ref = ref;
       response.data.portfolio.theme = response.data.theme;
       response.data.portfolio.imageUrl = response.data.imageUrl;
@@ -136,7 +136,7 @@ const PortfolioParentPage = ({
   useEffect(() => {
     fetchPortfolioData();
   }, []);
-
+console.log(portfolioData)
   if (isError) {
     return (
       <div className="h-screen flex flex-col items-center justify-center gap-6  px-4">

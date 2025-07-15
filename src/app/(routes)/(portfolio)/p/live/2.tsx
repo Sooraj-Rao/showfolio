@@ -262,7 +262,9 @@ export default function ModernPortfolioWithAnalytics({
     portfolioData.themeMode || "light"
   );
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const isPreview = portfolioData.analytics === false;
+  const isPreview =
+    portfolioData.previewAnalytics === false ||
+    portfolioData.analytics === false;
 
   const {
     trackEvent,

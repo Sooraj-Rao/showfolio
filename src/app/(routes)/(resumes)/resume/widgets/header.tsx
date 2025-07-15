@@ -7,6 +7,7 @@ import { MobileSidebar, ResumeSidebarItems } from "./sidebar";
 import { usePathname } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import { PortfolioSidebarItems } from "@/app/(routes)/(portfolio)/portfolio/widgets/sidebar";
+import { Logo } from "@/components/main/home/landing";
 
 export function DashboardHeader() {
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -43,9 +44,8 @@ export function DashboardHeader() {
 
   return (
     <header className="border-b bg-background/90 z-[99] backdrop-blur w-full sticky top-0 ">
-      <div className="flex h-16 items-center px-4 lg:px-10">
-        <h2 className="flex-1 font-semibold text-xl text-primary">Showfolio</h2>
-
+      <div className="flex h-16 items-center justify-between px-4 lg:px-10">
+        <Logo />
         <Button
           className=" md:block hidden"
           onClick={handleLogout}

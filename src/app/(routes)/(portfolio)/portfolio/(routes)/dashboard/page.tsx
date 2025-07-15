@@ -339,20 +339,20 @@ export default function DashboardPage() {
     <div className="space-y-8">
       {userData.hasPorfolioData && (
         <div className="flex items-center flex-col sm:flex-row justify-between w-full   bg-background  rounded-md ">
-          <span className="sm:text-lg text-sm flex flex-col sm:flex-row items-center font-semibold text-foreground">
-            Your portfolio is Live
+          <div className="flex flex-col sm:flex-row items-center gap-2 text-sm sm:text-base font-semibold text-foreground">
+            <span>Your portfolio is live:</span>
             <a
               target="_blank"
+              rel="noopener noreferrer"
               href={`${process.env.NEXT_PUBLIC_APP_URL!}/p/${
                 userData?.portfolio
               }?ref=demo`}
+              className="text-blue-500 hover:underline underline-offset-4 break-all"
             >
-              <code className=" text-sm px-5 hover:underline underline-offset-4 text-blue-500 font-semibold">
-                {process.env.NEXT_PUBLIC_APP_URL!}
-                /p/{userData?.portfolio}
-              </code>
+              {`${process.env.NEXT_PUBLIC_APP_URL!}/p/${userData?.portfolio}`}
             </a>
-          </span>
+          </div>
+
           <div className=" flex gap-x-6 mt-4 sm:mt-0">
             <Button
               onClick={handleCopyLink}
@@ -475,7 +475,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-1">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -487,8 +487,8 @@ export default function DashboardPage() {
               Latest visitor interactions with your portfolio
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3  ">
+          <CardContent className="">
+            <div className="space-y-3   ">
               {portfolioStats?.recentActivity.length ? (
                 Array.from(sessionMap.values())
                   .slice(0, 3)
@@ -579,68 +579,70 @@ export default function DashboardPage() {
                       className="h-2"
                     />
                   </div>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Smartphone className="h-4 w-4 text-green-500" />
-                        <span className="text-sm">Mobile</span>
+                  {portfolioStats.deviceBreakdown.mobile !== 0 && (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Smartphone className="h-4 w-4 text-green-500" />
+                          <span className="text-sm">Mobile</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">
+                            {portfolioStats.deviceBreakdown.mobile}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            (
+                            {Math.round(
+                              (portfolioStats.deviceBreakdown.mobile /
+                                totalDeviceViews) *
+                                100
+                            )}
+                            %)
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">
-                          {portfolioStats.deviceBreakdown.mobile}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          (
-                          {Math.round(
-                            (portfolioStats.deviceBreakdown.mobile /
-                              totalDeviceViews) *
-                              100
-                          )}
-                          %)
-                        </span>
-                      </div>
+                      <Progress
+                        value={
+                          (portfolioStats.deviceBreakdown.mobile /
+                            totalDeviceViews) *
+                          100
+                        }
+                        className="h-2"
+                      />
                     </div>
-                    <Progress
-                      value={
-                        (portfolioStats.deviceBreakdown.mobile /
-                          totalDeviceViews) *
-                        100
-                      }
-                      className="h-2"
-                    />
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Tablet className="h-4 w-4 text-orange-500" />
-                        <span className="text-sm">Tablet</span>
+                  )}
+                  {portfolioStats.deviceBreakdown.tablet !== 0 && (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Tablet className="h-4 w-4 text-orange-500" />
+                          <span className="text-sm">Tablet</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">
+                            {portfolioStats.deviceBreakdown.tablet}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            (
+                            {Math.round(
+                              (portfolioStats.deviceBreakdown.tablet /
+                                totalDeviceViews) *
+                                100
+                            )}
+                            %)
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">
-                          {portfolioStats.deviceBreakdown.tablet}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          (
-                          {Math.round(
-                            (portfolioStats.deviceBreakdown.tablet /
-                              totalDeviceViews) *
-                              100
-                          )}
-                          %)
-                        </span>
-                      </div>
+                      <Progress
+                        value={
+                          (portfolioStats.deviceBreakdown.tablet /
+                            totalDeviceViews) *
+                          100
+                        }
+                        className="h-2"
+                      />
                     </div>
-                    <Progress
-                      value={
-                        (portfolioStats.deviceBreakdown.tablet /
-                          totalDeviceViews) *
-                        100
-                      }
-                      className="h-2"
-                    />
-                  </div>
+                  )}
                 </>
               ) : (
                 <div className="text-center py-4 text-muted-foreground">
@@ -688,86 +690,73 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex  items-center gap-2">
+              <Zap className="h-5 w-5" />
+              Quick Actions
+            </CardTitle>
+            <CardDescription>Manage and share your portfolio</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 gap-4">
+              <Button
+                variant="outline"
+                className="h-auto flex  items-center justify-center p-6s gap-3 hover:bg-muted/50 bg-transparent"
+                asChild
+              >
+                <Link href="/portfolio/manage">
+                  <Edit className="h-6 w-6" />
+                  <div className="text-center">
+                    <div className="font-medium">Update Content</div>
+                  </div>
+                </Link>
+              </Button>
+
+              <Button
+                variant="outline"
+                className="h-auto flex items-center justify-center  gap-3 hover:bg-muted/50 bg-transparent"
+                onClick={handleCopyLink}
+              >
+                {copied ? (
+                  <CheckCircle className="h-6 w-6 text-green-500" />
+                ) : (
+                  <Copy className="h-6 w-6" />
+                )}
+                <div className="text-center">
+                  <div className="font-medium">Share Portfolio</div>
+                </div>
+              </Button>
+
+              <Button
+                variant="outline"
+                className="h-auto flex  items-center justify-center  gap-3 hover:bg-muted/50 bg-transparent"
+                asChild
+              >
+                <Link href="/portfolio/analytics">
+                  <BarChart3 className="h-6 w-6" />
+                  <div className="text-center">
+                    <div className="font-medium">View Analytics</div>
+                  </div>
+                </Link>
+              </Button>
+
+              <Button
+                variant="outline"
+                className="h-auto flex  items-center justify-center  gap-3 hover:bg-muted/50 bg-transparent"
+                asChild
+              >
+                <Link href="/portfolio/settings">
+                  <Users className="h-6 w-6" />
+                  <div className="text-center">
+                    <div className="font-medium">Settings</div>
+                  </div>
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Zap className="h-5 w-5" />
-            Quick Actions
-          </CardTitle>
-          <CardDescription>Manage and share your portfolio</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Button
-              variant="outline"
-              className="h-auto flex flex-col items-center justify-center p-6 gap-3 hover:bg-muted/50 bg-transparent"
-              asChild
-            >
-              <Link href="/portfolio/manage">
-                <Edit className="h-6 w-6" />
-                <div className="text-center">
-                  <div className="font-medium">Update Content</div>
-                  <div className="text-xs text-muted-foreground">
-                    Edit your portfolio
-                  </div>
-                </div>
-              </Link>
-            </Button>
-
-            <Button
-              variant="outline"
-              className="h-auto flex flex-col items-center justify-center p-6 gap-3 hover:bg-muted/50 bg-transparent"
-              onClick={handleCopyLink}
-            >
-              {copied ? (
-                <CheckCircle className="h-6 w-6 text-green-500" />
-              ) : (
-                <Copy className="h-6 w-6" />
-              )}
-              <div className="text-center">
-                <div className="font-medium">Share Portfolio</div>
-                <div className="text-xs text-muted-foreground">
-                  Copy link to clipboard
-                </div>
-              </div>
-            </Button>
-
-            <Button
-              variant="outline"
-              className="h-auto flex flex-col items-center justify-center p-6 gap-3 hover:bg-muted/50 bg-transparent"
-              asChild
-            >
-              <Link href="/portfolio/analytics">
-                <BarChart3 className="h-6 w-6" />
-                <div className="text-center">
-                  <div className="font-medium">View Analytics</div>
-                  <div className="text-xs text-muted-foreground">
-                    Detailed insights
-                  </div>
-                </div>
-              </Link>
-            </Button>
-
-            <Button
-              variant="outline"
-              className="h-auto flex flex-col items-center justify-center p-6 gap-3 hover:bg-muted/50 bg-transparent"
-              asChild
-            >
-              <Link href="/portfolio/settings">
-                <Users className="h-6 w-6" />
-                <div className="text-center">
-                  <div className="font-medium">Settings</div>
-                  <div className="text-xs text-muted-foreground">
-                    Privacy & preferences
-                  </div>
-                </div>
-              </Link>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

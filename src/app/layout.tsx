@@ -5,10 +5,6 @@ import { ThemeProvider } from "@/components/main/theme/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Suspense } from "react";
 
-function LoadingFallback() {
-  return <div className="text-center mt-32">Loading...</div>;
-}
-
 export const metadata: Metadata = {
   title: {
     default: "Showfolio",
@@ -77,7 +73,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Toaster />
-          <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
+          <Suspense>{children}</Suspense>
         </ThemeProvider>
       </body>
     </html>

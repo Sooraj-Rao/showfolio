@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Zap, Loader2 } from "lucide-react";
+import { Zap, Loader2, InfoIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { FormEvent, useEffect, useState } from "react";
 import axios from "axios";
@@ -90,7 +90,9 @@ export default function AIFeedbackPage() {
               <Label htmlFor="resume-select" className="font-medium">
                 Select Resume
               </Label>
+
               <Select
+                disabled={resumes.length === 0}
                 value={selectedResume?.fileUrl}
                 onValueChange={(value) => {
                   const resume = resumes.find(
@@ -111,6 +113,12 @@ export default function AIFeedbackPage() {
                   ))}
                 </SelectContent>
               </Select>
+              {resumes.length == 0 && (
+                <p className=" text-sm flex items-center gap-x-2">
+                  <InfoIcon size={18} />
+                  No resumes yet
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -130,7 +138,9 @@ export default function AIFeedbackPage() {
           <CardFooter className="flex justify-end pt-2">
             <Button
               onClick={processResume}
-              disabled={isLoading || !selectedResume || !role}
+              disabled={
+                isLoading || !selectedResume || !role || resumes.length === 0
+              }
               className="w-full sm:w-auto"
             >
               {isLoading ? (
@@ -180,7 +190,7 @@ interface HighlightedTextProps {
 }
 const HighlightedText: React.FC<HighlightedTextProps> = ({ text }) => {
   const renderHighlighted = (segment: string) => {
-    const cleanedSegment = segment.replace(/\*\*/g, "*"); 
+    const cleanedSegment = segment.replace(/\*\*/g, "*");
 
     const parts = cleanedSegment.split(/(\*[^*]+\*|"[^"]+"|[^:]+:(?=\s))/g);
 
@@ -232,10 +242,10 @@ const HighlightedText: React.FC<HighlightedTextProps> = ({ text }) => {
   };
 
   const cleanText = text
-    .replace(/\*\*([^*]+)\*\*/g, "*$1*") 
-    .replace(/\n\s*\n\s*\n/g, "\n\n") 
+    .replace(/\*\*([^*]+)\*\*/g, "*$1*")
+    .replace(/\n\s*\n\s*\n/g, "\n\n")
     .replace(/\s+6\.\s*$/, "")
-    .replace(/^\s*\*\s*/, "") 
+    .replace(/^\s*\*\s*/, "")
     .trim();
 
   const scoreMatch = cleanText.match(/(Resume Score: \d+\/\d+[\s\S]*)/);
@@ -249,8 +259,8 @@ const HighlightedText: React.FC<HighlightedTextProps> = ({ text }) => {
     .filter((section) => section.trim())
     .map((section) => {
       return section
-        .replace(/\s+\d+\.\s*$/, "") 
-        .replace(/^\s*\*\s*/, "") 
+        .replace(/\s+\d+\.\s*$/, "")
+        .replace(/^\s*\*\s*/, "")
         .trim();
     })
     .filter(Boolean);
@@ -293,7 +303,7 @@ const HighlightedText: React.FC<HighlightedTextProps> = ({ text }) => {
           const bulletPoints = scoreSection
             .split("\n")
             .filter((line) => line.trim().startsWith("*"))
-            .map((line) => line.replace(/^\s*\*+\s*/, "").trim()) 
+            .map((line) => line.replace(/^\s*\*+\s*/, "").trim())
             .filter(Boolean);
 
           return (

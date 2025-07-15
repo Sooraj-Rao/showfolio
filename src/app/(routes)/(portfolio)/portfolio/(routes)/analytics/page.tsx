@@ -61,6 +61,7 @@ import {
   Area,
 } from "recharts";
 import axios from "axios";
+import Loader from "@/app/(routes)/(resumes)/resume/widgets/loader";
 
 const COLORS = [
   "#8B5CF6",
@@ -235,7 +236,7 @@ export default function PortfolioAnalyticsPage() {
         else if (item.referrer.includes("facebook")) referrer = "Facebook";
         else if (item.referrer.startsWith("http"))
           referrer = "External Website";
-        else referrer = item.referrer|| "Other";
+        else referrer = item.referrer || "Other";
       }
 
       if (!acc[referrer]) acc[referrer] = 0;
@@ -445,18 +446,7 @@ export default function PortfolioAnalyticsPage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex-1 space-y-4 p-8">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center space-y-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-            <p className="text-lg font-medium">
-              Loading portfolio analytics...
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+    return <Loader title="Analytics" />;
   }
   return (
     <div className="flex-1 w-full  mx-auto space-y-6 ">

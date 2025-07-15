@@ -22,6 +22,7 @@ import { useZustandStore } from "@/zustand/store";
 import useGetUserData from "@/app/hooks/use-getUserData";
 import { AlertMessage } from "@/components/main/dashboard/resumes/disable-message";
 import { truncateText } from "@/app/utils/truncate-text";
+import Loader from "../../widgets/loader";
 
 export default function ResumeDashboard() {
   useGetUserData();
@@ -50,7 +51,7 @@ export default function ResumeDashboard() {
   );
 
   if (!userData) {
-    return <h1>Loading..</h1>;
+    return <Loader title="Dashboard" />;
   }
 
   const hotResume = Array.isArray(resumeData)
@@ -72,7 +73,7 @@ export default function ResumeDashboard() {
     <div>
       {showAlert && <AlertMessage type={showAlert} />}
       <div>
-        <div className="max-w-6xl mx-auto space-y-6">
+        <div className=" mx-auto space-y-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex items-center gap-4">
               <div>

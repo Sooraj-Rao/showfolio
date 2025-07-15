@@ -54,6 +54,7 @@ import useResumes from "@/app/hooks/get-resumes";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import AnalyticsDesc, { AnalyticsItem } from "./desc";
+import Loader from "../../widgets/loader";
 
 const COLORS = [
   "#0088FE",
@@ -64,8 +65,6 @@ const COLORS = [
   "#82ca9d",
   "#ffc658",
 ];
-
-
 
 interface Resume {
   _id: string;
@@ -157,10 +156,11 @@ export default function AnalyticsPage() {
     setSelectedResumeId(resumeId);
   };
 
- 
   const resumeAnalyticsData = useMemo(() => {
     if (selectedResumeId === "all") return analyticsData;
-    return analyticsData.filter((item) => item.resumeShortUrl === selectedResumeId);
+    return analyticsData.filter(
+      (item) => item.resumeShortUrl === selectedResumeId
+    );
   }, [analyticsData, selectedResumeId]);
   const isEmptyState = !loading && resumes.length === 0;
   const dataToUse = isEmptyState ? generateDummyData() : resumeAnalyticsData;
@@ -336,25 +336,21 @@ export default function AnalyticsPage() {
   const insights = generateInsights();
 
   if (loading) {
-    return (
-      <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-lg">Loading analytics...</div>
-        </div>
-      </div>
-    );
+    return <Loader title="Analytics" />;
   }
 
   if (isEmptyState) {
     return (
-      <div className="relative flex-1 space-y-4 p-4 md:p-8 pt-6 max-w-7xl mx-auto">
+      <div className="relative flex-1 space-y-4   mx-auto">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Analytics</h2>
+          <h2 className="text-2xl font-bold tracking-tight">
+            Resume Analytics
+          </h2>
           <p className="text-muted-foreground text-sm">
             Detailed analytics for your resumes
           </p>
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/50 backdrop-blur-[1px] z-10 flex items-center justify-center">
+        <div className="absolute  -top-6 inset-0 bg-gradient-to-b from-transparent to-background/50 backdrop-blur-[1px] z-10 flex items-center justify-center">
           <div className="text-center space-y-4 p-8 mt-40 backdrop-blur-md max-w-md mx-4">
             <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
               <FileText className="w-8 h-8 text-primary" />
@@ -443,8 +439,6 @@ export default function AnalyticsPage() {
   const selectedResume = resumes?.find(
     (r: Resume) => r.shortUrl === selectedResumeId
   );
-
-
 
   return (
     <div className="flex-1 w-full max-w-7xl mx-auto  space-y-6 overflow-x-hidden">
@@ -1348,4 +1342,3 @@ export default function AnalyticsPage() {
     </div>
   );
 }
-

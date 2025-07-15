@@ -25,7 +25,6 @@ import {
   Pencil,
   Trash2,
   FileText,
-  Loader2,
   ArrowLeft,
   ExternalLink,
   X,
@@ -47,6 +46,7 @@ import { useZustandStore } from "@/zustand/store";
 import Link from "next/link";
 import PdfViewer from "./pdf";
 import { truncateText } from "@/app/utils/truncate-text";
+import Loader from "../../../widgets/loader";
 
 interface TagInputProps {
   tags: string[];
@@ -251,14 +251,7 @@ export default function ResumeDetailsPage({
   };
 
   if (!error && isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="flex items-center gap-3">
-          <Loader2 className="animate-spin h-6 w-6 text-blue-600" />
-          <p className="text-gray-500">Loading resume details...</p>
-        </div>
-      </div>
-    );
+    return <Loader title="Resume details" />;
   }
 
   if (error) {
@@ -313,7 +306,7 @@ export default function ResumeDetailsPage({
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button  className="text-xs sm:text-base">
+              <Button className="text-xs sm:text-base">
                 <ExternalLink className="h-4 w-4 mr-2" />
                 View Live
               </Button>

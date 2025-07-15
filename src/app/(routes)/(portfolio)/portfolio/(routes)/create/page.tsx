@@ -378,6 +378,7 @@ export default function CreatePortfolioPage() {
           variant: "destructive",
         });
       }
+      await fetchUserData();
       router.push("/portfolio/manage");
     } catch (error) {
       console.error("Error saving portfolio:", error);

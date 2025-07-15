@@ -45,9 +45,14 @@ export function Sidebar() {
         <nav className="flex-1 space-y-2">
           {PortfolioSidebarItems.map((item) => {
             const isActive = pathname === item.href;
-            if (userData?.hasPorfolioData && item.name == "Create") return null;
             return (
-              <Link key={item.href} href={"" + item.href}>
+              <Link
+                className={
+                  userData?.hasPorfolioData && item.name == "Create" && "hidden"
+                }
+                key={item.href}
+                href={"" + item.href}
+              >
                 <Button
                   variant="ghost"
                   className={cn(

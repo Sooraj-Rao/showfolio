@@ -22,6 +22,5 @@ export async function deleteFileFromStorage(fileUrl: string) {
     await deleteObject(fileRef);
   } catch (error) {
     console.error("Error deleting file from Firebase Storage:", error);
-    throw error;
   }
 }

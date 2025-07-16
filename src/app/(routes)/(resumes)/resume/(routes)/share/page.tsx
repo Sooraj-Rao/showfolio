@@ -98,7 +98,7 @@ export default function SharePage() {
   const shortenUrl = async (url: string) => {
     setLoading(true);
     try {
-      const res = await fetch("https://sj1.xyz/api", {
+      const res = await fetch("https://srao.site/api", {
         method: "POST",
         headers: {
           Authorization: `Bearer quklnk_vSNTKReEzojrQIIGaKQcCAEw`,

@@ -124,9 +124,8 @@ export default function ResumeDetailsPage({
 }) {
   const router = useRouter();
   const { toast } = useToast();
-
   const [resume, setResume] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState("fetch");
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const { resumes, setResumes } = useZustandStore();
@@ -139,7 +138,7 @@ export default function ResumeDetailsPage({
 
   const fetchResume = useCallback(async () => {
     try {
-      setIsLoading(true);
+      setIsLoading("fetch");
       const response = await axios.get(
         `/api/resume/?shortUrl=${params?.resume_id}&operation=getone`
       );
@@ -157,7 +156,7 @@ export default function ResumeDetailsPage({
     } catch (err: unknown) {
       handleError(err);
     } finally {
-      setIsLoading(false);
+      setIsLoading("");
     }
   }, [params?.resume_id]);
 
@@ -182,6 +181,7 @@ export default function ResumeDetailsPage({
   const handleSave = async () => {
     try {
       if (!resume) return;
+      setIsLoading("save");
       const updatedResume = { shortUrl: resume.shortUrl, ...updateFields };
       const response = await axios.put(`/api/resume`, updatedResume);
       if (response.status !== 200) {
@@ -204,11 +204,13 @@ export default function ResumeDetailsPage({
           variant: "destructive",
         });
       }
+    } finally {
+      setIsLoading("");
     }
   };
   const handleDelete = async () => {
     try {
-      setIsLoading(true);
+      setIsLoading("delete");
       await axios.post("/api/resume", {
         selectedResumes: params.resume_id,
         operation: "delete",
@@ -229,7 +231,7 @@ export default function ResumeDetailsPage({
         });
       }
     } finally {
-      setIsLoading(false);
+      setIsLoading("");
       setIsDeleteDialogOpen(false);
     }
   };
@@ -250,7 +252,7 @@ export default function ResumeDetailsPage({
     }
   };
 
-  if (!error && isLoading) {
+  if (!error && isLoading == "fetch") {
     return <Loader title="Resume details" />;
   }
 
@@ -435,8 +437,12 @@ export default function ResumeDetailsPage({
                     </div>
 
                     <div className="flex gap-2 pt-4">
-                      <Button onClick={handleSave} className="flex-1">
-                        Save Changes
+                      <Button
+                        disabled={isLoading == "save"}
+                        onClick={handleSave}
+                        className="flex-1"
+                      >
+                        {isLoading == "save" ? "Saving..." : "Save Changes"}
                       </Button>
                       <Button
                         variant="outline"
@@ -595,10 +601,11 @@ export default function ResumeDetailsPage({
               <Button
                 variant="destructive"
                 className=" mb-2"
+                disabled={isLoading == "delete"}
                 onClick={handleDelete}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Delete Resume
+                {isLoading == "delete" ? "Deleting.." : "Delete Resume"}
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -123,7 +123,6 @@ const PortfolioParentPage = ({
       );
       localStorage.setItem("templateId", response.data?.templateId);
     } catch (error) {
-      console.log(error);
       setisError(
         error?.response?.data?.error ||
           "An error occurred while fetching portfolio data"
@@ -136,7 +135,6 @@ const PortfolioParentPage = ({
   useEffect(() => {
     fetchPortfolioData();
   }, []);
-console.log(portfolioData)
   if (isError) {
     return (
       <div className="h-screen flex flex-col items-center justify-center gap-6  px-4">

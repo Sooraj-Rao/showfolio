@@ -136,25 +136,27 @@ export default function SettingsPage() {
   };
 
   useEffect(() => {
-    if (searchParams.get("themeMode") || searchParams.get("theme")) {
-      const themeParam = searchParams.get("themeMode");
-      if (themeParam === "dark" || themeParam === "light") {
-        setTheme(themeParam);
+    const paramThemeMode = searchParams.get("themeMode");
+    const paramtTheme = searchParams.get("theme");
+
+    if (paramThemeMode != theme || paramtTheme != selectedColor) {
+      if (paramThemeMode === "dark" || paramThemeMode === "light") {
+        setTheme(paramThemeMode);
       }
 
-      const colorParam = searchParams.get("theme");
-      if (themeColors[colorParam]) {
-        setSelectedColor(colorParam);
+      if (themeColors[paramtTheme]) {
+        setSelectedColor(paramtTheme);
       }
-      setTab("appearance");
+      if (paramThemeMode || paramtTheme) setTab("appearance");
     }
-    if (
-      userData?.portfolioSettings?.theme ||
-      userData?.portfolioSettings?.themeColor
-    ) {
-      setTheme(userData.portfolioSettings.theme || "light");
-      setSelectedColor(userData.portfolioSettings.themeColor || "emerald");
-    }
+    if (!paramThemeMode && !paramtTheme)
+      if (
+        userData?.portfolioSettings?.theme ||
+        userData?.portfolioSettings?.themeColor
+      ) {
+        setTheme(userData.portfolioSettings.theme || "light");
+        setSelectedColor(userData.portfolioSettings.themeColor || "emerald");
+      }
 
     if (userData?.private) {
       if (userData.private.portfolio == true) {
@@ -500,7 +502,7 @@ export default function SettingsPage() {
               <a
                 href={`/p/preview/?username=${
                   userData?.portfolio || userData?.name
-                }`}
+                }&ref=demo`}
                 rel="noopener noreferrer"
                 className="text-blue-500 hover:underline"
               >

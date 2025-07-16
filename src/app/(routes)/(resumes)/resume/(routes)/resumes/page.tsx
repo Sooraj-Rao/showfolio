@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
 import { useState, useMemo } from "react";
@@ -11,18 +12,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Grid } from "@/components/ui/grid";
-import { InfoIcon, Loader2, PlusIcon } from "lucide-react";
+import { InfoIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
-import axios from "axios";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
 import { ResumeCard } from "@/components/main/dashboard/resumes/card";
 import useResumes from "@/app/hooks/get-resumes";
 import { IResume } from "@/models/resume";
@@ -30,42 +21,10 @@ import { IResume } from "@/models/resume";
 type SortOption = "name" | "date" | "views";
 
 export default function ResumesPage() {
-  const { resumes, loadingResumes, fetchResumes } = useResumes();
-  const [selectedResumes, setSelectedResumes] = useState<string[]>([]);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const { resumes, loadingResumes } = useResumes();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("date");
   const [filterFolder, setFilterFolder] = useState("all");
-  const { toast } = useToast();
-
-  const confirmDelete = async () => {
-    setIsDeleting(true);
-    try {
-      const response = await axios.post("/api/resume", {
-        selectedResumes,
-        operation: "delete",
-      });
-      if (response.status === 200) {
-        fetchResumes();
-        setSelectedResumes([]);
-        setIsDeleteDialogOpen(false);
-        toast({
-          title: "Success",
-          description: `Successfully deleted ${response.data.deletedCount} resume(s)`,
-        });
-      }
-    } catch (error) {
-      console.error("Error deleting resumes:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete selected resumes. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsDeleting(false);
-    }
-  };
 
   const filteredAndSortedResumes = useMemo(() => {
     return resumes
@@ -106,8 +65,6 @@ export default function ResumesPage() {
       });
     }
   });
-
-  console.log(filterFolder);
 
   return (
     <div className="space-y-6 ">
@@ -179,42 +136,6 @@ export default function ResumesPage() {
           ))}
         </Grid>
       )}
-
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              Are you sure you want to delete the selected resumes?
-            </DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. This will permanently delete the
-              selected resumes.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={confirmDelete}
-              disabled={isDeleting}
-            >
-              {isDeleting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Deleting...
-                </>
-              ) : (
-                "Delete"
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

@@ -1,46 +1,48 @@
-/* eslint-disable import/no-anonymous-default-export */
 type SignupData = {
   name: string;
   email: string;
   password: string;
   otp: string;
   expires: number;
-  attempts: number[];
+  attempts: number;
 };
 
-const signupStore = new Map<string, SignupData>();
+const otpMap = new Map<string, SignupData>();
 
-function setSignupData(email: string, data: Omit<SignupData, "attempts">) {
-  const now = Date.now();
-  const existing = signupStore.get(email);
+const signupStore = {
+  set(email: string, data: Omit<SignupData, "attempts">) {
+    otpMap.set(email, { ...data, attempts: 0 });
+  },
 
-  const updatedAttempts =
-    existing?.attempts?.filter((t) => now - t < 5 * 60 * 1000) || [];
+  get(email: string): SignupData | undefined {
+    return otpMap.get(email);
+  },
 
-  updatedAttempts.push(now);
+  canSendOtp(email: string): boolean {
+    const entry = otpMap.get(email);
+    if (!entry) return true;
 
-  signupStore.set(email, {
-    ...data,
-    attempts: updatedAttempts,
-  });
-}
+    if (entry.attempts >= 2) return false;
 
-function getSignupData(email: string): SignupData | undefined {
-  return signupStore.get(email);
-}
+    if (Date.now() > entry.expires) {
+      otpMap.delete(email);
+      return true;
+    }
 
-function canSendOtp(email: string): boolean {
-  const data = signupStore.get(email);
-  if (!data) return true;
-  const now = Date.now();
-  const recentAttempts = data.attempts.filter(
-    (timestamp) => now - timestamp < 5 * 60 * 1000
-  );
-  return recentAttempts.length < 2;
-}
+    return true;
+  },
 
-export default {
-  set: setSignupData,
-  get: getSignupData,
-  canSendOtp,
+  incrementAttempts(email: string) {
+    const entry = otpMap.get(email);
+    if (entry) {
+      entry.attempts += 1;
+      otpMap.set(email, entry);
+    }
+  },
+
+  delete(email: string) {
+    otpMap.delete(email);
+  },
 };
+
+export default signupStore;

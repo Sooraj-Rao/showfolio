@@ -13,9 +13,7 @@ export async function middleware(req: NextRequest) {
         try {
           await jwtVerify(token.value, new TextEncoder().encode(JWT_SECRET));
           return NextResponse.redirect(new URL("/resume/dashboard", req.url));
-        } catch {
-          // Invalid token, continue to login
-        }
+        } catch {}
       }
     }
 
@@ -43,7 +41,6 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    // "/auth/login",
     "/api/user",
     "/api/resume",
     "/api/resume/analytics",

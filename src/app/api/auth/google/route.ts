@@ -17,11 +17,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // Check if user already exists
     let user = await User.findOne({ email });
 
     if (user) {
-      // Update existing user with Google info if not already set
       if (!user.googleId) {
         user.googleId = uid;
         user.imageUrl = photoURL || user.imageUrl;
@@ -29,7 +27,6 @@ export async function POST(req: Request) {
         await user.save();
       }
     } else {
-      // Create new user
       user = await User.create({
         name,
         email,
@@ -37,11 +34,10 @@ export async function POST(req: Request) {
         imageUrl: photoURL || "",
         provider: "google",
         portfolio: name.toLowerCase().replace(/\s+/g, ""),
-        password: await bcrypt.hash(Math.random().toString(36), 10), // Random password for Google users
+        password: await bcrypt.hash(Math.random().toString(36), 10), 
       });
     }
 
-    // Generate JWT token
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
       expiresIn: "1d",
     });

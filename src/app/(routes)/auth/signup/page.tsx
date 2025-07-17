@@ -37,18 +37,18 @@ export default function Signup() {
     setError("");
 
     try {
-      const response = await axios.post("/api/auth/signup", {
+      const response = await axios.post("/api/auth/send-otp", {
         name,
         email,
         password,
       });
 
-      if (response.status === 200) {
+      if (response.status === 200 || response.data.success) {
         toast({
           title: "Success",
-          description: "Account created successfully",
+          description: response.data.message,
         });
-        router.push("/resume/dashboard");
+        router.push(`/auth/verify-otp?email=${encodeURIComponent(email)}`);
       } else {
         throw new Error("Failed to sign up");
       }

@@ -20,7 +20,6 @@ export const signInWithGoogle = async () => {
     const result = await signInWithPopup(auth, googleProvider)
     const user = result.user
 
-    // Send user data to our backend
     const response = await fetch("/api/auth/google", {
       method: "POST",
       headers: {
@@ -48,10 +47,8 @@ export const signInWithGoogle = async () => {
 
 export const signOutUser = async () => {
   try {
-    // Sign out from Firebase
     await firebaseSignOut(auth)
 
-    // Clear backend session
     await fetch("/api/auth/login", {
       method: "PUT",
     })

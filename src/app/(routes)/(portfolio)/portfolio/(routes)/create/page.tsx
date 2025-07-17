@@ -390,7 +390,6 @@ export default function CreatePortfolioPage() {
     } finally {
       setLoader(false);
     }
-    // router.push("/portfolio/dashboard");
   };
 
   const updatePersonalInfo = (

@@ -1,7 +1,7 @@
 import { Analytics } from "@/models/analytics";
 import { NextRequest, NextResponse } from "next/server";
-import { GetUserId } from "../helper/utils";
 import { IResume } from "@/models/resume";
+import { GetUserId } from "../../helper/utils";
 
 export async function GET(req: NextRequest) {
   try {

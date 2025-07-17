@@ -20,7 +20,7 @@ export function DashboardHeader() {
     try {
       const agree = confirm("Are you sure want to logout");
       if (!agree) return;
-      const res = await fetch("/api/login", {
+      const res = await fetch("/api/auth/login", {
         method: "PUT",
       });
       if (!res.ok) {
@@ -47,7 +47,7 @@ export function DashboardHeader() {
       <div className="flex h-16 items-center justify-between px-4 lg:px-10">
         <Logo />
         <Button
-          className=" md:block hidden"
+          className=" lg:block hidden"
           onClick={handleLogout}
           variant="outline"
         >

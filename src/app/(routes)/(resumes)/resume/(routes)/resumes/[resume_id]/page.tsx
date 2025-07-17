@@ -545,7 +545,7 @@ export default function ResumeDetailsPage({
                   className="w-full justify-start"
                   onClick={() =>
                     DownloadResume(
-                      `/api/resume-file?resume=${resume?._id}`,
+                      `/api/resume/resume-file?resume=${resume?._id}`,
                       `${resume?.title}.pdf`
                     )
                   }

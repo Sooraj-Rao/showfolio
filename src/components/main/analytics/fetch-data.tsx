@@ -14,7 +14,7 @@ export const AnalyticsData = async ({ event, resumeId }: FetchDataParams) => {
 
   const data = await FetchLocationBrowserData();
 
-  const response = await fetch("/api/analytics-api", {
+  const response = await fetch("/api/resume/analytics-api", {
     method: "POST",
     body: JSON.stringify({ event, resumeId, data }),
     headers: { "Content-Type": "application/json" },

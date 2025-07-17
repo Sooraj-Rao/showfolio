@@ -1,113 +1,115 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose from "mongoose";
+import { Model } from "mongoose";
 
 export interface IUser extends Document {
   name: string;
   email: string;
-  password: string;
-  imageUrl: string;
-  resumes: mongoose.Types.ObjectId[];
-  provider: "email" | "google" | "linkedin";
-  createdAt: Date;
-  updatedAt: Date;
-  isActive: boolean;
-  templateId: string;
-  portfolio: string;
+  password?: string;
+  googleId?: string;
+  provider: "email" | "google";
+  portfolio?: string;
   portfolioData: string;
-  aiCredits: number;
-  private: {
-    portfolio: boolean;
-    profile: boolean;
-    resumes: boolean;
-  };
+  templateId: string;
+  imageUrl: string;
   portfolioSettings: {
     theme: string;
     themeColor: string;
     showContacts: boolean;
     analyticsTrack: boolean;
   };
+  private: {
+    profile: boolean;
+    portfolio: boolean;
+    resumes: boolean;
+  };
+  resumes: mongoose.Types.ObjectId[];
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const userSchema: Schema<IUser> = new mongoose.Schema(
+const userSchema = new mongoose.Schema<IUser>(
   {
     name: {
       type: String,
       required: true,
-      trim: true,
     },
     email: {
       type: String,
       required: true,
       unique: true,
-      lowercase: true,
-      trim: true,
     },
-
     password: {
       type: String,
       required: true,
+      select: false,
     },
-    resumes: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Resume",
-      required: true,
+    googleId: {
+      type: String,
+      sparse: true,
     },
     provider: {
       type: String,
-      enum: ["email", "google", "linkedin"],
+      enum: ["email", "google"],
       default: "email",
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
-    aiCredits: {
-      type: Number,
-      default: 5,
     },
     portfolio: {
       type: String,
+      unique: true,
     },
     portfolioData: {
       type: String,
+      default: "{}",
     },
     templateId: {
       type: String,
-    },
-    private: {
-      portfolio: {
-        type: Boolean,
-        default: false,
-        required: true,
-      },
-      profile: {
-        type: Boolean,
-        default: false,
-        required: true,
-      },
-      resumes: {
-        type: Boolean,
-        default: false,
-        required: true,
-      },
+      default: "2",
     },
     imageUrl: {
       type: String,
+      default: "",
     },
     portfolioSettings: {
       theme: {
         type: String,
+        default: "default",
       },
       themeColor: {
         type: String,
-      },
-      analyticsTrack: {
-        type: Boolean,
-        default: true,
+        default: "#000000",
       },
       showContacts: {
         type: Boolean,
         default: true,
       },
+      analyticsTrack: {
+        type: Boolean,
+        default: true,
+      },
+    },
+    private: {
+      profile: {
+        type: Boolean,
+        default: false,
+      },
+      portfolio: {
+        type: Boolean,
+        default: false,
+      },
+      resumes: {
+        type: Boolean,
+        default: false,
+      },
+    },
+    resumes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Resume",
+      },
+    ],
+    isActive: {
+      type: Boolean,
+      default: true,
     },
   },
   {
@@ -117,4 +119,5 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
 
 const User: Model<IUser> =
   mongoose.models.User || mongoose.model<IUser>("User", userSchema);
+
 export default User;

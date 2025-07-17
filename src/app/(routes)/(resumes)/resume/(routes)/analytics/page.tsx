@@ -136,7 +136,7 @@ export default function AnalyticsPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("/api/analytics");
+      const res = await axios.get("/api/resume/analytics");
       setAnalyticsData(res?.data?.data || []);
     } catch {
       setAnalyticsData([]);

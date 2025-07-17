@@ -30,7 +30,7 @@ const useGetResumeData = () => {
         let response;
         if (operation === "ResumePreview") {
           response = await axios.get(
-            `/api/resume-preview?shortUrl=${shortUrl}`
+            `/api/resume/resume-preview?shortUrl=${shortUrl}`
           );
         } else {
           response = await axios.get(

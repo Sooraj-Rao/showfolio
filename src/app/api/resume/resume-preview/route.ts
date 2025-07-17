@@ -1,7 +1,6 @@
 import connectDB from "@/lib/db";
 import Resume from "@/models/resume";
-import User from "@/models/user";
-import { IUser } from "@/models/user";
+import User, { IUser } from "@/models/user";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -57,7 +56,7 @@ async function getResumePreview(shortUrl: string) {
     const result = {
       name: user.name,
       email: user.email,
-      fileUrl: `/api/resume-file?resume=${shortUrl}`,
+      fileUrl: `/api/resume/resume-file?resume=${shortUrl}`,
       portfolioUrl: portfolioUrl,
       imageUrl: user.imageUrl || "",
     };

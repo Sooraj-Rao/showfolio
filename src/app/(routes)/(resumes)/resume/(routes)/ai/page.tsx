@@ -52,15 +52,14 @@ export default function AIFeedbackPage() {
       formData.append("responseLength", "medium");
       formData.append("query", role);
 
-      const response = await axios.post(`/api/ai`, formData);
+      const response = await axios.post(`/api/resume/ai`, formData);
       setResult({
         desc: response.data.result,
         shortUrl: selectedResume.shortUrl,
       });
-      if (error) {
-      }
-    } catch (err) {
-      console.error(err);
+      if (!response.data.result)
+        setError("Uh-oh! There was an error processing your request.");
+    } catch {
       setError("Uh-oh! There was an error processing your request.");
     } finally {
       setIsLoading(false);
@@ -158,7 +157,7 @@ export default function AIFeedbackPage() {
           </CardFooter>
         </Card>
       </form>
-
+      {error && <p className=" text-red-500">{error}</p>}
       {selectedResume?.shortUrl === result?.shortUrl && (
         <Card>
           <CardHeader>

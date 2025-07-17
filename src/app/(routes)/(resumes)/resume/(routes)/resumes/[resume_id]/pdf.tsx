@@ -15,7 +15,7 @@ export default function PdfViewer({ fileUrl, preview }: PdfViewerProps) {
         workerUrl={`https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js`}
       >
         <Viewer
-          fileUrl={`/api/resume-file?resume=${fileUrl}${
+          fileUrl={`/api/resume/resume-file?resume=${fileUrl}${
             preview ? "&preview=true" : ""
           }
        

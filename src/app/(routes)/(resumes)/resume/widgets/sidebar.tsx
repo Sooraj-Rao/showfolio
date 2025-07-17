@@ -74,7 +74,7 @@ export function MobileSidebar({ isOpen, toggleSidebar, SidebarItems }) {
       try {
         const agree = confirm("Are you sure want to logout");
         if (!agree) return;
-        const res = await fetch("/api/login", {
+        const res = await fetch("/api/auth/login", {
           method: "PUT",
         });
         if (!res.ok) {

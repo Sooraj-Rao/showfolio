@@ -10,6 +10,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import Link from "next/link";
 
 export default function VerifyOTPPage() {
   const searchParams = useSearchParams();
@@ -53,13 +54,21 @@ export default function VerifyOTPPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background relative">
+    <div className="flex items-center justify-center  bg-background relative">
       <SiteNav />
-      <Card className="w-[350px] sm:w-[450px] mt-24 shadow-xl border rounded-lg">
+      <Card className="w-[320px] sm:w-[450px] mt-40 shadow-xl border rounded-lg">
         <CardContent className="p-6">
           <CardTitle className="text-center text-xl font-semibold mb-6">
-            Verify OTP
+            Enter OTP
           </CardTitle>
+          <p>
+            <span className=" text-muted-foreground">We&apos;ve sent a 6-digit OTP to your email: </span>
+            <strong>{email}</strong>
+            <Link href="/auth/signup" className=" ml-3 text-blue-500">
+              edit
+            </Link>
+          </p>
+
           <form onSubmit={handleVerify} className="space-y-6">
             <InputOTP
               maxLength={6}
@@ -71,11 +80,15 @@ export default function VerifyOTPPage() {
                 }
               }}
               disabled={loading}
-              className="mx-auto flex justify-center"
+              className="mx-auto  flex justify-center"
             >
               <InputOTPGroup>
                 {[...Array(6)].map((_, index) => (
-                  <InputOTPSlot key={index} index={index} />
+                  <InputOTPSlot
+                    className="md:text-2xl "
+                    key={index}
+                    index={index}
+                  />
                 ))}
               </InputOTPGroup>
             </InputOTP>

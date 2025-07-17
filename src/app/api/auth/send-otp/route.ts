@@ -1,15 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import signupStore from "@/lib/otpStore";
-
-type RateLimitEntry = {
-  count: number;
-  expires: number;
-};
-
-const rateLimitStore = new Map<string, RateLimitEntry>();
-const MAX_REQUESTS = 5;
-const WINDOW_MS = 10 * 60 * 1000; // 10 minutes
 
 export async function POST(req: Request) {
   const { name, email, password } = await req.json();
@@ -18,11 +8,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "All fields required" }, { status: 400 });
   }
 
-  const ip = getIP(req) ?? "unknown";
-
-  if (!rateLimit(ip)) {
+  if (!signupStore.canSendOtp(email)) {
     return NextResponse.json(
-      { error: "Too many requests. Try again later." },
+      { error: "OTP request limit exceeded. Try again later." },
       { status: 429 }
     );
   }
@@ -40,52 +28,17 @@ export async function POST(req: Request) {
   const emailStatus = await sendEmail({
     to: email,
     from: process.env.EMAIL_FROM!,
-    subject: "Verify Your Email - OTP Inside",
-    html: getOTPEmailHTML(name, otp),
-  });
-
-  return NextResponse.json({
-    success: emailStatus,
-    message: emailStatus ? "OTP sent to your email." : "Failed to send OTP",
-  });
-}
-
-function rateLimit(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitStore.get(ip);
-
-  if (!entry || entry.expires < now) {
-    rateLimitStore.set(ip, { count: 1, expires: now + WINDOW_MS });
-    return true;
-  }
-
-  if (entry.count >= MAX_REQUESTS) return false;
-
-  entry.count += 1;
-  rateLimitStore.set(ip, entry);
-  return true;
-}
-
-function getIP(req: Request): string | null {
-  const forwarded = req.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0].trim();
-  const ip = (req as any).ip;
-  return ip || null;
-}
-
-function getOTPEmailHTML(name: string, otp: string) {
-  return `
- <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
+    subject: "Your One-Time Password (OTP) for Signup",
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
+    <h2 style="color: #f43f5e;margin-top: 2.5rem; text-align: center;">Showfolio</h2>
   
-  <a href="https://showfolio.soorajrao.in" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
-  <div
-    style="position: relative; width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #f43f5e, rgba(255, 91, 91, 0.7)); display: flex; align-items: center; justify-content: center;">
-    <span style="font-weight: bold; color: #ffffff;">S</span>
-  </div>
-  <span style="font-weight: bold; font-size: 1.25rem; color: #333;">Showfolio</span>
-</a>
+    <p style="margin-top: 2.5rem;">Hello,
+        <strong>
 
-    <h2 style="color: #f43f5e;margin-top: 2.5rem;">Hello, ${name}!</h2>
+            ${name}!
+        </strong>
+    </p>
     <p style="font-size: 16px;">
       Use the OTP below to verify your email address. It is valid for <strong>5 minutes</strong>.
     </p>
@@ -94,9 +47,14 @@ function getOTPEmailHTML(name: string, otp: string) {
         ${otp}
       </span>
     </div>
-
   </div>
-  `;
+    `,
+  });
+
+  return NextResponse.json({
+    success: emailStatus,
+    message: emailStatus ? "OTP sent" : "Failed to send OTP",
+  });
 }
 
 async function sendEmail({
@@ -123,10 +81,14 @@ async function sendEmail({
     });
 
     const result = await response.json();
-    if (!result.success) console.error("Email send failed:", result);
+
+    if (!result.success) {
+      console.error("Failed to send mail:", result);
+    }
+
     return !!result.success;
-  } catch (err) {
-    console.error("Email API error:", err);
+  } catch (error) {
+    console.error("Email API error:", error);
     return false;
   }
 }

@@ -1,39 +1,46 @@
+/* eslint-disable import/no-anonymous-default-export */
 type SignupData = {
   name: string;
   email: string;
   password: string;
   otp: string;
   expires: number;
+  attempts: number[];
 };
 
-const store = new Map<string, SignupData>();
+const signupStore = new Map<string, SignupData>();
 
-const signupStore = {
-  set(email: string, data: SignupData) {
-    store.set(email, data);
-  },
+function setSignupData(email: string, data: Omit<SignupData, "attempts">) {
+  const now = Date.now();
+  const existing = signupStore.get(email);
 
-  get(email: string): SignupData | null {
-    const data = store.get(email);
+  const updatedAttempts =
+    existing?.attempts?.filter((t) => now - t < 5 * 60 * 1000) || [];
 
-    if (!data) return null;
+  updatedAttempts.push(now);
 
-    // Check if OTP has expired
-    if (Date.now() > data.expires) {
-      store.delete(email); // remove expired entry
-      return null;
-    }
+  signupStore.set(email, {
+    ...data,
+    attempts: updatedAttempts,
+  });
+}
 
-    return data;
-  },
+function getSignupData(email: string): SignupData | undefined {
+  return signupStore.get(email);
+}
 
-  has(email: string) {
-    return store.has(email);
-  },
+function canSendOtp(email: string): boolean {
+  const data = signupStore.get(email);
+  if (!data) return true;
+  const now = Date.now();
+  const recentAttempts = data.attempts.filter(
+    (timestamp) => now - timestamp < 5 * 60 * 1000
+  );
+  return recentAttempts.length < 2;
+}
 
-  delete(email: string) {
-    store.delete(email);
-  },
+export default {
+  set: setSignupData,
+  get: getSignupData,
+  canSendOtp,
 };
-
-export default signupStore;

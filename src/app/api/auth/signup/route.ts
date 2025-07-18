@@ -3,14 +3,22 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import connectDB from "@/lib/db";
 import User from "@/models/user";
+import { redis } from "@/lib/redis";
 import { setAuthCookie } from "../../helper/utils";
-import signupStore from "@/lib/otpStore";
+
+type OtpData = {
+  name: string;
+  email: string;
+  password: string;
+  otp: string;
+  expires: number;
+};
 
 export async function POST(req: Request) {
   try {
     await connectDB();
-    const { email, otp } = await req.json();
 
+    const { email, otp } = await req.json();
     if (!email || !otp) {
       return NextResponse.json(
         { error: "Email and OTP are required" },
@@ -26,37 +34,38 @@ export async function POST(req: Request) {
       );
     }
 
-    const tempData = signupStore.get(email);
-    if (!tempData) {
+    const redisData = (await redis.get(`otp:${email}`)) as OtpData | null;
+    if (!redisData) {
       return NextResponse.json(
-        { error: "No signup request found" },
+        { error: "OTP expired or not found" },
         { status: 404 }
       );
     }
 
-    if (tempData.otp !== otp) {
+
+    if (redisData.otp !== otp) {
       return NextResponse.json({ error: "Invalid OTP" }, { status: 401 });
     }
 
-    if (Date.now() > tempData.expires) {
-      signupStore.delete(email);
+    if (Date.now() > redisData.expires) {
+      await redis.del(`signup:${email}`);
       return NextResponse.json({ error: "OTP expired" }, { status: 401 });
     }
 
-    const hashedPassword = await bcrypt.hash(tempData.password, 10);
+    const hashedPassword = await bcrypt.hash(redisData.password, 10);
 
     const user = await User.create({
-      name: tempData.name,
-      email: tempData.email,
+      name: redisData.name,
+      email: redisData.email,
       password: hashedPassword,
-      portfolio: tempData.name,
+      portfolio: redisData.name,
     });
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
       expiresIn: "1d",
     });
 
-    signupStore.delete(email); 
+    await redis.del(`signup:${email}`);
 
     const response = NextResponse.json({
       success: true,
@@ -65,8 +74,8 @@ export async function POST(req: Request) {
 
     setAuthCookie(response, token);
     return response;
-  } catch (error) {
-    console.error("Signup error:", error);
+  } catch (err) {
+    console.error("Signup error:", err);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

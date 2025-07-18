@@ -1,60 +1,77 @@
+import { redis } from "@/lib/redis";
+import User from "@/models/user";
 import { NextResponse } from "next/server";
-import signupStore from "@/lib/otpStore";
+
+const MAX_REQUESTS = 2;
+const WINDOW_SECONDS = 300;
 
 export async function POST(req: Request) {
-  const { name, email, password } = await req.json();
+  const body = await req.json();
+  const email = body.email?.toLowerCase();
+  const name = body.name || "User";
+  const password = body.password;
 
-  if (!name || !email || !password) {
-    return NextResponse.json({ error: "All fields required" }, { status: 400 });
+  if (!email || !email.includes("@")) {
+    return NextResponse.json({ error: "Invalid email" }, { status: 400 });
   }
 
-  if (!signupStore.canSendOtp(email)) {
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    return NextResponse.json({ error: "User already exists" }, { status: 400 });
+  }
+
+  const key = `rate_limit:otp:${email}`;
+  const count = await redis.incr(key);
+
+  if (count === 1) {
+    await redis.expire(key, WINDOW_SECONDS);
+  }
+
+  if (count > MAX_REQUESTS) {
     return NextResponse.json(
-      { error: "OTP request limit exceeded. Try again later." },
+      { error: "Too many OTP requests. Try again after 5 minutes." },
       { status: 429 }
     );
   }
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-  signupStore.set(email, {
+  const otpData = {
     name,
     email,
     password,
     otp,
-    expires: Date.now() + 5 * 60 * 1000,
+    expires: Date.now() + WINDOW_SECONDS * 1000,
+  };
+
+  await redis.set(`otp:${email}`, JSON.stringify(otpData), {
+    ex: WINDOW_SECONDS,
   });
 
-  const emailStatus = await sendEmail({
-    to: email,
-    from: process.env.EMAIL_FROM!,
-    subject: "Your One-Time Password (OTP) for Signup",
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
-    <h2 style="color: #f43f5e;margin-top: 2.5rem; text-align: center;">Showfolio</h2>
-  
-    <p style="margin-top: 2.5rem;">Hello,
-        <strong>
-
-            ${name}!
-        </strong>
-    </p>
-    <p style="font-size: 16px;">
-      Use the OTP below to verify your email address. It is valid for <strong>5 minutes</strong>.
-    </p>
-    <div style="margin: 24px 0; text-align: center;">
-      <span style="display: inline-block; padding: 14px 28px; font-size: 24px; font-weight: bold; color: white; background-color: #f43f5e; border-radius: 8px;">
-        ${otp}
-      </span>
+  const html = `
+    <div style="max-width: 600px; margin: auto; padding: 20px;">
+      <h2 style="color: #f43f5e; text-align: center;">Showfolio</h2>
+      <p style="font-size: 16px;">Hello <strong>${name}</strong>,</p>
+      <p style="font-size: 16px;">
+        Use the OTP below to verify your email address. It is valid for <strong>5 minutes</strong>.
+      </p>
+      <div style="margin: 24px 0; text-align: center;">
+        <span style="display: inline-block; padding: 14px 28px; font-size: 24px; font-weight: bold; color: white; background-color: #f43f5e; border-radius: 8px;">
+          ${otp}
+        </span>
+      </div>
     </div>
-  </div>
-    `,
+  `;
+
+  await sendEmail({
+    to: email,
+    from: "Showfolio",
+    subject: "Signup OTP",
+    html,
   });
 
-  return NextResponse.json({
-    success: emailStatus,
-    message: emailStatus ? "OTP sent" : "Failed to send OTP",
-  });
+  console.log(`OTP sent to ${email}: ${otp}`);
+  return NextResponse.json({ success: true });
 }
 
 async function sendEmail({

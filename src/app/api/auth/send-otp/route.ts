@@ -1,3 +1,4 @@
+import connectDB from "@/lib/db";
 import { redis } from "@/lib/redis";
 import User from "@/models/user";
 import { NextResponse } from "next/server";
@@ -14,7 +15,7 @@ export async function POST(req: Request) {
   if (!email || !email.includes("@")) {
     return NextResponse.json({ error: "Invalid email" }, { status: 400 });
   }
-
+ await connectDB();
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     return NextResponse.json({ error: "User already exists" }, { status: 400 });

@@ -44,10 +44,6 @@ export default function Signup() {
       });
 
       if (response.status === 200 || response.data.success) {
-        toast({
-          title: "Success",
-          description: response.data.message,
-        });
         router.push(`/auth/verify-otp?email=${encodeURIComponent(email)}`);
       } else {
         throw new Error("Failed to sign up");

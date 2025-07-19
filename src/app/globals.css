@@ -121,3 +121,7 @@ body {
 .hideScrollBar::-webkit-scrollbar {
   display: none;
 }
+
+button{
+  user-select: none;
+}

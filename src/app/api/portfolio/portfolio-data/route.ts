@@ -101,6 +101,13 @@ export async function PATCH(req: NextRequest) {
         );
       }
     } else if (portfolio) {
+      const isAlreadyUser = await User.findOne({ portfolio });
+      if (isAlreadyUser) {
+        return NextResponse.json(
+          { error: "Custom name for URL already taken" },
+          { status: 400 }
+        );
+      }
       const res = await User.findByIdAndUpdate(
         userId,
         {

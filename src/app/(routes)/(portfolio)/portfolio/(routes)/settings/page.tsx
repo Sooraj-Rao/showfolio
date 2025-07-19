@@ -187,15 +187,13 @@ export default function SettingsPage() {
       } else {
         toast({
           title: "Error saving portfolio",
-          description: "There was an error saving your portfolio.",
+          description: res.data.error,
           variant: "destructive",
         });
       }
     } catch (error) {
-      console.error("Error saving portfolio:", error);
       toast({
-        title: "Error saving portfolio",
-        description: "There was an error saving your portfolio.",
+        description: error?.response?.data?.error,
         variant: "destructive",
       });
     } finally {
@@ -321,7 +319,7 @@ export default function SettingsPage() {
             <CardContent className="space-y-4">
               <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">
-                  {process.env.NEXT_PUBLIC_APP_URL}/
+                  {process.env.NEXT_PUBLIC_APP_URL}/p/
                 </span>
                 <Input
                   onChange={(e) => setportfolioUrl(e.target.value)}
@@ -458,16 +456,14 @@ export default function SettingsPage() {
                     <div
                       className={`w-8 h-8 rounded-full ${
                         themeColors[selectedColor as keyof typeof themeColors]
-                          .bg
+                          ?.bg || "None"
                       }`}
                     />
                     <div>
                       <p className="font-medium">
                         Selected theme:{" "}
-                        {
-                          themeColors[selectedColor as keyof typeof themeColors]
-                            .name
-                        }
+                        {themeColors[selectedColor as keyof typeof themeColors]
+                          ?.name || "None"}
                       </p>
 
                       <p className="font-medium">
@@ -504,13 +500,21 @@ export default function SettingsPage() {
                   userData?.portfolio || userData?.name
                 }&ref=demo`}
                 rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
+                className={`text-blue-500 hover:underline 
+                  ${!userData?.hasPorfolioData && "pointer-events-none"}
+                  
+                  `}
               >
                 <Button variant="secondary">
                   Test & Preview
                   <ExternalLink size={16} />
                 </Button>
               </a>
+              {!userData?.hasPorfolioData && (
+                <span className=" text-xs ml-2 text-red-500">
+                  (No portfolio created yet)
+                </span>
+              )}
             </div>
           </Card>
         </TabsContent>

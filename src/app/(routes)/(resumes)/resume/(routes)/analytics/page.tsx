@@ -12,6 +12,7 @@ import {
   FileText,
   Plus,
   BarChart3,
+  Mail,
 } from "lucide-react";
 import {
   Card,
@@ -298,43 +299,6 @@ export default function AnalyticsPage() {
   const totalContact = eventCounts.contact || 0;
   const totalEvents = filteredData.length;
 
-  const generateInsights = () => {
-    const insights = [];
-
-    const mobilePercentage = Math.round(
-      ((deviceCounts.mobile || 0) / totalEvents) * 100
-    );
-    if (mobilePercentage > 50) {
-      insights.push({
-        type: "success",
-        title: "Strong Mobile Engagement",
-        description: `${mobilePercentage}% of views come from mobile devices. Your resume is mobile-friendly!`,
-        color: "green",
-      });
-    } else if (mobilePercentage > 0) {
-      insights.push({
-        type: "info",
-        title: "Mobile Opportunity",
-        description: `${mobilePercentage}% mobile usage. Consider optimizing for mobile experience.`,
-        color: "blue",
-      });
-    }
-
-    const countryCount = Object.keys(countryCounts).length;
-    if (countryCount > 1) {
-      insights.push({
-        type: "success",
-        title: "Global Reach",
-        description: `Your resume is being viewed from ${countryCount} different countries, showing international appeal.`,
-        color: "blue",
-      });
-    }
-
-    return insights;
-  };
-
-  const insights = generateInsights();
-
   if (loading) {
     return <Loader title="Analytics" />;
   }
@@ -389,7 +353,7 @@ export default function AnalyticsPage() {
                 <CardTitle className="text-sm font-medium">
                   Total Views
                 </CardTitle>
-                <Eye className="h-4 w-4 text-muted-foreground" />
+                <Eye className="h-4 w-4 text-blue-600 " />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">127</div>
@@ -399,17 +363,17 @@ export default function AnalyticsPage() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Downloads</CardTitle>
-                <Download className="h-4 w-4 text-muted-foreground" />
+                <Download className="h-4 w-4 text-green-500" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">23</div>
-                <p className="text-xs text-muted-foreground">18% of views</p>
+                <p className="text-xs text-yellow-500">18% of views</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Shares</CardTitle>
-                <Share2 className="h-4 w-4 text-muted-foreground" />
+                <Share2 className="h-4 w-4 text-rose-500" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">8</div>
@@ -515,7 +479,7 @@ export default function AnalyticsPage() {
             <CardTitle className="text-xs sm:text-sm font-medium truncate">
               Total Views
             </CardTitle>
-            <Eye className="h-4 w-4 text-muted-foreground shrink-0" />
+            <Eye className="h-4 w-4 text-blue-600  shrink-0" />
           </CardHeader>
           <CardContent>
             <div className="text-lg sm:text-2xl font-bold">{totalViews}</div>
@@ -531,7 +495,7 @@ export default function AnalyticsPage() {
             <CardTitle className="text-xs sm:text-sm font-medium truncate">
               Downloads
             </CardTitle>
-            <Download className="h-4 w-4 text-muted-foreground shrink-0" />
+            <Download className="h-4 w-4 text-green-500 shrink-0" />
           </CardHeader>
           <CardContent>
             <div className="text-lg sm:text-2xl font-bold">
@@ -552,7 +516,7 @@ export default function AnalyticsPage() {
             <CardTitle className="text-xs sm:text-sm font-medium truncate">
               Shares
             </CardTitle>
-            <Share2 className="h-4 w-4 text-muted-foreground shrink-0" />
+            <Share2 className="h-4 w-4 text-yellow-500 shrink-0" />
           </CardHeader>
           <CardContent>
             <div className="text-lg sm:text-2xl font-bold">{totalShares}</div>
@@ -571,7 +535,7 @@ export default function AnalyticsPage() {
             <CardTitle className="text-xs sm:text-sm font-medium truncate">
               Contacted
             </CardTitle>
-            <Share2 className="h-4 w-4 text-muted-foreground shrink-0" />
+            <Mail className="h-4 w-4 text-rose-500 shrink-0" />
           </CardHeader>
           <CardContent>
             <div className="text-lg sm:text-2xl font-bold">{totalContact}</div>
@@ -1211,126 +1175,6 @@ export default function AnalyticsPage() {
                     </div>
                   </div>
                 )}
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="performance" className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Conversion Funnel</CardTitle>
-                <CardDescription className="text-sm">
-                  User journey from view to action
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-4 sm:p-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4  rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Eye className="h-5 w-5 text-blue-600 shrink-0" />
-                      <span className="font-medium text-sm sm:text-base">
-                        Views
-                      </span>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-lg sm:text-2xl font-bold text-blue-600">
-                        {totalViews}
-                      </div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">
-                        100%
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between p-4 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Download className="h-5 w-5 text-green-600 shrink-0" />
-                      <span className="font-medium text-sm sm:text-base">
-                        Downloads
-                      </span>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-lg sm:text-2xl font-bold text-green-600">
-                        {totalDownloads}
-                      </div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">
-                        {totalViews > 0
-                          ? Math.round((totalDownloads / totalViews) * 100)
-                          : 0}
-                        %
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between p-4  rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Share2 className="h-5 w-5 text-orange-600 shrink-0" />
-                      <span className="font-medium text-sm sm:text-base">
-                        Shares
-                      </span>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-lg sm:text-2xl font-bold text-orange-600">
-                        {totalShares}
-                      </div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">
-                        {totalViews > 0
-                          ? Math.round((totalShares / totalViews) * 100)
-                          : 0}
-                        %
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Key Insights</CardTitle>
-                <CardDescription className="text-sm">
-                  Data-driven recommendations
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-4 sm:p-6">
-                <div className="space-y-4 max-h-[300px] overflow-y-auto">
-                  {insights.length > 0 ? (
-                    insights.map((insight, index) => (
-                      <div key={index} className="p-4 border rounded-lg">
-                        <div className="flex items-start gap-3">
-                          <div
-                            className={`w-2 h-2 rounded-full mt-2 shrink-0 ${
-                              insight.color === "green"
-                                ? "bg-green-500"
-                                : "bg-blue-500"
-                            }`}
-                          />
-                          <div className="min-w-0 flex-1">
-                            <h4
-                              className={`font-medium text-sm sm:text-base ${
-                                insight.color === "green"
-                                  ? "text-green-700"
-                                  : "text-blue-700"
-                              }`}
-                            >
-                              {insight.title}
-                            </h4>
-                            <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                              {insight.description}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center text-muted-foreground py-8">
-                      <div className="text-sm">
-                        Not enough data for insights yet. Keep sharing your
-                        resume!
-                      </div>
-                    </div>
-                  )}
-                </div>
               </CardContent>
             </Card>
           </div>

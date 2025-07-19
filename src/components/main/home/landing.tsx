@@ -18,14 +18,17 @@ import {
   Download,
   Brain,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import useGetUserData from "@/app/hooks/use-getUserData";
+import { useRouter } from "next/navigation";
 
-export function LandingPage() {
+export function LandingPage({ noRedirect }: { noRedirect?: boolean }) {
   const [activeTab, setActiveTab] = useState(0);
   const { theme } = useTheme();
+  const { userData } = useGetUserData();
+  const router = useRouter();
   const isDark = theme === "dark";
-
   const features = [
     {
       title: "Resume Management",
@@ -110,6 +113,11 @@ export function LandingPage() {
         : "/feat/p-analytics/dark.png",
     },
   ];
+  useEffect(() => {
+    if (userData && !noRedirect) {
+      router.push("/resume/dashboard");
+    }
+  }, [userData]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -214,48 +222,54 @@ export function LandingPage() {
                 </motion.div>
               </ScrollReveal>
 
-              <ScrollReveal delay={0.3} direction="down">
-                <motion.div
-                  className="absolute -top-8 -right-8 w-40  rounded-lg bg-background border shadow-lg p-3 gap-2  flex-col justify-between hidden sm:flex"
-                  whileHover={{ y: -5, scale: 1.03 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <div className="text-xs text-muted-foreground">
-                    Resume Stats
+              <motion.div
+                className="absolute -top-8 -right-8 w-40 rounded-lg bg-background border shadow-lg p-3 gap-2 flex-col justify-between hidden sm:flex"
+                initial={{ opacity: 0, y: 3 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: 0.5,
+                  duration: 0.5,
+                  ease: "easeOut",
+                }}
+                whileHover={{ y: -5, scale: 1.03 }}
+              >
+                <div className="text-xs text-muted-foreground">
+                  Resume Stats
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <Eye className="h-3 w-3 text-blue-500" />
+                    <span className="text-xs">Views: 47</span>
                   </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <Eye className="h-3 w-3 text-blue-500" />
-                      <span className="text-xs">Views: 47</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Download className="h-3 w-3 text-green-500" />
-                      <span className="text-xs">Downloads: 12</span>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <Download className="h-3 w-3 text-green-500" />
+                    <span className="text-xs">Downloads: 12</span>
                   </div>
-                </motion.div>
-              </ScrollReveal>
+                </div>
+              </motion.div>
 
-              <ScrollReveal delay={0.4} direction="right">
-                <motion.div
-                  className="absolute -bottom-8 -left-8 w-48 rounded-lg bg-background border shadow-lg p-3 hidden sm:block"
-                  whileHover={{ y: -5, scale: 1.03 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <div className="text-xs text-muted-foreground mb-2">
-                    AI Feedback
-                  </div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Brain className="h-4 w-4 text-primary" />
-                    <div className="text-sm font-medium">
-                      Good skills section
-                    </div>
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Add more specific achievements
-                  </div>
-                </motion.div>
-              </ScrollReveal>
+              <motion.div
+                className="absolute -bottom-8 -left-8 w-48 rounded-lg bg-background border shadow-lg p-3 hidden sm:block"
+                initial={{ opacity: 0, y: 3 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: 0.5,
+                  duration: 0.5,
+                  ease: "easeOut",
+                }}
+                whileHover={{ y: -5, scale: 1.03 }}
+              >
+                <div className="text-xs text-muted-foreground mb-2">
+                  AI Feedback
+                </div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Brain className="h-4 w-4 text-primary" />
+                  <div className="text-sm font-medium">Good skills section</div>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Add more specific achievements
+                </div>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -370,7 +384,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      <footer className="py-12 border-t">
+      <footer className="py-6 border-t">
         <div className="container px-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <Logo />

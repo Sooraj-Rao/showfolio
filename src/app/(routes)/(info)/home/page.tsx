@@ -1,6 +1,6 @@
 import { LandingPage } from "@/components/main/home/landing";
 import React from "react";
 
-const page = () => <LandingPage noRedirect={false} />;
+const Home = () => <LandingPage noRedirect={true} />;
 
-export default page;
+export default Home;

@@ -360,6 +360,12 @@ export default function CreatePortfolioPage() {
   const handleSubmit = async () => {
     localStorage.setItem("portfolioFormData", JSON.stringify(formData));
     setLoader(true);
+    if (!formData.personalInfo.email || !formData.personalInfo.name) {
+      return toast({
+        description: "Name and Email are mandatory",
+        variant: "destructive",
+      });
+    }
     try {
       const res = await axios.post("/api/portfolio/portfolio-data", {
         portfolioData: formData,

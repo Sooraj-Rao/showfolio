@@ -343,11 +343,13 @@ export default function SettingsPage() {
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
+                  disabled
+                  readOnly
                   id="email"
                   name="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  // onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your email"
                 />
               </div>

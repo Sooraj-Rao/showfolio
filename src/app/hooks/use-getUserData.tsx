@@ -2,10 +2,12 @@
 import { useState, useEffect, useCallback } from "react";
 import axios, { AxiosError } from "axios";
 import { useZustandStore } from "@/zustand/store";
+import { usePathname } from "next/navigation";
 
 const useGetUserData = () => {
   const { userData, setUserData, setResumes } = useZustandStore();
   const [error, setError] = useState<string>("");
+  const path = usePathname();
   const [loadingUserData, setLoadingUserData] = useState(false);
 
   const fetchUserData = useCallback(async (): Promise<void> => {
@@ -21,6 +23,7 @@ const useGetUserData = () => {
       setUserData(data);
       setResumes(data?.resumes);
     } catch (err: unknown) {
+      if (path === "/" || path === "/home") return;
       if (axios.isAxiosError(err)) {
         const axiosErr = err as AxiosError;
         if (axiosErr.response?.status === 401) {

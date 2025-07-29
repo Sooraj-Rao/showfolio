@@ -41,13 +41,13 @@ export default function VerifyOTPPage() {
       const data = await res.json();
 
       if (res.ok) {
-        setMessage("✅ OTP verified!");
+        setMessage(" OTP verified!");
         router.push("/resume/dashboard");
       } else {
-        setMessage(`❌ ${data.error || "Verification failed"}`);
+        setMessage(` ${data.error || "Verification failed"}`);
       }
     } catch {
-      setMessage("❌ Something went wrong");
+      setMessage(" Something went wrong");
     } finally {
       setLoading(false);
     }

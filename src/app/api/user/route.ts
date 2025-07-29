@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { GetUserId } from "../helper/utils";
 import User from "@/models/user";
 import Resume from "@/models/resume";
+import { Analytics } from "@/models/analytics";
 
 export async function GET(req: NextRequest) {
   try {
@@ -125,9 +126,14 @@ export async function DELETE(req: NextRequest) {
     }
 
     await connectDB();
-    const user = await User.findByIdAndDelete(userId);
+    const userDeletion = User.findByIdAndDelete(userId);
+    const analyticsDeletion = Analytics.deleteMany({ user: userId });
+    const resumesDeletion = Resume.deleteMany({ user: userId }); 
 
-    if (!user) {
+
+    await Promise.all([userDeletion, analyticsDeletion, resumesDeletion]);
+
+    if (!userDeletion) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 

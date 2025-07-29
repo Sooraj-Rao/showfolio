@@ -43,7 +43,7 @@ export default function Signup() {
         password,
       });
 
-      if (response.status === 200 || response.data.success) {
+      if (response.data.success) {
         router.push(`/auth/verify-otp?email=${encodeURIComponent(email)}`);
       } else {
         throw new Error("Failed to sign up");

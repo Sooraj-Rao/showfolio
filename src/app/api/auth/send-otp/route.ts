@@ -15,41 +15,46 @@ export async function POST(req: Request) {
   if (!email || !email.includes("@")) {
     return NextResponse.json({ error: "Invalid email" }, { status: 400 });
   }
- await connectDB();
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    return NextResponse.json({ error: "User already exists" }, { status: 400 });
-  }
 
-  const key = `rate_limit:otp:${email}`;
-  const count = await redis.incr(key);
+  try {
+    await connectDB();
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "User already exists" },
+        { status: 400 }
+      );
+    }
 
-  if (count === 1) {
-    await redis.expire(key, WINDOW_SECONDS);
-  }
+    const key = `rate_limit:otp:${email}`;
+    const count = await redis.incr(key);
 
-  if (count > MAX_REQUESTS) {
-    return NextResponse.json(
-      { error: "Too many OTP requests. Try again after 5 minutes." },
-      { status: 429 }
-    );
-  }
+    if (count === 1) {
+      await redis.expire(key, WINDOW_SECONDS);
+    }
 
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    if (count > MAX_REQUESTS) {
+      return NextResponse.json(
+        { error: "Too many OTP requests. Try again after 5 minutes." },
+        { status: 429 }
+      );
+    }
 
-  const otpData = {
-    name,
-    email,
-    password,
-    otp,
-    expires: Date.now() + WINDOW_SECONDS * 1000,
-  };
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-  await redis.set(`otp:${email}`, JSON.stringify(otpData), {
-    ex: WINDOW_SECONDS,
-  });
+    const otpData = {
+      name,
+      email,
+      password,
+      otp,
+      expires: Date.now() + WINDOW_SECONDS * 1000,
+    };
 
-  const html = `
+    await redis.set(`otp:${email}`, JSON.stringify(otpData), {
+      ex: WINDOW_SECONDS,
+    });
+
+    const html = `
     <div style="max-width: 600px; margin: auto; padding: 20px;">
       <h2 style="color: #f43f5e; text-align: center;">Showfolio</h2>
       <p style="font-size: 16px;">Hello <strong>${name}</strong>,</p>
@@ -64,15 +69,18 @@ export async function POST(req: Request) {
     </div>
   `;
 
-  await sendEmail({
-    to: email,
-    from: "Showfolio",
-    subject: "Signup OTP",
-    html,
-  });
-
-  console.log(`OTP sent to ${email}: ${otp}`);
-  return NextResponse.json({ success: true });
+    const success = await sendEmail({
+      to: email,
+      from: "Showfolio <showfolio@mailory.site>",
+      subject: "Signup OTP",
+      html,
+    });
+    if (success) console.log(`OTP sent to ${email}: ${otp}`);
+    return NextResponse.json({ success });
+  } catch (error) {
+    console.log(error);
+    NextResponse.json({ error: "Internal Server Error" });
+  }
 }
 
 async function sendEmail({
@@ -89,22 +97,23 @@ async function sendEmail({
   text?: string;
 }): Promise<boolean> {
   try {
-    const response = await fetch(process.env.EMAIL_API_URL!, {
+    const response = await fetch(process.env.EMAIL_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.EMAIL_API_KEY}`,
+        "mailory-authorization": `Bearer ${process.env.EMAIL_API_KEY}`,
       },
       body: JSON.stringify({ to, from, subject, html, text }),
     });
 
-    const result = await response.json();
+    const { success, error, messageId } = await response.json();
 
-    if (!result.success) {
-      console.error("Failed to send mail:", result);
+    if (!success || !messageId) {
+      console.error("Failed to send mail:", error);
+      return false;
     }
 
-    return !!result.success;
+    return true;
   } catch (error) {
     console.error("Email API error:", error);
     return false;

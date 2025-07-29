@@ -259,12 +259,12 @@ export default function ModernPortfolioWithAnalytics({
     portfolioData?.theme || "emerald"
   );
   const [themeMode, setthemeMode] = useState(
-    portfolioData.themeMode || "light"
+    portfolioData?.themeMode || "light"
   );
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isPreview =
-    portfolioData.previewAnalytics === false ||
-    portfolioData.analytics === false;
+    portfolioData?.previewAnalytics === false ||
+    portfolioData?.analytics === false;
 
   const {
     trackEvent,
@@ -272,27 +272,27 @@ export default function ModernPortfolioWithAnalytics({
     trackProjectView,
     trackExternalLink,
     trackSocialLink,
-  } = usePortfolioAnalytics(isPreview, portfolioData.userId);
+  } = usePortfolioAnalytics(isPreview, portfolioData?.userId);
 
   const theme = themes[currentTheme];
-
+console.log(currentTheme)
   const hasData = (section: keyof PortfolioData) => {
     if (!portfolioData) return false;
     const data = portfolioData[section];
-    if (Array.isArray(data)) {
+    if (Array?.isArray(data)) {
       return (
-        data.length > 0 &&
-        data.some((item) => {
-          if (typeof item === "string") return item.trim() !== "";
-          return Object.values(item).some(
-            (value) => value && value.toString().trim() !== ""
+        data?.length > 0 &&
+        data?.some((item) => {
+          if (typeof item === "string") return item?.trim() !== "";
+          return Object?.values(item)?.some(
+            (value) => value && value?.toString()?.trim() !== ""
           );
         })
       );
     }
     if (typeof data === "object") {
-      return Object.values(data).some(
-        (value) => value && value.toString().trim() !== ""
+      return Object?.values(data)?.some(
+        (value) => value && value?.toString()?.trim() !== ""
       );
     }
     return false;
@@ -300,15 +300,15 @@ export default function ModernPortfolioWithAnalytics({
 
   const hasSkillsData = () => {
     if (!portfolioData?.skills) return false;
-    if (Array.isArray(portfolioData.skills)) {
+    if (Array?.isArray(portfolioData?.skills)) {
       return (
-        portfolioData.skills.length > 0 &&
-        portfolioData.skills.some((skill) => skill.trim() !== "")
+        portfolioData?.skills?.length > 0 &&
+        portfolioData?.skills?.some((skill) => skill?.trim() !== "")
       );
     }
     return (
-      Object.keys(portfolioData.skills).length > 0 &&
-      Object.values(portfolioData.skills).some((skills) => skills.length > 0)
+      Object?.keys(portfolioData?.skills)?.length > 0 &&
+      Object?.values(portfolioData?.skills)?.some((skills) => skills?.length > 0)
     );
   };
 
@@ -319,22 +319,22 @@ export default function ModernPortfolioWithAnalytics({
   };
 
   const handleProjectClick = (project: any) => {
-    trackProjectView(project.name);
+    trackProjectView(project?.name);
 
-    if (project.link) {
-      trackExternalLink(project.link, "projects");
-      window.open(project.link, "_blank");
+    if (project?.link) {
+      trackExternalLink(project?.link, "projects");
+      window?.open(project?.link, "_blank");
     }
   };
 
   const handleSocialClick = (link: any) => {
-    trackSocialLink(link.platform);
-    window.open(link.url, "_blank");
+    trackSocialLink(link?.platform);
+    window?.open(link?.url, "_blank");
   };
 
   const handleExternalLink = (url: string, section = "general") => {
     trackExternalLink(url, section);
-    window.open(url, "_blank");
+    window?.open(url, "_blank");
   };
 
   const handleThemeChange = (newTheme: keyof typeof themes) => {
@@ -344,14 +344,14 @@ export default function ModernPortfolioWithAnalytics({
 
   const handleResumeDownload = () => {
     trackClick("resume_download", "resume");
-    if (portfolioData.personalInfo?.resumeUrl)
-      window.open(portfolioData.personalInfo?.resumeUrl);
+    if (portfolioData?.personalInfo?.resumeUrl)
+      window?.open(portfolioData?.personalInfo?.resumeUrl);
   };
 
   const handleContactClick = () => {
     trackClick("contact_button", "contact");
     if (portfolioData?.personalInfo?.email) {
-      window.open(`mailto:${portfolioData.personalInfo.email}`);
+      window?.open(`mailto:${portfolioData?.personalInfo?.email}`);
     }
   };
 
@@ -361,7 +361,7 @@ export default function ModernPortfolioWithAnalytics({
 
   const handleBlogPostClick = (blog: any, index: number) => {
     setActiveBlogPost(`blog-${index}`);
-    trackClick(`blog_${blog.title}`, "blog");
+    trackClick(`blog_${blog?.title}`, "blog");
   };
 
   const handleBlogBackClick = () => {
@@ -383,15 +383,15 @@ export default function ModernPortfolioWithAnalytics({
 
   const handleAchievementClick = (achievement: any) => {
     trackClick(
-      `achievement_${achievement.description.substring(0, 30)}`,
+      `achievement_${achievement?.description?.substring(0, 30)}`,
       "achievements"
     );
-    handleExternalLink(achievement.link, "achievements");
+    handleExternalLink(achievement?.link, "achievements");
   };
 
   const handleCertificationClick = (cert: any) => {
-    trackClick(`certification_${cert.name}`, "certifications");
-    handleExternalLink(cert.url, "certifications");
+    trackClick(`certification_${cert?.name}`, "certifications");
+    handleExternalLink(cert?.url, "certifications");
   };
 
   const renderBlogPost = (blog: any, index: number) => {
@@ -413,17 +413,17 @@ export default function ModernPortfolioWithAnalytics({
           <article className="space-y-6">
             <div className="space-y-4">
               <h1 className="text-3xl md:text-4xl font-bold leading-tight">
-                {blog.title}
+                {blog?.title}
               </h1>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <time>{new Date(blog.date).toLocaleDateString()}</time>
+                <time>{new Date(blog?.date)?.toLocaleDateString()}</time>
               </div>
             </div>
 
             <div className="prose prose-neutral dark:prose-invert prose-lg max-w-none">
-              {blog.description
-                .split("\n")
-                .map((paragraph: string, i: number) => (
+              {blog?.description
+                ?.split("\n")
+                ?.map((paragraph: string, i: number) => (
                   <p key={i} className="mb-6 leading-relaxed">
                     {paragraph}
                   </p>
@@ -438,7 +438,7 @@ export default function ModernPortfolioWithAnalytics({
 
   const renderContent = () => {
     if (activeBlogPost) {
-      const blogIndex = Number.parseInt(activeBlogPost.split("-")[1]);
+      const blogIndex = Number?.parseInt(activeBlogPost?.split("-")[1]);
       const blog = portfolioData?.blogs?.[blogIndex];
       if (blog) {
         return renderBlogPost(blog, blogIndex);
@@ -457,7 +457,7 @@ export default function ModernPortfolioWithAnalytics({
                 <h2 className="text-2xl md:text-3xl font-bold">About Me</h2>
                 <div className="max-w-4xl">
                   <p className="text-lg leading-relaxed text-muted-foreground">
-                    {portfolioData.personalInfo.bio}
+                    {portfolioData?.personalInfo?.bio}
                   </p>
                 </div>
               </section>
@@ -467,7 +467,7 @@ export default function ModernPortfolioWithAnalytics({
               {hasData("workExperience") && (
                 <section className="space-y-8" id="experience">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${theme.primary}`}>
+                    <div className={`p-2 rounded-lg ${theme?.primary}`}>
                       <Briefcase className="w-5 h-5 text-white" />
                     </div>
                     <h2 className="text-2xl font-bold">Experience</h2>
@@ -479,21 +479,21 @@ export default function ModernPortfolioWithAnalytics({
                         className="relative pl-8 border-l-2 border-border"
                       >
                         <div
-                          className={`absolute -left-2 w-4 h-4 rounded-full ${theme.primary}`}
+                          className={`absolute -left-2 w-4 h-4 rounded-full ${theme?.primary}`}
                         />
                         <div className="space-y-2">
                           <h3 className="text-xl font-semibold">
-                            {exp.position}
+                            {exp?.position}
                           </h3>
-                          <p className={`font-medium ${theme.accent}`}>
-                            {exp.company}
+                          <p className={`font-medium ${theme?.accent}`}>
+                            {exp?.company}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            {exp.startDate} - {exp.endDate}
+                            {exp?.startDate} - {exp?.endDate}
                           </p>
-                          {exp.description && (
+                          {exp?.description && (
                             <p className="text-muted-foreground leading-relaxed">
-                              {exp.description}
+                              {exp?.description}
                             </p>
                           )}
                         </div>
@@ -506,7 +506,7 @@ export default function ModernPortfolioWithAnalytics({
               {hasData("education") && (
                 <section className="space-y-8" id="education">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${theme.primary}`}>
+                    <div className={`p-2 rounded-lg ${theme?.primary}`}>
                       <GraduationCap className="w-5 h-5 text-white" />
                     </div>
                     <h2 className="text-2xl font-bold">Education</h2>
@@ -518,17 +518,17 @@ export default function ModernPortfolioWithAnalytics({
                         className="relative pl-8 border-l-2 border-border"
                       >
                         <div
-                          className={`absolute -left-2 w-4 h-4 rounded-full ${theme.primary}`}
+                          className={`absolute -left-2 w-4 h-4 rounded-full ${theme?.primary}`}
                         />
                         <div className="space-y-2">
                           <h3 className="text-xl font-semibold">
-                            {edu.degree} {edu.field && `in ${edu.field}`}
+                            {edu?.degree} {edu?.field && `in ${edu?.field}`}
                           </h3>
-                          <p className={`font-medium ${theme.accent}`}>
-                            {edu.institution}
+                          <p className={`font-medium ${theme?.accent}`}>
+                            {edu?.institution}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            {edu.startDate} - {edu.endDate}
+                            {edu?.startDate} - {edu?.endDate}
                           </p>
                         </div>
                       </div>
@@ -542,7 +542,7 @@ export default function ModernPortfolioWithAnalytics({
               {hasData("achievements") && (
                 <section className="space-y-8" id="achievements">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${theme.primary}`}>
+                    <div className={`p-2 rounded-lg ${theme?.primary}`}>
                       <Trophy className="w-5 h-5 text-white" />
                     </div>
                     <h2 className="text-2xl font-bold">Achievements</h2>
@@ -551,13 +551,13 @@ export default function ModernPortfolioWithAnalytics({
                     {portfolioData?.achievements?.map((achievement, index) => (
                       <div key={index} className="space-y-3">
                         <p className="text-muted-foreground leading-relaxed">
-                          {achievement.description}
+                          {achievement?.description}
                         </p>
-                        {achievement.link && (
+                        {achievement?.link && (
                           <Button
                             variant="ghost"
                             size="sm"
-                            className={`gap-2 ${theme.accentHover} p-0 h-auto`}
+                            className={`gap-2 ${theme?.accentHover} p-0 h-auto`}
                             onClick={() => handleAchievementClick(achievement)}
                           >
                             View Achievement{" "}
@@ -573,7 +573,7 @@ export default function ModernPortfolioWithAnalytics({
               {hasData("certifications") && (
                 <section className="space-y-8" id="certifications">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${theme.primary}`}>
+                    <div className={`p-2 rounded-lg ${theme?.primary}`}>
                       <Award className="w-5 h-5 text-white" />
                     </div>
                     <h2 className="text-2xl font-bold">Certifications</h2>
@@ -581,16 +581,16 @@ export default function ModernPortfolioWithAnalytics({
                   <div className="space-y-6">
                     {portfolioData?.certifications?.map((cert, index) => (
                       <div key={index} className="space-y-3">
-                        <h3 className="text-lg font-semibold">{cert.name}</h3>
-                        <p className={`${theme.accent}`}>{cert.issuer}</p>
+                        <h3 className="text-lg font-semibold">{cert?.name}</h3>
+                        <p className={`${theme?.accent}`}>{cert?.issuer}</p>
                         <p className="text-sm text-muted-foreground">
-                          {cert.date}
+                          {cert?.date}
                         </p>
-                        {cert.url && (
+                        {cert?.url && (
                           <Button
                             variant="ghost"
                             size="sm"
-                            className={`gap-2 ${theme.accentHover} p-0 h-auto`}
+                            className={`gap-2 ${theme?.accentHover} p-0 h-auto`}
                             onClick={() => handleCertificationClick(cert)}
                           >
                             View Certificate{" "}
@@ -618,7 +618,7 @@ export default function ModernPortfolioWithAnalytics({
         }
 
         const skillsData = portfolioData?.skills;
-        const isOldFormat = Array.isArray(skillsData);
+        const isOldFormat = Array?.isArray(skillsData);
 
         return (
           <div
@@ -634,10 +634,10 @@ export default function ModernPortfolioWithAnalytics({
             {isOldFormat ? (
               <div className="max-w-4xl mx-auto">
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                  {(skillsData as string[]).map((skill, index) => (
+                  {(skillsData as string[])?.map((skill, index) => (
                     <div
                       key={index}
-                      className={`group relative p-3 rounded-lg ${theme.cardBg} border ${theme.cardBorder} hover:scale-105 transition-all duration-300 cursor-pointer`}
+                      className={`group relative p-3 rounded-lg ${theme?.cardBg} border ${theme?.cardBorder} hover:scale-105 transition-all duration-300 cursor-pointer`}
                       onClick={() => handleSkillClick(skill)}
                     >
                       <div className="text-center">
@@ -646,7 +646,7 @@ export default function ModernPortfolioWithAnalytics({
                         </span>
                       </div>
                       <div
-                        className={`absolute inset-0 rounded-lg ${theme.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10`}
+                        className={`absolute inset-0 rounded-lg ${theme?.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10`}
                       />
                     </div>
                   ))}
@@ -654,10 +654,10 @@ export default function ModernPortfolioWithAnalytics({
               </div>
             ) : (
               <div className="max-w-6xl mx-auto space-y-12">
-                {Object.entries(skillsData as Record<string, string[]>).map(
+                {Object?.entries(skillsData as Record<string, string[]>)?.map(
                   ([category, skills]) => {
                     const IconComponent =
-                      skillCategoryIcons[category.toLowerCase()] || Code;
+                      skillCategoryIcons[category?.toLowerCase()] || Code;
                     return (
                       <div
                         key={category}
@@ -665,7 +665,7 @@ export default function ModernPortfolioWithAnalytics({
                         id={`skills-${category}`}
                       >
                         <div className="flex items-center gap-3">
-                          <div className={`p-2 rounded-lg ${theme.primary}`}>
+                          <div className={`p-2 rounded-lg ${theme?.primary}`}>
                             <IconComponent className="w-5 h-5 text-white" />
                           </div>
                           <h2 className="text-2xl font-bold capitalize">
@@ -673,10 +673,10 @@ export default function ModernPortfolioWithAnalytics({
                           </h2>
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                          {skills.map((skill, index) => (
+                          {skills?.map((skill, index) => (
                             <div
                               key={index}
-                              className={`group relative p-3 rounded-lg ${theme.cardBg} border ${theme.cardBorder} hover:scale-105 transition-all duration-300 cursor-pointer`}
+                              className={`group relative p-3 rounded-lg ${theme?.cardBg} border ${theme?.cardBorder} hover:scale-105 transition-all duration-300 cursor-pointer`}
                               onClick={() => handleSkillClick(skill, category)}
                             >
                               <div className="text-center">
@@ -685,7 +685,7 @@ export default function ModernPortfolioWithAnalytics({
                                 </span>
                               </div>
                               <div
-                                className={`absolute inset-0 rounded-lg ${theme.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10`}
+                                className={`absolute inset-0 rounded-lg ${theme?.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10`}
                               />
                             </div>
                           ))}
@@ -725,25 +725,25 @@ export default function ModernPortfolioWithAnalytics({
               {portfolioData?.blogs?.map((blog, index) => (
                 <Card
                   key={index}
-                  className={`group ${theme.cardBg} border ${theme.cardBorder} hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden`}
+                  className={`group ${theme?.cardBg} border ${theme?.cardBorder} hover:scale-[1?.02] transition-all duration-300 cursor-pointer overflow-hidden`}
                   onClick={() => handleBlogPostClick(blog, index)}
                 >
                   <CardContent className="p-6">
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <time className="text-sm text-muted-foreground">
-                          {new Date(blog.date).toLocaleDateString()}
+                          {new Date(blog?.date)?.toLocaleDateString()}
                         </time>
                         <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                       </div>
                       <h2 className="text-xl font-bold group-hover:text-foreground transition-colors line-clamp-2">
-                        {blog.title}
+                        {blog?.title}
                       </h2>
                       <p className="text-muted-foreground leading-relaxed line-clamp-3">
-                        {blog.description.substring(0, 150)}...
+                        {blog?.description?.substring(0, 150)}?.?.?.
                       </p>
                       <div
-                        className={`w-full h-1 rounded-full ${theme.gradient}`}
+                        className={`w-full h-1 rounded-full ${theme?.gradient}`}
                       />
                     </div>
                   </CardContent>
@@ -775,48 +775,48 @@ export default function ModernPortfolioWithAnalytics({
               {portfolioData?.projects?.map((project, index) => (
                 <Card
                   key={index}
-                  className={`group ${theme.cardBg}  border ${theme.cardBorder} hover:scale-[1.02] transition-all duration-300 overflow-hidden`}
+                  className={`group ${theme?.cardBg}  border ${theme?.cardBorder} hover:scale-[1?.02] transition-all duration-300 overflow-hidden`}
                   id={`project-${index}`}
                 >
-                  {project.imageUrl && (
+                  {project?.imageUrl && (
                     <div className="relative h-48 overflow-hidden">
                       <img
-                        src={project.imageUrl || "/placeholder.svg"}
-                        alt={project.name}
+                        src={project?.imageUrl || "/placeholder?.svg"}
+                        alt={project?.name}
                         className="object-cover group-hover:scale-110 transition-transform duration-300"
                       />
                     </div>
                   )}
                   <CardContent className="p-6 space-y-4">
                     <h3 className="text-xl font-bold group-hover:text-foreground transition-colors">
-                      {project.name}
+                      {project?.name}
                     </h3>
                     <p className="text-muted-foreground leading-relaxed">
-                      {project.description}
+                      {project?.description}
                     </p>
-                    {project.technology && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {project.technology
-                          .split(",")
-                          .map((tech, techIndex) => (
+                    {project?.technology && (
+                      <div className="flex flex-wrap gap-1?.5">
+                        {project?.technology
+                          ?.split(",")
+                          ?.map((tech, techIndex) => (
                             <Badge
                               key={techIndex}
                               variant="secondary"
                               className="text-xs px-2 py-1 bg-muted/50 cursor-pointer"
                               onClick={() =>
-                                handleSkillClick(tech.trim(), "technology")
+                                handleSkillClick(tech?.trim(), "technology")
                               }
                             >
-                              {tech.trim()}
+                              {tech?.trim()}
                             </Badge>
                           ))}
                       </div>
                     )}
-                    {project.link && (
+                    {project?.link && (
                       <Button
                         variant="ghost"
                         size="sm"
-                        className={`gap-2 ${theme.accent} ${theme.accentHover} p-0 h-auto`}
+                        className={`gap-2 ${theme?.accent} ${theme?.accentHover} p-0 h-auto`}
                         onClick={() => handleProjectClick(project)}
                       >
                         View Project <ExternalLink className="w-4 h-4" />
@@ -854,7 +854,7 @@ export default function ModernPortfolioWithAnalytics({
       key: "about",
       label: "About",
       condition:
-        portfolioData.personalInfo?.bio ||
+        portfolioData?.personalInfo?.bio ||
         hasData("workExperience") ||
         hasData("education") ||
         hasData("achievements") ||
@@ -862,7 +862,7 @@ export default function ModernPortfolioWithAnalytics({
     },
     { key: "skills", label: "Skills", condition: hasSkillsData() },
     { key: "blog", label: "Blog", condition: hasData("blogs") },
-  ].filter((section) => section.condition);
+  ]?.filter((section) => section?.condition);
   return (
     <div
       className={`min-h-screen bg-background text-foreground transition-all duration-500 ${theme?.gradient}`}
@@ -875,20 +875,20 @@ export default function ModernPortfolioWithAnalytics({
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
             <div>
-              {portfolioData.personalInfo?.name && (
+              {portfolioData?.personalInfo?.name && (
                 <h1 className="text-lg font-bold">
-                  {portfolioData.personalInfo.name}
+                  {portfolioData?.personalInfo?.name}
                 </h1>
               )}
-              {portfolioData.personalInfo?.title && (
+              {portfolioData?.personalInfo?.title && (
                 <p className="text-sm text-muted-foreground">
-                  {portfolioData.personalInfo.title}
+                  {portfolioData?.personalInfo?.title}
                 </p>
               )}
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {portfolioData.previewAnalytics === false && (
+            {portfolioData?.previewAnalytics === false && (
               <ModeToggle
                 setthemeMode={setthemeMode}
                 themeMode={themeMode}
@@ -915,7 +915,7 @@ export default function ModernPortfolioWithAnalytics({
             id="mobile-menu"
           >
             <div className="p-4 space-y-4">
-              {portfolioData.previewAnalytics === false && (
+              {portfolioData?.previewAnalytics === false && (
                 <div className="flex items-center gap-2 mb-4">
                   <Palette className="w-4 h-4" />
                   <Select
@@ -925,19 +925,19 @@ export default function ModernPortfolioWithAnalytics({
                     <SelectTrigger className="flex-1">
                       <div className="flex items-center gap-2">
                         <div
-                          className={`w-3 h-3 rounded-full ${theme.primary}`}
+                          className={`w-3 h-3 rounded-full ${theme?.primary}`}
                         />
                         <SelectValue />
                       </div>
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.entries(themes).map(([key, theme]) => (
+                      {Object?.entries(themes)?.map(([key, theme]) => (
                         <SelectItem key={key} value={key}>
                           <div className="flex items-center gap-2">
                             <div
-                              className={`w-3 h-3 rounded-full ${theme.primary}`}
+                              className={`w-3 h-3 rounded-full ${theme?.primary}`}
                             />
-                            {theme.name}
+                            {theme?.name}
                           </div>
                         </SelectItem>
                       ))}
@@ -947,26 +947,26 @@ export default function ModernPortfolioWithAnalytics({
               )}
 
               <nav className="grid grid-cols-1 gap-2" id="mobile-navigation">
-                {availableSections.map((section) => (
+                {availableSections?.map((section) => (
                   <Button
-                    key={section.key}
+                    key={section?.key}
                     variant={
-                      activeSection === section.key ? "secondary" : "ghost"
+                      activeSection === section?.key ? "secondary" : "ghost"
                     }
                     className={`justify-start 
-                      activeSection === section.key ? theme.primary : ""
+                      activeSection === section?.key ? theme?.primary : ""
                     }`}
-                    onClick={() => handleSectionChange(section.key)}
+                    onClick={() => handleSectionChange(section?.key)}
                   >
-                    {section.label}
+                    {section?.label}
                   </Button>
                 ))}
               </nav>
               <div className="flex gap-2 pt-4 border-t border-border">
-                {portfolioData.personalInfo.resumeUrl && (
+                {portfolioData?.personalInfo?.resumeUrl && (
                   <Button
                     size="sm"
-                    className={`flex-1 bg-transparent gap-2 ${theme.primary}`}
+                    className={`flex-1 bg-transparent gap-2 ${theme?.primary}`}
                     onClick={handleResumeDownload}
                   >
                     <ExternalLink className="w-4 h-4" />
@@ -997,19 +997,19 @@ export default function ModernPortfolioWithAnalytics({
             <div className="text-center space-y-6" id="profile-section">
               <div className="relative w-32 h-32 mx-auto rounded-full overflow-hidden bg-muted">
                 <img
-                  src={portfolioData.imageUrl || "/placeholder.svg"}
+                  src={portfolioData?.imageUrl || "/placeholder?.svg"}
                   alt="Profile"
                   className="object-cover"
                 />
               </div>
-              {portfolioData.personalInfo?.name && (
+              {portfolioData?.personalInfo?.name && (
                 <h1 className="text-2xl font-bold">
-                  {portfolioData.personalInfo.name}
+                  {portfolioData?.personalInfo?.name}
                 </h1>
               )}
-              {portfolioData.personalInfo?.title && (
+              {portfolioData?.personalInfo?.title && (
                 <p className="text-muted-foreground">
-                  {portfolioData.personalInfo.title}
+                  {portfolioData?.personalInfo?.title}
                 </p>
               )}
             </div>
@@ -1025,19 +1025,19 @@ export default function ModernPortfolioWithAnalytics({
                       <SelectTrigger className="flex-1">
                         <div className="flex items-center gap-2">
                           <div
-                            className={`w-3 h-3 rounded-full ${theme.primary}`}
+                            className={`w-3 h-3 rounded-full ${theme?.primary}`}
                           />
                           <SelectValue />
                         </div>
                       </SelectTrigger>
                       <SelectContent>
-                        {Object.entries(themes).map(([key, theme]) => (
+                        {Object?.entries(themes)?.map(([key, theme]) => (
                           <SelectItem key={key} value={key}>
                             <div className="flex items-center gap-2">
                               <div
-                                className={`w-3 h-3 rounded-full ${theme.primary}`}
+                                className={`w-3 h-3 rounded-full ${theme?.primary}`}
                               />
-                              {theme.name}
+                              {theme?.name}
                             </div>
                           </SelectItem>
                         ))}
@@ -1063,32 +1063,32 @@ export default function ModernPortfolioWithAnalytics({
             </div>
             <div className="space-y-6">
               {portfolioData?.contacts &&
-                (portfolioData.personalInfo?.phone ||
-                  portfolioData.personalInfo?.email ||
-                  portfolioData.personalInfo?.location) && (
+                (portfolioData?.personalInfo?.phone ||
+                  portfolioData?.personalInfo?.email ||
+                  portfolioData?.personalInfo?.location) && (
                   <div className="space-y-4" id="contact-section">
                     <h2 className="text-lg font-semibold">Contact</h2>
                     <div className="space-y-3 text-sm">
-                      {portfolioData.personalInfo?.email && (
+                      {portfolioData?.personalInfo?.email && (
                         <div className="flex items-center gap-3 text-muted-foreground">
                           <Mail className="w-4 h-4" />
-                          <span>{portfolioData.personalInfo.email}</span>
+                          <span>{portfolioData?.personalInfo?.email}</span>
                         </div>
                       )}
-                      {portfolioData.personalInfo?.location && (
+                      {portfolioData?.personalInfo?.location && (
                         <div className="flex items-center gap-3 text-muted-foreground">
                           <MapPin className="w-4 h-4" />
-                          <span>{portfolioData.personalInfo.location}</span>
+                          <span>{portfolioData?.personalInfo?.location}</span>
                         </div>
                       )}
-                      {portfolioData.personalInfo?.phone && (
+                      {portfolioData?.personalInfo?.phone && (
                         <a
-                          href={`tel:${portfolioData.personalInfo.phone}`}
+                          href={`tel:${portfolioData?.personalInfo?.phone}`}
                           className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
                           onClick={handlePhoneClick}
                         >
                           <PhoneCallIcon className="w-4 h-4" />
-                          <span>{portfolioData.personalInfo.phone}</span>
+                          <span>{portfolioData?.personalInfo?.phone}</span>
                         </a>
                       )}
                     </div>
@@ -1099,26 +1099,26 @@ export default function ModernPortfolioWithAnalytics({
                 <div className="space-y-4" id="social-section">
                   <h2 className="text-lg font-semibold">Social</h2>
                   <div className="flex gap-3">
-                    {portfolioData.socialLinks?.map((link, index) => (
+                    {portfolioData?.socialLinks?.map((link, index) => (
                       <Button
                         key={index}
                         variant="ghost"
                         size="icon"
                         className="hover:bg-muted"
                         onClick={() => handleSocialClick(link)}
-                        title={link.platform}
+                        title={link?.platform}
                       >
-                        {link.platform.toLowerCase().includes("linkedin") && (
+                        {link?.platform?.toLowerCase()?.includes("linkedin") && (
                           <Linkedin className="w-5 h-5" />
                         )}
-                        {link.platform.toLowerCase().includes("github") && (
+                        {link?.platform?.toLowerCase()?.includes("github") && (
                           <Github className="w-5 h-5" />
                         )}
-                        {link.platform.toLowerCase().includes("twitter") && (
+                        {link?.platform?.toLowerCase()?.includes("twitter") && (
                           <Twitter className="w-5 h-5" />
                         )}
-                        {!["linkedin", "github", "twitter"].some((platform) =>
-                          link.platform.toLowerCase().includes(platform)
+                        {!["linkedin", "github", "twitter"]?.some((platform) =>
+                          link?.platform?.toLowerCase()?.includes(platform)
                         ) && <ExternalLink className="w-5 h-5" />}
                       </Button>
                     ))}
@@ -1127,17 +1127,17 @@ export default function ModernPortfolioWithAnalytics({
               )}
             </div>
             <div className="flex gap-3 pt-6 border-t border-border">
-              {portfolioData.personalInfo.resumeUrl && (
+              {portfolioData?.personalInfo?.resumeUrl && (
                 <Button
                   variant="ghost"
-                  className={`flex-1 gap-2 ${theme.primary}`}
+                  className={`flex-1 gap-2 ${theme?.primary}`}
                   onClick={handleResumeDownload}
                 >
                   <ExternalLink className="w-4 h-4" />
                   Resume
                 </Button>
               )}
-              {portfolioData.contacts && (
+              {portfolioData?.contacts && (
                 <Button
                   variant="outline"
                   className="flex-1 gap-2"
@@ -1157,18 +1157,18 @@ export default function ModernPortfolioWithAnalytics({
             id="desktop-navigation"
           >
             <nav className="flex gap-8">
-              {availableSections.map((section) => (
+              {availableSections?.map((section) => (
                 <Button
-                  key={section.key}
+                  key={section?.key}
                   variant="ghost"
                   className={`text-lg ${
-                    activeSection === section.key
-                      ? `${theme.accent} font-semibold`
+                    activeSection === section?.key
+                      ? `${theme?.accent} font-semibold`
                       : "text-muted-foreground hover:text-foreground"
                   }`}
-                  onClick={() => handleSectionChange(section.key)}
+                  onClick={() => handleSectionChange(section?.key)}
                 >
-                  {section.label}
+                  {section?.label}
                 </Button>
               ))}
             </nav>

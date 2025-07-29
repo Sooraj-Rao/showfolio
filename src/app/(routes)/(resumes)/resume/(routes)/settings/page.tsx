@@ -155,7 +155,7 @@ export default function SettingsPage() {
         title: "Account Deleted",
         description: "Your account has been successfully deleted.",
       });
-      router.push("/");
+      router.push("/home");
     } catch {
       toast({
         title: "Error",

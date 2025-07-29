@@ -72,11 +72,11 @@ const userSchema = new mongoose.Schema<IUser>(
     portfolioSettings: {
       theme: {
         type: String,
-        default: "default",
+        default: "light",
       },
       themeColor: {
         type: String,
-        default: "#000000",
+        default: "emerald",
       },
       showContacts: {
         type: Boolean,

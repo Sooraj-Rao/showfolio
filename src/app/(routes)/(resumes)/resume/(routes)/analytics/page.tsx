@@ -6,8 +6,6 @@ import {
   Download,
   Eye,
   Share2,
-  Monitor,
-  Globe,
   TrendingUp,
   FileText,
   Plus,
@@ -745,7 +743,6 @@ export default function AnalyticsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
-                  <Monitor className="h-5 w-5 shrink-0" />
                   <span className="truncate">Device Types</span>
                 </CardTitle>
                 <CardDescription className="text-sm">
@@ -892,7 +889,6 @@ export default function AnalyticsPage() {
             <Card className="lg:col-span-1">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
-                  <Globe className="h-5 w-5 shrink-0" />
                   <span className="truncate">Geographic Distribution</span>
                 </CardTitle>
                 <CardDescription className="text-sm">

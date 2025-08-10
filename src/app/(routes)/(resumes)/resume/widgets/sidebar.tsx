@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   BarChart2,
+  Edit,
   Home,
   List,
   Settings,
@@ -21,6 +22,7 @@ export const ResumeSidebarItems = [
   { name: "Dashboard", href: "/resume/dashboard", icon: Home },
   { name: "Resumes", href: "/resume/resumes", icon: List },
   { name: "Upload", href: "/resume/upload", icon: Upload },
+  { name: "Resume Builder", href: "/builder", icon: Edit },
   { name: "Analytics", href: "/resume/analytics", icon: BarChart2 },
   { name: "Share", href: "/resume/share", icon: Share2 },
   { name: "AI Feedback", href: "/resume/ai", icon: Zap },
@@ -37,7 +39,11 @@ export function Sidebar() {
           {ResumeSidebarItems.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <Link key={item.href} href={item.href}>
+              <Link
+                target={`${item.href.includes("builder") ? "_blank" : "_self"}`}
+                key={item.href}
+                href={item.href}
+              >
                 <Button
                   variant="ghost"
                   className={cn(
@@ -70,31 +76,31 @@ export function MobileSidebar({ isOpen, toggleSidebar, SidebarItems }) {
   const pathname = usePathname();
   const isResume = pathname.startsWith("/resume");
 
-    const handleLogout = async () => {
-      try {
-        const agree = confirm("Are you sure want to logout");
-        if (!agree) return;
-        const res = await fetch("/api/auth/login", {
-          method: "PUT",
-        });
-        if (!res.ok) {
-          throw new Error("Failed to logout");
-        } else {
-          toast({
-            title: "Success",
-            description: "Logout successful",
-            variant: "default",
-          });
-          window.location.href = "/";
-        }
-      } catch {
+  const handleLogout = async () => {
+    try {
+      const agree = confirm("Are you sure want to logout");
+      if (!agree) return;
+      const res = await fetch("/api/auth/login", {
+        method: "PUT",
+      });
+      if (!res.ok) {
+        throw new Error("Failed to logout");
+      } else {
         toast({
-          title: "Failed",
-          description: "Failed to logout",
-          variant: "destructive",
+          title: "Success",
+          description: "Logout successful",
+          variant: "default",
         });
+        window.location.href = "/";
       }
-    };
+    } catch {
+      toast({
+        title: "Failed",
+        description: "Failed to logout",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <aside
@@ -114,7 +120,12 @@ export function MobileSidebar({ isOpen, toggleSidebar, SidebarItems }) {
           {SidebarItems?.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <Link onClick={toggleSidebar} key={item.href} href={item.href}>
+              <Link
+                onClick={toggleSidebar}
+                key={item.href}
+                href={item.href}
+                target={`${item.href.includes("builder") ? "_blank" : "_self"}`}
+              >
                 <Button
                   variant="ghost"
                   className={`text-sm text-muted-foreground my-1 w-full justify-start dark:hover:bg-muted/70

@@ -15,12 +15,7 @@ import {
   Tablet,
   ChevronDown,
   ChevronUp,
-  Navigation,
   ExternalLink,
-  MapPin,
-  Wifi,
-  BarChart3,
-  PieChart,
   Target,
   Zap,
 } from "lucide-react";
@@ -558,7 +553,6 @@ export default function PortfolioAnalyticsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="w-5 h-5 text-blue-500" />
                   Activity Timeline
                 </CardTitle>
                 <CardDescription>
@@ -613,7 +607,6 @@ export default function PortfolioAnalyticsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <PieChart className="w-5 h-5 text-green-500" />
                   Event Distribution
                 </CardTitle>
                 <CardDescription>
@@ -677,7 +670,6 @@ export default function PortfolioAnalyticsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Monitor className="w-5 h-5" />
                   Device Types
                 </CardTitle>
               </CardHeader>
@@ -742,7 +734,6 @@ export default function PortfolioAnalyticsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Wifi className="w-5 h-5" />
                   Operating Systems
                 </CardTitle>
               </CardHeader>
@@ -807,7 +798,6 @@ export default function PortfolioAnalyticsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Globe className="w-5 h-5" />
                   Browsers
                 </CardTitle>
               </CardHeader>
@@ -876,7 +866,6 @@ export default function PortfolioAnalyticsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Globe className="w-5 h-5 text-blue-500" />
                   Geographic Distribution
                 </CardTitle>
                 <CardDescription>
@@ -919,7 +908,6 @@ export default function PortfolioAnalyticsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-green-500" />
                   Top Locations
                 </CardTitle>
                 <CardDescription>Cities with the most visitors</CardDescription>
@@ -961,7 +949,6 @@ export default function PortfolioAnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Navigation className="w-5 h-5 text-purple-500" />
                 Traffic Sources
               </CardTitle>
               <CardDescription>
@@ -1016,7 +1003,10 @@ export default function PortfolioAnalyticsPage() {
                         </div>
                         <div className="text-right">
                           <div className="font-semibold">
-                            {source.value} visits
+                            {source.value}
+                            <span className=" font-normal ml-1 text-sm">
+                              events
+                            </span>
                           </div>
                           <div className="text-xs text-muted-foreground">
                             {source.percentage}%

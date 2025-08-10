@@ -455,42 +455,6 @@ export default function ManagePortfolio() {
     });
   };
 
-  const insertLink = (
-    textareaId: string,
-    linkText: string,
-    linkUrl: string
-  ) => {
-    const textarea = document.getElementById(textareaId) as HTMLTextAreaElement;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = textarea.value;
-    const before = text.substring(0, start);
-    const after = text.substring(end, text.length);
-    const linkMarkdown = `[${linkText}](${linkUrl})`;
-
-    const newText = before + linkMarkdown + after;
-    textarea.value = newText;
-
-    const event = new Event("input", { bubbles: true });
-    textarea.dispatchEvent(event);
-
-    const newCursorPos = start + linkMarkdown.length;
-    textarea.setSelectionRange(newCursorPos, newCursorPos);
-    textarea.focus();
-  };
-
-  const handleInsertLink = (textareaId: string) => {
-    const linkText = prompt("Enter link text:");
-    if (!linkText) return;
-
-    const linkUrl = prompt("Enter link URL:");
-    if (!linkUrl) return;
-
-    insertLink(textareaId, linkText, linkUrl);
-  };
-
   return (
     <div className="min-h-screen bg-background ">
       <div className="mx-auto space-y-6">
@@ -1784,19 +1748,6 @@ export default function ManagePortfolio() {
                             <Label htmlFor={`blogDescription-${index}`}>
                               Description
                             </Label>
-                            {editMode && (
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() =>
-                                  handleInsertLink(`blogDescription-${index}`)
-                                }
-                              >
-                                <Plus className="mr-1 h-3 w-3" />
-                                Add Link
-                              </Button>
-                            )}
                           </div>
                           <Textarea
                             id={`blogDescription-${index}`}
@@ -1811,11 +1762,10 @@ export default function ManagePortfolio() {
                               )
                             }
                             disabled={!editMode}
-                            placeholder="Write your blog content here... You can add links using the 'Add Link' button or manually with [text](url) format."
+                            placeholder="Write your blog content here... You can add links using [text](url) format."
                           />
                           <p className="text-xs text-muted-foreground">
-                            Tip: Use [text](url) format for links, or click
-                            {"Add Link"} button above
+                            Tip: Use [text](url) format for links
                           </p>
                         </div>
                       </div>

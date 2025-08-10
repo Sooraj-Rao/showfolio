@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Zap, Loader2, InfoIcon } from "lucide-react";
+import { Zap, Loader2, InfoIcon, X, AlertCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { FormEvent, useEffect, useState } from "react";
 import axios from "axios";
@@ -31,6 +31,7 @@ export default function AIFeedbackPage() {
   const [selectedResume, setSelectedResume] = useState<IResume | null>(null);
   const [role, setRole] = useState("");
   const [error, setError] = useState("");
+  const [showSuggestion, setshowSuggestion] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState({ desc: "", shortUrl: "" });
 
@@ -132,6 +133,46 @@ export default function AIFeedbackPage() {
                 className="w-full"
               />
             </div>
+            {showSuggestion && (
+              <div className="space-y-2">
+                <div className=" flex justify-between items-center">
+                  <Label htmlFor="suggestion" className="font-medium">
+                    Suggestions
+                  </Label>
+                  <Button
+                    onClick={() => setshowSuggestion(false)}
+                    size="icon"
+                    variant="ghost"
+                  >
+                    <X />
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {[
+                    "How to tailor resume for startups?",
+                    "What skills should I highlight for a remote role?",
+                    "How to optimize my resume for ATS?",
+                    "Is my resume too long?",
+                    "How to improve resume for a FAANG interview?",
+                  ].map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      type="button"
+                      onClick={() => setRole(suggestion)}
+                      className={`px-3 py-1 sm:text-sm text-xs  rounded-full border 
+                    ${
+                      role === suggestion
+                        ? "bg-primary/10 border-primary"
+                        : "bg-blue-600/20 border-muted"
+                    }
+                    `}
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </CardContent>
 
           <CardFooter className="flex justify-end pt-2">
@@ -174,8 +215,30 @@ export default function AIFeedbackPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4 sm:text-justify">
+            <div className="space-y-4 border-b mb-4 sm:text-justify">
               <HighlightedText text={result.desc} />
+            </div>
+            <div className=" flex flex-col sm:flex-row gap-3 sm:items-center text-sm text-muted-foreground">
+              <p className=" flex items-center gap-2">
+                <AlertCircle size={16} /> We don’t save your response. Please
+                download it if you need it later.
+              </p>
+              <Button
+                onClick={() => {
+                  const blob = new Blob([result.desc], {
+                    type: "text/plain;charset=utf-8",
+                  });
+                  const url = URL.createObjectURL(blob);
+                  const link = document.createElement("a");
+                  link.href = url;
+                  link.download =
+                    selectedResume?.title || "" + `_resume-feedback${Math.random().toString(36).slice(2, 6)}.txt`;
+                  link.click();
+                  URL.revokeObjectURL(url);
+                }}
+              >
+                Download Response
+              </Button>
             </div>
           </CardContent>
         </Card>

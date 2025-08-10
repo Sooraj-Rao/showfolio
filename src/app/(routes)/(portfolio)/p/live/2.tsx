@@ -275,7 +275,6 @@ export default function ModernPortfolioWithAnalytics({
   } = usePortfolioAnalytics(isPreview, portfolioData?.userId);
 
   const theme = themes[currentTheme];
-console.log(currentTheme)
   const hasData = (section: keyof PortfolioData) => {
     if (!portfolioData) return false;
     const data = portfolioData[section];
@@ -308,7 +307,9 @@ console.log(currentTheme)
     }
     return (
       Object?.keys(portfolioData?.skills)?.length > 0 &&
-      Object?.values(portfolioData?.skills)?.some((skills) => skills?.length > 0)
+      Object?.values(portfolioData?.skills)?.some(
+        (skills) => skills?.length > 0
+      )
     );
   };
 
@@ -393,7 +394,6 @@ console.log(currentTheme)
     trackClick(`certification_${cert?.name}`, "certifications");
     handleExternalLink(cert?.url, "certifications");
   };
-
   const renderBlogPost = (blog: any, index: number) => {
     if (activeBlogPost === `blog-${index}`) {
       return (
@@ -423,11 +423,32 @@ console.log(currentTheme)
             <div className="prose prose-neutral dark:prose-invert prose-lg max-w-none">
               {blog?.description
                 ?.split("\n")
-                ?.map((paragraph: string, i: number) => (
-                  <p key={i} className="mb-6 leading-relaxed">
-                    {paragraph}
-                  </p>
-                ))}
+                .map((paragraph: string, i: number) => {
+                  const parts = paragraph.split(/(\[.*?\]\(.*?\))/g);
+
+                  return (
+                    <p key={i} className="mb-6 leading-relaxed">
+                      {parts.map((part, index) => {
+                        const match = part.match(/\[(.*?)\]\((.*?)\)/);
+                        if (match) {
+                          const [, text, url] = match;
+                          return (
+                            <a
+                              key={index}
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-500  capitalize hover:underline"
+                            >
+                              {text}
+                            </a>
+                          );
+                        }
+                        return part;
+                      })}
+                    </p>
+                  );
+                })}
             </div>
           </article>
         </div>
@@ -716,9 +737,6 @@ console.log(currentTheme)
           >
             <div className="text-center space-y-4">
               <h1 className="text-3xl md:text-4xl font-bold">Blog</h1>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                Thoughts, insights, and experiences from my journey
-              </p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
@@ -740,7 +758,9 @@ console.log(currentTheme)
                         {blog?.title}
                       </h2>
                       <p className="text-muted-foreground leading-relaxed line-clamp-3">
-                        {blog?.description?.substring(0, 150)}?.?.?.
+                        {blog?.description
+                          ?.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+                          ?.substring(0, 150)}
                       </p>
                       <div
                         className={`w-full h-1 rounded-full ${theme?.gradient}`}
@@ -787,7 +807,7 @@ console.log(currentTheme)
                       />
                     </div>
                   )}
-                  <CardContent className="p-6 space-y-4">
+                  <CardContent className=" space-y-4">
                     <h3 className="text-xl font-bold group-hover:text-foreground transition-colors">
                       {project?.name}
                     </h3>
@@ -795,7 +815,7 @@ console.log(currentTheme)
                       {project?.description}
                     </p>
                     {project?.technology && (
-                      <div className="flex flex-wrap gap-1?.5">
+                      <div className="flex flex-wrap gap-1">
                         {project?.technology
                           ?.split(",")
                           ?.map((tech, techIndex) => (
@@ -833,6 +853,18 @@ console.log(currentTheme)
 
   useEffect(() => {
     trackEvent("page_view");
+    if (document) {
+      document.title =
+        portfolioData?.personalInfo?.name || "Showfolio Portfolio";
+      const existingIcons = document.querySelectorAll("link[rel*='icon']");
+      existingIcons.forEach((icon) => icon.parentNode?.removeChild(icon));
+
+      const link = document.createElement("link");
+      link.rel = "icon";
+      link.type = "image/png";
+      link.href = portfolioData.imageUrl;
+      document.head.appendChild(link);
+    }
   }, [portfolioData]);
 
   if (!portfolioData) {
@@ -1108,7 +1140,9 @@ console.log(currentTheme)
                         onClick={() => handleSocialClick(link)}
                         title={link?.platform}
                       >
-                        {link?.platform?.toLowerCase()?.includes("linkedin") && (
+                        {link?.platform
+                          ?.toLowerCase()
+                          ?.includes("linkedin") && (
                           <Linkedin className="w-5 h-5" />
                         )}
                         {link?.platform?.toLowerCase()?.includes("github") && (

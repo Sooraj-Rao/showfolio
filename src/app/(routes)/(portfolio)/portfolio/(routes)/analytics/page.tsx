@@ -110,7 +110,7 @@ interface AnalyticsSummary {
 }
 
 export default function PortfolioAnalyticsPage() {
-  const [timeRange, setTimeRange] = useState("7d");
+  const [timeRange, setTimeRange] = useState("90d");
   const [analyticsData, setAnalyticsData] = useState<AnalyticsItem[]>([]);
   const [summary, setSummary] = useState<AnalyticsSummary | null>(null);
   const [loading, setLoading] = useState(true);

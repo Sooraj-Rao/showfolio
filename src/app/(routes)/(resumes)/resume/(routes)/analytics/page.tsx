@@ -127,7 +127,7 @@ const generateDummyData = () => {
 };
 
 export default function AnalyticsPage() {
-  const [timeRange, setTimeRange] = useState("7d");
+  const [timeRange, setTimeRange] = useState("90d");
   const [selectedResumeId, setSelectedResumeId] = useState("all");
   const [analyticsData, setAnalyticsData] = useState<AnalyticsItem[]>([]);
   const [loading, setLoading] = useState(true);

@@ -163,6 +163,7 @@ export async function PATCH(req: NextRequest) {
         { new: true, upsert: true }
       );
       console.log(res.portfolioSettings);
+      console.log(res.private.portfolio);
       if (
         res.portfolioSettings.analyticsTrack === privacy.analyticsTrack &&
         res.portfolioSettings.showContacts === privacy.showContacts &&

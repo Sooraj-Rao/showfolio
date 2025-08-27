@@ -275,7 +275,7 @@ export function LandingPage({ noRedirect }: { noRedirect?: boolean }) {
         </div>
       </section>
 
-      <section id="detailed-features" className="py-20">
+      <section id="features" className="py-20">
         <div className="container px-4">
           <ScrollReveal className="text-center max-w-3xl mx-auto mb-16 space-y-4">
             <h2 className="text-3xl font-bold">Features</h2>

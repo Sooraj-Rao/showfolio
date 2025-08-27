@@ -42,8 +42,8 @@ export async function GET(req: NextRequest) {
       portfolioSettings: {
         themeColor: user.portfolioSettings?.themeColor || null,
         theme: user.portfolioSettings?.theme || null,
-        showContacts: user.portfolioSettings?.showContacts || true,
-        analyticsTrack: user.portfolioSettings?.analyticsTrack || true,
+        showContacts: user.portfolioSettings?.showContacts ,
+        analyticsTrack: user.portfolioSettings?.analyticsTrack ,
       },
       resumes: user.resumes,
       createdAt: user.createdAt,

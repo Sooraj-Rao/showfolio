@@ -1084,6 +1084,7 @@ export default function ModernPortfolioWithAnalytics({
                   />
                   <br />
                   <Link
+                    target="_blank"
                     href={`/portfolio/settings?theme=${currentTheme}&themeMode=${themeMode}`}
                   >
                     <Button variant="destructive" className=" mt-4">

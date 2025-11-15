@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+// import { GoogleGenerativeAI } from "@google/generative-ai";
 import PDFParser from "pdf2json";
 import axios from "axios";
 
 type Mode = "feedback";
 type ResponseLength = "short" | "medium" | "descriptive";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
+// const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
 export async function GET() {
   return NextResponse.json({ message: "GET request successful" });
 }

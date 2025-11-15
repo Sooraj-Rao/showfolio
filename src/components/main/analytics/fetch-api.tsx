@@ -1,5 +1,7 @@
 "use client";
+
 import axios from "axios";
+import { UAParser } from "ua-parser-js";
 
 interface LocationData {
   city?: string;
@@ -20,53 +22,34 @@ export interface I_LocationBrowserData {
   device: DeviceInfo | null;
 }
 
-interface NavigatorUAData {
-  brands: { brand: string; version: string }[];
-  platform: string;
-}
+export const FetchLocationBrowserData =
+  async (): Promise<I_LocationBrowserData> => {
+    let device: DeviceInfo | null = null;
+    let location: LocationData | null = null;
 
-export const FetchLocationBrowserData = async () => {
-  let device;
-  let location;
-  const nav = navigator;
-  const ua = nav.userAgent;
+    const parser = new UAParser();
 
-  const detectBrowserFromUA = (ua: string): string => {
-    if (ua.includes("Firefox/")) return "Firefox";
-    if (ua.includes("Edg/")) return "Edge";
-    if (ua.includes("Brave")) return "Brave";
-    if (ua.includes("Chrome/")) return "Chrome";
-    if (ua.includes("Safari/") && !ua.includes("Chrome")) return "Safari";
-    return "Unknown";
-  };
-
-  if ("userAgentData" in nav && nav.userAgentData) {
-    const uaData = nav.userAgentData as NavigatorUAData;
-    const brands =
-      uaData.brands[2]?.brand ?? uaData.brands.map((b) => b.brand).join(", ");
+    const result = parser.getResult();
+    console.log(result);
     device = {
-      browser: brands,
-      platform: uaData.platform,
+      browser: result.browser?.name || "Unknown",
+      platform: result.os?.name || "Unknown",
     };
-  } else {
-    device = {
-      browser: detectBrowserFromUA(ua),
-      platform: nav.platform,
-    };
-  }
 
-  const stored = localStorage.getItem("location");
-  if (stored) {
-    location = JSON.parse(stored);
-  } else {
     try {
-      const res = await axios.get("/api/loc");
-      localStorage.setItem("location", JSON.stringify(res.data));
-      location = res.data;
+      const stored =
+        typeof window !== "undefined" ? localStorage.getItem("location") : null;
+
+      if (stored) {
+        location = JSON.parse(stored);
+      } else {
+        const res = await axios.get("/api/loc");
+        location = res.data;
+        localStorage.setItem("location", JSON.stringify(res.data));
+      }
     } catch (err) {
       console.error("Failed to fetch location:", err);
     }
-  }
 
-  return { location, device };
-};
+    return { location, device };
+  };

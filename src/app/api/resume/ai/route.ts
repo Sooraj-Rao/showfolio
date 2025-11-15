@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-// import { GoogleGenerativeAI } from "@google/generative-ai";
 import PDFParser from "pdf2json";
 import axios from "axios";
 
 type Mode = "feedback";
 type ResponseLength = "short" | "medium" | "descriptive";
 
-// const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
 export async function GET() {
   return NextResponse.json({ message: "GET request successful" });
 }
@@ -43,13 +41,6 @@ export async function POST(req: NextRequest) {
 
     const prompt = createPrompt(resumeText, userQuery);
 
-    // const result = await genAI
-    //   .getGenerativeModel({
-    //     model: "gemini-1.5-flash",
-    //   })
-    //   .generateContent(prompt);
-
-    // const responseContent = result.response.text();
 
     const apiResponse = await axios.post(
       `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,

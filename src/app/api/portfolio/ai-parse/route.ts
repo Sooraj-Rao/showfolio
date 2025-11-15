@@ -5,7 +5,12 @@ import PDFParser from "pdf2json";
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
+export async function GET() {
+  return NextResponse.json('hello')
+}
+
 export async function POST(req: NextRequest) {
+
   try {
     const formData = await req.formData();
     const firebaseUrl = formData.get("firebaseUrl") as string | null;
@@ -13,22 +18,28 @@ export async function POST(req: NextRequest) {
 
     let buffer: Buffer;
 
-    if (firebaseUrl) {
-      const response = await axios.get(firebaseUrl, {
-        responseType: "arraybuffer",
-      });
-      buffer = Buffer.from(response.data);
-    } else if (uploadedFile) {
-      const arrayBuffer = await uploadedFile.arrayBuffer();
-      buffer = Buffer.from(arrayBuffer);
-    } else {
-      return NextResponse.json(
-        { error: "No resume file or URL provided" },
-        { status: 400 }
-      );
+    try {
+      
+      if (firebaseUrl) {
+        const response = await axios.get(firebaseUrl, {
+          responseType: "arraybuffer",
+        });
+        buffer = Buffer.from(response.data);
+      } else if (uploadedFile) {
+        const arrayBuffer = await uploadedFile.arrayBuffer();
+        buffer = Buffer.from(arrayBuffer);
+      } else {
+        return NextResponse.json(
+          { error: "No resume file or URL provided" },
+          { status: 400 }
+        );
+      }
+    } catch (err) {
+      console.log(err)
     }
 
     const resumeText = await parsePdf(buffer);
+console.log(resumeText)
 
     if (!resumeText || resumeText.trim().length === 0) {
       return NextResponse.json(
@@ -38,7 +49,7 @@ export async function POST(req: NextRequest) {
     }
 
     const prompt = createStructuredPrompt(resumeText);
-
+    
     const llmResponse = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
       {
@@ -106,25 +117,35 @@ const parsePdf = async (buffer: Buffer): Promise<string> => {
     const pdfParser = new PDFParser();
 
     pdfParser.on("pdfParser_dataError", () => {
-      reject(new Error("Failed to parse PDF"));
+      console.error("Error parsing PDF with pdf2json");
+      reject(new Error("Failed to parse PDF with pdf2json"));
     });
 
-    pdfParser.on("pdfParser_dataReady", (pdfData) => {
-      try {
-        const text = pdfData.Pages.map((page: any) =>
-          page.Texts.map((textItem: any) =>
-            decodeURIComponent(textItem.R[0]?.T || "")
-          ).join(" ")
-        ).join("\n");
-        resolve(text);
-      } catch  {
-        reject(new Error("Error extracting text from PDF data"));
+    pdfParser.on(
+      "pdfParser_dataReady",
+      (pdfData: {
+        Pages: Array<{
+          Texts: Array<{ R: Array<{ T: string }> }>;
+        }>;
+      }) => {
+        try {
+          const text = pdfData.Pages.map((page) =>
+            page.Texts.map((textItem) =>
+              decodeURIComponent(textItem.R[0]?.T || "")
+            ).join(" ")
+          ).join("\n");
+          resolve(text);
+        } catch (error) {
+          console.error("Error extracting text from PDF data", error);
+          reject(new Error("Failed to extract text from PDF data"));
+        }
       }
-    });
+    );
 
     try {
       pdfParser.parseBuffer(buffer);
-    } catch  {
+    } catch (error) {
+      console.error("Error parsing buffer", error);
       reject(new Error("Failed to parse PDF buffer"));
     }
   });

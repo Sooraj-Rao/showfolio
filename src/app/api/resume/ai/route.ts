@@ -43,16 +43,32 @@ export async function POST(req: NextRequest) {
 
     const prompt = createPrompt(resumeText, userQuery);
 
-    const result = await genAI
-      .getGenerativeModel({
-        model: "gemini-1.5-flash",
-      })
-      .generateContent(prompt);
+    // const result = await genAI
+    //   .getGenerativeModel({
+    //     model: "gemini-1.5-flash",
+    //   })
+    //   .generateContent(prompt);
 
-    const responseContent = result.response.text();
+    // const responseContent = result.response.text();
+
+    const apiResponse = await axios.post(
+      `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        contents: [
+          {
+            parts: [{ text: prompt }],
+          },
+        ],
+      }
+    );
+
+    const feedback =
+      apiResponse.data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "No response generated";
+
 
     return NextResponse.json({
-      result: responseContent,
+      result: feedback,
       mode: mode,
       responseLength: responseLength,
     });
